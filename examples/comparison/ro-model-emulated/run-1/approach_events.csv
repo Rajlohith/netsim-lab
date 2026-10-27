@@ -1,0 +1,30 @@
+seq,mono_ns,wall_ns,approach,node,kind,bytes,detail
+1,10000000000,1792746000000000000,ro-model,mn,attach,0,new care-of address acquired
+2,10000000000,1792746000000000000,ro-model,mn,signal_tx,62,registration request
+3,10031000000,1792746000031000000,ro-model,mn,signal_rx,58,registration reply
+4,10031000000,1792746000031000000,ro-model,mn,signal_tx,9,CoTI 9B
+5,10031000000,1792746000031000000,ro-model,mn,signal_tx,9,HoTI 9B
+6,10057000000,1792746000057000000,ro-model,mn,signal_rx,19,CoT 19B
+7,10064000000,1792746000064000000,ro-model,mn,signal_rx,19,HoT 19B
+8,10064000000,1792746000064000000,ro-model,mn,signal_tx,32,BU 32B
+9,10090000000,1792746000090000000,ro-model,mn,signal_rx,22,BA 22B
+10,14000000000,1792746004000000000,ro-model,mn,link_change,0,"link eth-b up, eth-a down (emulated movement)"
+11,14020000000,1792746004020000000,ro-model,mn,attach,0,new care-of address acquired
+12,14020000000,1792746004020000000,ro-model,mn,signal_tx,62,registration request
+13,14091000000,1792746004091000000,ro-model,mn,signal_rx,58,registration reply
+14,14091000000,1792746004091000000,ro-model,mn,signal_tx,9,CoTI 9B
+15,14145000000,1792746004145000000,ro-model,mn,signal_rx,19,CoT 19B
+16,14145000000,1792746004145000000,ro-model,mn,signal_tx,32,BU 32B
+17,14199000000,1792746004199000000,ro-model,mn,signal_rx,22,BA 22B
+18,14199000000,1792746004199000000,ro-model,mn,recovered,0,route-optimisation binding active at the correspondent
+19,17000000000,1792746007000000000,ro-model,mn,link_change,0,"link eth-a up, eth-b down (emulated movement)"
+20,17020000000,1792746007020000000,ro-model,mn,attach,0,new care-of address acquired
+21,17020000000,1792746007020000000,ro-model,mn,signal_tx,62,registration request
+22,17051000000,1792746007051000000,ro-model,mn,signal_rx,58,registration reply
+23,17051000000,1792746007051000000,ro-model,mn,signal_tx,9,CoTI 9B
+24,17077000000,1792746007077000000,ro-model,mn,signal_rx,19,CoT 19B
+25,17077000000,1792746007077000000,ro-model,mn,signal_tx,32,BU 32B
+26,17103000000,1792746007103000000,ro-model,mn,signal_rx,22,BA 22B
+27,17103000000,1792746007103000000,ro-model,mn,recovered,0,route-optimisation binding active at the correspondent
+28,20500000000,1792746010500000000,ro-model,mn,signal_tx,62,registration request
+29,20531000000,1792746010531000000,ro-model,mn,signal_rx,58,registration reply

@@ -1,0 +1,197 @@
+{
+  "available": true,
+  "binding_timeline": [
+    {
+      "event": "binding_created",
+      "lifetime_s": 30,
+      "mono_ns": 10016000000,
+      "reachable_via": "10.10.4.2"
+    },
+    {
+      "event": "binding_updated",
+      "lifetime_s": 30,
+      "mono_ns": 14056000000,
+      "reachable_via": "10.10.5.2"
+    },
+    {
+      "event": "binding_updated",
+      "lifetime_s": 30,
+      "mono_ns": 17036000000,
+      "reachable_via": "10.10.4.2"
+    },
+    {
+      "detail": "deregistered",
+      "event": "binding_removed",
+      "mono_ns": 20516000000,
+      "reachable_via": null
+    }
+  ],
+  "connectivity": {
+    "handoffs": [
+      {
+        "detail": "eth-a -> eth-b",
+        "event_id": "handoff-1",
+        "handoff_latency_ms": 91.0,
+        "interruption_ms": 110.0,
+        "loss_burst_packets": 8,
+        "recovered": true,
+        "rtt_median_after_ms": 80.0,
+        "rtt_median_before_ms": 40.0,
+        "time_to_registered_ms": 71.0
+      },
+      {
+        "detail": "eth-b -> eth-a",
+        "event_id": "handoff-2",
+        "handoff_latency_ms": 51.0,
+        "interruption_ms": 70.0,
+        "loss_burst_packets": 8,
+        "recovered": true,
+        "rtt_median_after_ms": 40.0,
+        "rtt_median_before_ms": 80.0,
+        "time_to_registered_ms": 31.0
+      }
+    ],
+    "loss": {
+      "exact": true,
+      "longest_burst_packets": 8,
+      "loss_percent": 1.684211,
+      "lost": 16,
+      "sent_ok": 950
+    },
+    "source": "Stage 3 probe metrics",
+    "unavailable_reason": null
+  },
+  "episodes": [
+    {
+      "attach_mono_ns": 10000000000,
+      "care_of_address": "10.10.4.2",
+      "detection_ms": null,
+      "handoff_latency_ms": null,
+      "link_change_mono_ns": null,
+      "outcome": "registered",
+      "registered_mono_ns": 10031000000,
+      "rejected_133": 0,
+      "requests": 1,
+      "retransmits": 0,
+      "time_to_registered_ms": 31.0
+    },
+    {
+      "attach_mono_ns": 14020000000,
+      "care_of_address": "10.10.5.2",
+      "detection_ms": 20.0,
+      "handoff_latency_ms": 91.0,
+      "link_change_mono_ns": 14000000000,
+      "outcome": "registered",
+      "registered_mono_ns": 14091000000,
+      "rejected_133": 0,
+      "requests": 1,
+      "retransmits": 0,
+      "time_to_registered_ms": 71.0
+    },
+    {
+      "attach_mono_ns": 17020000000,
+      "care_of_address": "10.10.4.2",
+      "detection_ms": 20.0,
+      "handoff_latency_ms": 51.0,
+      "link_change_mono_ns": 17000000000,
+      "outcome": "registered",
+      "registered_mono_ns": 17051000000,
+      "rejected_133": 0,
+      "requests": 2,
+      "retransmits": 0,
+      "time_to_registered_ms": 31.0
+    }
+  ],
+  "failures": {
+    "auth_failure": 0,
+    "binding_expired": 0,
+    "dataplane_error": 0,
+    "packet_drops_by_reason": {
+      "anb:link_down_in_flight": 1,
+      "ha:ttl_expired": 13,
+      "mn:link_down_in_flight": 3
+    },
+    "reg_failed": 0,
+    "reg_rejected": 0,
+    "reg_timeout": 0,
+    "replay_rejected": 0,
+    "reply_auth_invalid": 0,
+    "request_malformed": 0,
+    "tunnel_drops_first_seen": []
+  },
+  "mode": "simulation",
+  "registration_delay_ms": {
+    "count": 3,
+    "max": 71.0,
+    "mean": 44.333333,
+    "min": 31.0,
+    "p50": 31.0,
+    "p95": 67.0,
+    "p99": 70.2,
+    "stdev": 23.094011
+  },
+  "registrations": [
+    {
+      "care_of_address": "10.10.4.2",
+      "code": 0,
+      "delay_ms": 31.0,
+      "granted_lifetime_s": 30,
+      "identification": 17187320093265100800,
+      "reply_mono_ns": 10031000000,
+      "request_mono_ns": 10000000000,
+      "requested_lifetime_s": 30
+    },
+    {
+      "care_of_address": "10.10.5.2",
+      "code": 0,
+      "delay_ms": 71.0,
+      "granted_lifetime_s": 30,
+      "identification": 17187320110530869329,
+      "reply_mono_ns": 14091000000,
+      "request_mono_ns": 14020000000,
+      "requested_lifetime_s": 30
+    },
+    {
+      "care_of_address": "10.10.4.2",
+      "code": 0,
+      "delay_ms": 31.0,
+      "granted_lifetime_s": 30,
+      "identification": 17187320123415771217,
+      "reply_mono_ns": 17051000000,
+      "request_mono_ns": 17020000000,
+      "requested_lifetime_s": 30
+    },
+    {
+      "care_of_address": "10.10.100.2",
+      "code": 0,
+      "delay_ms": 31.0,
+      "granted_lifetime_s": 0,
+      "identification": 17187320138362257408,
+      "reply_mono_ns": 20531000000,
+      "request_mono_ns": 20500000000,
+      "requested_lifetime_s": 0
+    }
+  ],
+  "retransmissions": 0,
+  "schema_version": 1,
+  "tunnel": {
+    "basis": "counted from byte-accurate encapsulated packets (ipip.encapsulate)",
+    "first_encap_after_binding_ms": [
+      {
+        "care_of_address": "10.10.4.2",
+        "ms": 489.0
+      },
+      {
+        "care_of_address": "10.10.5.2",
+        "ms": 9.0
+      }
+    ],
+    "inner_bytes": 87400,
+    "measured": true,
+    "outer_bytes": 106400,
+    "overhead_bytes_per_packet": 20.0,
+    "overhead_percent_of_inner": 21.73913,
+    "packets": 950
+  },
+  "warnings": []
+}

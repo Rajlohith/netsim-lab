@@ -1,0 +1,30 @@
+{
+  "agent_address": "10.10.100.1",
+  "drops": {
+    "ana:link_down_in_flight": 1
+  },
+  "ha_stats": {
+    "accepted": 4,
+    "inner_bytes": 87400,
+    "outer_bytes": 106400,
+    "rejected": 0,
+    "requests": 4,
+    "tunnel_packets": 950
+  },
+  "home_address": "10.10.100.2",
+  "mn_final_state": "detached",
+  "mode": "simulation",
+  "moves": [
+    [
+      4.0,
+      "eth-b"
+    ],
+    [
+      7.0,
+      "eth-a"
+    ]
+  ],
+  "probe_payload_bytes": 64,
+  "schema_version": 1,
+  "tunnel_overhead_basis": "counted from byte-accurate encapsulated packets (ipip.encapsulate)"
+}

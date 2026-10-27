@@ -1,0 +1,20 @@
+{
+  "approach": "mip-basic",
+  "continuity": {
+    "endpoint_address_preserved": true,
+    "note": "UDP probes are connectionless; the home address stays valid for the peer",
+    "transport_connection_preserved": null
+  },
+  "environment": "emulated",
+  "mode": "emulated-mip",
+  "model": {
+    "handoff_mode": "bbm",
+    "old_link_hold_ms": null,
+    "protocol": "educational Mobile IPv4-style protocol (app.mobileip), NOT RFC 5944 compliant"
+  },
+  "overhead": {
+    "basis": "counted from byte-accurate encapsulated packets (ipip.encapsulate)",
+    "mobility_bytes_per_packet": 20.0,
+    "packets": 950
+  }
+}

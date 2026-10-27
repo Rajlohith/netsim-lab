@@ -1,0 +1,221 @@
+{
+  "duplicates": 0,
+  "generated_wall_iso": "2026-10-26T11:17:35.611259Z",
+  "handoffs": [
+    {
+      "action_duration_ms": 608.0,
+      "detail": "eth-a -> eth-b",
+      "end_missing": false,
+      "end_mono_ns": 14608000000,
+      "event_id": "handoff-1",
+      "interruption_ms": null,
+      "loss_burst": null,
+      "margin_ms": 250.0,
+      "max_interarrival_gap_in_window_ms": 615.0,
+      "overlapping_loss_bursts": 0,
+      "recovered": true,
+      "rtt_median_after_ms": 54.0,
+      "rtt_median_before_ms": 26.0,
+      "rtt_samples_after": 10,
+      "rtt_samples_before": 10,
+      "start_mono_ns": 14000000000
+    },
+    {
+      "action_duration_ms": 552.0,
+      "detail": "eth-b -> eth-a",
+      "end_missing": false,
+      "end_mono_ns": 17552000000,
+      "event_id": "handoff-2",
+      "interruption_ms": null,
+      "loss_burst": null,
+      "margin_ms": 250.0,
+      "max_interarrival_gap_in_window_ms": 555.0,
+      "overlapping_loss_bursts": 0,
+      "recovered": true,
+      "rtt_median_after_ms": 26.0,
+      "rtt_median_before_ms": 54.0,
+      "rtt_samples_after": 10,
+      "rtt_samples_before": 10,
+      "start_mono_ns": 17000000000
+    }
+  ],
+  "handoffs_unavailable_reason": null,
+  "inputs": {
+    "echoes.csv": {
+      "present": true,
+      "rows": 948,
+      "skipped_rows": 0,
+      "truncated_tail": false
+    },
+    "events.csv": {
+      "present": true,
+      "rows": 6,
+      "skipped_rows": 0,
+      "truncated_tail": false
+    },
+    "received.csv": {
+      "present": true,
+      "rows": 950,
+      "skipped_rows": 0,
+      "truncated_tail": false
+    },
+    "sent.csv": {
+      "present": true,
+      "rows": 950,
+      "skipped_rows": 0,
+      "truncated_tail": false
+    }
+  },
+  "interarrival_gaps_ms": {
+    "count": 949,
+    "max": 615.0,
+    "max_gap_detail": {
+      "after_seq": 348,
+      "before_seq": 349,
+      "end_mono_ns": 14608000000,
+      "start_mono_ns": 13993000000
+    },
+    "mean": 10.0,
+    "min": 0.0,
+    "p50": 10.0,
+    "p95": 10.0,
+    "p99": 10.0,
+    "stdev": 26.674551
+  },
+  "jitter": {
+    "rfc3550_final_ms": 1e-06,
+    "rfc3550_max_ms": 37.8125,
+    "rfc3550_mean_ms": 2.423604,
+    "rtt_delta_mean_ms": 1.869979,
+    "samples": 949
+  },
+  "loss": {
+    "basis": "sender_log",
+    "bursts": [],
+    "delivered": 950,
+    "exact": true,
+    "longest_burst_packets": 0,
+    "loss_percent": 0.0,
+    "lost": 0,
+    "lost_seqs": [],
+    "received_not_in_sent_log": 0,
+    "send_errors": 0,
+    "sent_ok": 950
+  },
+  "owd_ms": {
+    "count": 950,
+    "max": 618.0,
+    "mean": 52.842105,
+    "min": 13.0,
+    "p50": 13.0,
+    "p95": 360.2,
+    "p99": 550.04,
+    "stdev": 112.842647
+  },
+  "owd_unavailable_reason": null,
+  "reordered_packets": 0,
+  "role_status": {
+    "receiver": "completed",
+    "sender": "completed"
+  },
+  "rtt_info": {
+    "delivered_without_echo": 2,
+    "echoed": 948
+  },
+  "rtt_ms": {
+    "count": 948,
+    "max": 645.0,
+    "mean": 70.2827,
+    "min": 26.0,
+    "p50": 26.0,
+    "p95": 381.5,
+    "p99": 570.3,
+    "stdev": 114.450232
+  },
+  "run_id": "run-1",
+  "run_status": "complete",
+  "scenario_id": "tcp-reconnect-emulated-stall-timeout",
+  "schema_version": 1,
+  "sender_schedule_slip_ms": {
+    "count": 950,
+    "max": 0.0,
+    "mean": 0.0,
+    "min": 0.0,
+    "p50": 0.0,
+    "p95": 0.0,
+    "p99": 0.0,
+    "stdev": 0.0
+  },
+  "session_id": 1364543811,
+  "throughput": {
+    "goodput_bps": 51200.0,
+    "offered_bps": 51200.0,
+    "received_bytes": 60800,
+    "sent_bytes": 60800,
+    "timeseries": [
+      {
+        "bps": 51200.0,
+        "bytes": 6400,
+        "packets": 100,
+        "t_start_s": 0.0
+      },
+      {
+        "bps": 51200.0,
+        "bytes": 6400,
+        "packets": 100,
+        "t_start_s": 1.0
+      },
+      {
+        "bps": 51200.0,
+        "bytes": 6400,
+        "packets": 100,
+        "t_start_s": 2.0
+      },
+      {
+        "bps": 25088.0,
+        "bytes": 3136,
+        "packets": 49,
+        "t_start_s": 3.0
+      },
+      {
+        "bps": 76800.0,
+        "bytes": 9600,
+        "packets": 150,
+        "t_start_s": 4.0
+      },
+      {
+        "bps": 51200.0,
+        "bytes": 6400,
+        "packets": 100,
+        "t_start_s": 5.0
+      },
+      {
+        "bps": 25088.0,
+        "bytes": 3136,
+        "packets": 49,
+        "t_start_s": 6.0
+      },
+      {
+        "bps": 77824.0,
+        "bytes": 9728,
+        "packets": 152,
+        "t_start_s": 7.0
+      },
+      {
+        "bps": 51200.0,
+        "bytes": 6400,
+        "packets": 100,
+        "t_start_s": 8.0
+      },
+      {
+        "bps": 25600.0,
+        "bytes": 3200,
+        "packets": 50,
+        "t_start_s": 9.0
+      }
+    ],
+    "timeseries_bin_s": 1.0,
+    "timeseries_origin_mono_ns": 10513000000
+  },
+  "warnings": []
+}

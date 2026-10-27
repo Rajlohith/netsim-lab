@@ -1,0 +1,20 @@
+{
+  "approach": "ro-model",
+  "continuity": {
+    "endpoint_address_preserved": true,
+    "note": "UDP probes are connectionless; the home address stays valid for the peer",
+    "transport_connection_preserved": null
+  },
+  "environment": "emulated",
+  "mode": "emulated-mip",
+  "model": {
+    "handoff_mode": "bbm",
+    "old_link_hold_ms": null,
+    "protocol": "educational Mobile IP + simplified route-optimisation model (app/mobileip/ro.py), NOT Mobile IPv6"
+  },
+  "overhead": {
+    "basis": "counted from real IP-in-IP packets sent directly by the correspondent",
+    "mobility_bytes_per_packet": 20.0,
+    "packets": 950
+  }
+}

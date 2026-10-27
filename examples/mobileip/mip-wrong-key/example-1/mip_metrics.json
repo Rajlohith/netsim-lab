@@ -1,0 +1,73 @@
+{
+  "available": true,
+  "binding_timeline": [],
+  "connectivity": {
+    "handoffs": [],
+    "loss": {
+      "exact": true,
+      "longest_burst_packets": 250,
+      "loss_percent": 100.0,
+      "lost": 250,
+      "sent_ok": 250
+    },
+    "source": "Stage 3 probe metrics",
+    "unavailable_reason": null
+  },
+  "episodes": [
+    {
+      "attach_mono_ns": 10000000000,
+      "care_of_address": "10.10.4.2",
+      "detection_ms": null,
+      "handoff_latency_ms": null,
+      "link_change_mono_ns": null,
+      "outcome": "incomplete",
+      "registered_mono_ns": null,
+      "rejected_133": 0,
+      "requests": 3,
+      "retransmits": 2,
+      "time_to_registered_ms": null
+    }
+  ],
+  "failures": {
+    "auth_failure": 3,
+    "binding_expired": 0,
+    "dataplane_error": 0,
+    "packet_drops_by_reason": {
+      "ha:no_binding": 250
+    },
+    "reg_failed": 0,
+    "reg_rejected": 0,
+    "reg_timeout": 0,
+    "replay_rejected": 0,
+    "reply_auth_invalid": 3,
+    "request_malformed": 0,
+    "tunnel_drops_first_seen": [
+      "no_binding"
+    ]
+  },
+  "mode": "simulation",
+  "registration_delay_ms": {
+    "count": 0,
+    "max": null,
+    "mean": null,
+    "min": null,
+    "p50": null,
+    "p95": null,
+    "p99": null,
+    "stdev": null
+  },
+  "registrations": [],
+  "retransmissions": 2,
+  "schema_version": 1,
+  "tunnel": {
+    "basis": "analytic: RFC 2003 outer header; kernel tunnel bytes are not observed by this tool",
+    "first_encap_after_binding_ms": [],
+    "measured": false,
+    "overhead_bytes_per_packet": 20,
+    "overhead_percent_of_inner": 21.73913,
+    "packets": null
+  },
+  "warnings": [
+    "tunnel overhead is analytic (no tunnel_stats event)"
+  ]
+}

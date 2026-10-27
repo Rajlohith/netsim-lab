@@ -1,0 +1,54 @@
+{
+  "approach": {
+    "mechanism": "Basic Mobile IP registration plus a Return Routability exchange (home + care-of tokens) and an authenticated Binding Update to the correspondent, which then sends directly to the care-of address (IP-in-IP stand-in for the IPv6 routing header).",
+    "name": "Simplified route-optimisation model",
+    "recovery_point": "Binding Update accepted by the correspondent (route-optimised path active)",
+    "scope_limits": "The correspondent keeps using the old care-of address until the new binding is accepted, so handoff can be slower than via the home agent.",
+    "status": "SIMPLIFIED MODEL inspired by Mobile IPv6 route optimisation (RFC 6275). Route optimisation belongs to Mobile IPv6, not Mobile IPv4. This is NOT Mobile IPv6 and NOT a standards implementation (see app/mobileip/ro.py)."
+  },
+  "effective_handoff_mode": "bbm",
+  "generated_wall_iso": "2026-10-26T11:17:36.620199Z",
+  "reason": "ro-model in the live namespaces (sudo) environment: the RO model has no kernel data plane / daemons (emulator only)",
+  "schema_version": 1,
+  "software": {
+    "aioquic_available": false,
+    "platform": "linux",
+    "python": "3.12.3"
+  },
+  "spec": {
+    "approach": "ro-model",
+    "detect_delay_ms": 20.0,
+    "duration_s": 10.0,
+    "environment": "live",
+    "handoff_mode": "bbm",
+    "initial_iface": "eth-a",
+    "lifetime_s": 30,
+    "link_semantics": "both-ends",
+    "moves": [
+      [
+        4.0,
+        "eth-b"
+      ],
+      [
+        7.0,
+        "eth-a"
+      ]
+    ],
+    "old_link_hold_ms": 100.0,
+    "payload": 64,
+    "probe_start_s": 0.5,
+    "rate_pps": 100.0,
+    "ro_lifetime_s": 40,
+    "run_id": "run-1",
+    "scenario_id": "ro-model-live",
+    "tcp_detect": "event",
+    "tcp_detect_timeout_s": 0.5,
+    "topology": "config/topology_ro.yaml",
+    "variant": ""
+  },
+  "status": "unsupported",
+  "support": [
+    "unsupported",
+    "the RO model has no kernel data plane / daemons (emulator only)"
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "duplicates": 0,
+  "generated_wall_iso": "2026-10-24T14:01:16.422641Z",
+  "handoffs": [],
+  "handoffs_unavailable_reason": null,
+  "inputs": {
+    "echoes.csv": {
+      "present": true,
+      "rows": 250,
+      "skipped_rows": 0,
+      "truncated_tail": false
+    },
+    "events.csv": {
+      "present": true,
+      "rows": 2,
+      "skipped_rows": 0,
+      "truncated_tail": false
+    },
+    "received.csv": {
+      "present": true,
+      "rows": 250,
+      "skipped_rows": 0,
+      "truncated_tail": false
+    },
+    "sent.csv": {
+      "present": true,
+      "rows": 250,
+      "skipped_rows": 0,
+      "truncated_tail": false
+    }
+  },
+  "interarrival_gaps_ms": {
+    "count": 249,
+    "max": 10.0,
+    "max_gap_detail": {
+      "after_seq": 0,
+      "before_seq": 1,
+      "end_mono_ns": 10530000000,
+      "start_mono_ns": 10520000000
+    },
+    "mean": 10.0,
+    "min": 10.0,
+    "p50": 10.0,
+    "p95": 10.0,
+    "p99": 10.0,
+    "stdev": 0.0
+  },
+  "jitter": {
+    "rfc3550_final_ms": 0.0,
+    "rfc3550_max_ms": 0.0,
+    "rfc3550_mean_ms": 0.0,
+    "rtt_delta_mean_ms": 0.0,
+    "samples": 249
+  },
+  "loss": {
+    "basis": "sender_log",
+    "bursts": [],
+    "delivered": 250,
+    "exact": true,
+    "longest_burst_packets": 0,
+    "loss_percent": 0.0,
+    "lost": 0,
+    "lost_seqs": [],
+    "received_not_in_sent_log": 0,
+    "send_errors": 0,
+    "sent_ok": 250
+  },
+  "owd_ms": {
+    "count": 250,
+    "max": 20.0,
+    "mean": 20.0,
+    "min": 20.0,
+    "p50": 20.0,
+    "p95": 20.0,
+    "p99": 20.0,
+    "stdev": 0.0
+  },
+  "owd_unavailable_reason": null,
+  "reordered_packets": 0,
+  "role_status": {
+    "receiver": "completed",
+    "sender": "completed"
+  },
+  "rtt_info": {
+    "delivered_without_echo": 0,
+    "echoed": 250
+  },
+  "rtt_ms": {
+    "count": 250,
+    "max": 40.0,
+    "mean": 40.0,
+    "min": 40.0,
+    "p50": 40.0,
+    "p95": 40.0,
+    "p99": 40.0,
+    "stdev": 0.0
+  },
+  "run_id": "example-1",
+  "run_status": "complete",
+  "scenario_id": "mip-clock-skew-resync",
+  "schema_version": 1,
+  "sender_schedule_slip_ms": {
+    "count": 250,
+    "max": 0.0,
+    "mean": 0.0,
+    "min": 0.0,
+    "p50": 0.0,
+    "p95": 0.0,
+    "p99": 0.0,
+    "stdev": 0.0
+  },
+  "session_id": 1296650289,
+  "throughput": {
+    "goodput_bps": 51200.0,
+    "offered_bps": 51200.0,
+    "received_bytes": 16000,
+    "sent_bytes": 16000,
+    "timeseries": [
+      {
+        "bps": 51200.0,
+        "bytes": 6400,
+        "packets": 100,
+        "t_start_s": 0.0
+      },
+      {
+        "bps": 51200.0,
+        "bytes": 6400,
+        "packets": 100,
+        "t_start_s": 1.0
+      },
+      {
+        "bps": 25600.0,
+        "bytes": 3200,
+        "packets": 50,
+        "t_start_s": 2.0
+      }
+    ],
+    "timeseries_bin_s": 1.0,
+    "timeseries_origin_mono_ns": 10520000000
+  },
+  "warnings": []
+}

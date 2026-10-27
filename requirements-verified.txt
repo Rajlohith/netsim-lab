@@ -1,0 +1,10 @@
+# Versions the test suite was ACTUALLY run against in the development sandbox (Python 3.12.3, Linux 6.18).
+# Only these packages were importable there. NOT a lock file: fastapi, uvicorn, pydantic, pydantic-settings, httpx, pytest,
+# ruff and aioquic were NOT installed, so the FastAPI app and pytest-style tests have never been executed.
+# cryptography is only needed with aioquic.
+numpy==2.4.4
+pandas==3.0.2
+scikit-learn==1.8.0
+matplotlib==3.10.8
+PyYAML==6.0.3
+cryptography==46.0.6

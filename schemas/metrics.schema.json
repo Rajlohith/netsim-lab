@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "metrics.json (derived from raw files)",
+  "description": "Every value is derived from raw observations; unavailable values are null with a reason in warnings.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "scenario_id",
+    "run_id",
+    "generated_wall_iso",
+    "run_status",
+    "loss",
+    "interarrival_gaps_ms",
+    "rtt_ms",
+    "owd_ms",
+    "jitter",
+    "throughput",
+    "handoffs",
+    "warnings"
+  ],
+  "properties": {
+    "run_status": {
+      "enum": [
+        "complete",
+        "interrupted",
+        "incomplete"
+      ]
+    },
+    "loss": {
+      "type": "object",
+      "description": "basis=sender_log (exact only if exact=true) or receiver_gaps (lower bound)"
+    },
+    "rtt_ms": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "owd_ms": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "handoffs": {
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

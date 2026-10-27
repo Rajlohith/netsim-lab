@@ -1,0 +1,1 @@
+{"scenario_id": "example-handoff-blackout", "run_id": "example-1", "clock": {"monotonic_source": "time.monotonic_ns (CLOCK_MONOTONIC)", "monotonic_resolution_ns": 1, "wall_source": "time.time_ns (CLOCK_REALTIME, may step/slew)", "boot_id": "f5aac59b-418f-45db-b1cc-15adb87ed017", "hostname": "vm"}}

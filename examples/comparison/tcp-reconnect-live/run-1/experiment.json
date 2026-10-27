@@ -1,0 +1,54 @@
+{
+  "approach": {
+    "mechanism": "The address change kills the TCP connection. The app detects it (OS notification, or a stall timeout), opens a new connection from the new address and resumes the session with its own sequence numbers (HELLO carries the next needed seq).",
+    "name": "TCP reconnection baseline",
+    "recovery_point": "first new (non-duplicate) data frame delivered to the mobile node on the NEW connection",
+    "scope_limits": "Needs an application that implements resume; an unmodified TCP application simply loses its connection.",
+    "status": "No mobility protocol. Application-level behaviour over TCP (RFC 9293). In the emulator TCP is the simplified TcpLite model; the same application logic is validated over real kernel TCP on loopback."
+  },
+  "effective_handoff_mode": "bbm",
+  "generated_wall_iso": "2026-10-26T11:17:36.627192Z",
+  "reason": "tcp-reconnect in the live namespaces (sudo) environment: not implemented in Stage 5 (it would only need the probe apps launched in the namespaces)",
+  "schema_version": 1,
+  "software": {
+    "aioquic_available": false,
+    "platform": "linux",
+    "python": "3.12.3"
+  },
+  "spec": {
+    "approach": "tcp-reconnect",
+    "detect_delay_ms": 20.0,
+    "duration_s": 10.0,
+    "environment": "live",
+    "handoff_mode": "bbm",
+    "initial_iface": "eth-a",
+    "lifetime_s": 30,
+    "link_semantics": "both-ends",
+    "moves": [
+      [
+        4.0,
+        "eth-b"
+      ],
+      [
+        7.0,
+        "eth-a"
+      ]
+    ],
+    "old_link_hold_ms": 100.0,
+    "payload": 64,
+    "probe_start_s": 0.5,
+    "rate_pps": 100.0,
+    "ro_lifetime_s": 40,
+    "run_id": "run-1",
+    "scenario_id": "tcp-reconnect-live",
+    "tcp_detect": "event",
+    "tcp_detect_timeout_s": 0.5,
+    "topology": "config/topology_ro.yaml",
+    "variant": ""
+  },
+  "status": "unsupported",
+  "support": [
+    "unsupported",
+    "not implemented in Stage 5 (it would only need the probe apps launched in the namespaces)"
+  ]
+}

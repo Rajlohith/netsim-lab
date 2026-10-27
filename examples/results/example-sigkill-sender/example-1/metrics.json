@@ -1,0 +1,133 @@
+{
+  "duplicates": 0,
+  "generated_wall_iso": "2026-10-23T01:54:53.982794Z",
+  "handoffs": null,
+  "handoffs_unavailable_reason": null,
+  "inputs": {
+    "echoes.csv": {
+      "present": true,
+      "rows": 163,
+      "skipped_rows": 0,
+      "truncated_tail": false
+    },
+    "events.csv": {
+      "present": false,
+      "rows": 0,
+      "skipped_rows": 0,
+      "truncated_tail": false
+    },
+    "received.csv": {
+      "present": true,
+      "rows": 190,
+      "skipped_rows": 0,
+      "truncated_tail": false
+    },
+    "sent.csv": {
+      "present": true,
+      "rows": 163,
+      "skipped_rows": 0,
+      "truncated_tail": false
+    }
+  },
+  "interarrival_gaps_ms": {
+    "count": 189,
+    "max": 5.117846,
+    "max_gap_detail": {
+      "after_seq": 115,
+      "before_seq": 116,
+      "end_mono_ns": 394787447335,
+      "start_mono_ns": 394782329489
+    },
+    "mean": 5.000295,
+    "min": 4.894645,
+    "p50": 4.99951,
+    "p95": 5.066296,
+    "p99": 5.096663,
+    "stdev": 0.039832
+  },
+  "jitter": {
+    "rfc3550_final_ms": 0.02234,
+    "rfc3550_max_ms": 0.034169,
+    "rfc3550_mean_ms": 0.018832,
+    "rtt_delta_mean_ms": 0.020739,
+    "samples": 189
+  },
+  "loss": {
+    "basis": "sender_log",
+    "bursts": [],
+    "delivered": 163,
+    "exact": false,
+    "longest_burst_packets": 0,
+    "loss_percent": 0.0,
+    "lost": 0,
+    "lost_seqs": [],
+    "received_not_in_sent_log": 27,
+    "send_errors": 0,
+    "sent_ok": 163
+  },
+  "owd_ms": {
+    "count": 190,
+    "max": 0.111219,
+    "mean": 0.040402,
+    "min": 0.017449,
+    "p50": 0.035151,
+    "p95": 0.073748,
+    "p99": 0.103573,
+    "stdev": 0.018491
+  },
+  "owd_unavailable_reason": null,
+  "reordered_packets": 0,
+  "role_status": {
+    "receiver": "completed",
+    "sender": "running"
+  },
+  "rtt_info": {
+    "delivered_without_echo": 0,
+    "echoed": 163
+  },
+  "rtt_ms": {
+    "count": 163,
+    "max": 0.240419,
+    "mean": 0.078702,
+    "min": 0.044949,
+    "p50": 0.070732,
+    "p95": 0.125147,
+    "p99": 0.159954,
+    "stdev": 0.026557
+  },
+  "run_id": "example-1",
+  "run_status": "incomplete",
+  "scenario_id": "example-sigkill-sender",
+  "schema_version": 1,
+  "sender_schedule_slip_ms": {
+    "count": 163,
+    "max": 0.1915,
+    "mean": 0.123004,
+    "min": 0.00275,
+    "p50": 0.121305,
+    "p95": 0.154863,
+    "p99": 0.17949,
+    "stdev": 0.019462
+  },
+  "session_id": 2559459614,
+  "throughput": {
+    "goodput_bps": 102393.96,
+    "offered_bps": 102381.282,
+    "received_bytes": 12160,
+    "sent_bytes": 10432,
+    "timeseries": [
+      {
+        "bps": 97280.0,
+        "bytes": 12160,
+        "packets": 190,
+        "t_start_s": 0.0
+      }
+    ],
+    "timeseries_bin_s": 1.0,
+    "timeseries_origin_mono_ns": 394207319169
+  },
+  "warnings": [
+    "sender status is 'running': run did not finish cleanly, data may be truncated",
+    "loss is not exact: sender log not finalised/complete; 27 received seqs missing from sender log"
+  ]
+}

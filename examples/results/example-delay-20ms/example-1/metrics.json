@@ -1,0 +1,130 @@
+{
+  "duplicates": 0,
+  "generated_wall_iso": "2026-10-23T01:54:48.160489Z",
+  "handoffs": null,
+  "handoffs_unavailable_reason": null,
+  "inputs": {
+    "echoes.csv": {
+      "present": true,
+      "rows": 100,
+      "skipped_rows": 0,
+      "truncated_tail": false
+    },
+    "events.csv": {
+      "present": false,
+      "rows": 0,
+      "skipped_rows": 0,
+      "truncated_tail": false
+    },
+    "received.csv": {
+      "present": true,
+      "rows": 100,
+      "skipped_rows": 0,
+      "truncated_tail": false
+    },
+    "sent.csv": {
+      "present": true,
+      "rows": 100,
+      "skipped_rows": 0,
+      "truncated_tail": false
+    }
+  },
+  "interarrival_gaps_ms": {
+    "count": 99,
+    "max": 11.338367,
+    "max_gap_detail": {
+      "after_seq": 11,
+      "before_seq": 12,
+      "end_mono_ns": 388768903233,
+      "start_mono_ns": 388757564866
+    },
+    "mean": 10.001741,
+    "min": 8.646826,
+    "p50": 10.00263,
+    "p95": 10.329942,
+    "p99": 10.73351,
+    "stdev": 0.252205
+  },
+  "jitter": {
+    "rfc3550_final_ms": 0.049515,
+    "rfc3550_max_ms": 0.284119,
+    "rfc3550_mean_ms": 0.097207,
+    "rtt_delta_mean_ms": 0.190212,
+    "samples": 99
+  },
+  "loss": {
+    "basis": "sender_log",
+    "bursts": [],
+    "delivered": 100,
+    "exact": true,
+    "longest_burst_packets": 0,
+    "loss_percent": 0.0,
+    "lost": 0,
+    "lost_seqs": [],
+    "received_not_in_sent_log": 0,
+    "send_errors": 0,
+    "sent_ok": 100
+  },
+  "owd_ms": {
+    "count": 100,
+    "max": 21.536526,
+    "mean": 20.219558,
+    "min": 20.082189,
+    "p50": 20.192093,
+    "p95": 20.369893,
+    "p99": 20.916526,
+    "stdev": 0.168584
+  },
+  "owd_unavailable_reason": null,
+  "reordered_packets": 0,
+  "role_status": {
+    "receiver": "completed",
+    "sender": "completed"
+  },
+  "rtt_info": {
+    "delivered_without_echo": 0,
+    "echoed": 100
+  },
+  "rtt_ms": {
+    "count": 100,
+    "max": 41.821607,
+    "mean": 40.386625,
+    "min": 40.135404,
+    "p50": 40.343118,
+    "p95": 40.671362,
+    "p99": 41.638514,
+    "stdev": 0.24804
+  },
+  "run_id": "example-1",
+  "run_status": "complete",
+  "scenario_id": "example-delay-20ms",
+  "schema_version": 1,
+  "sender_schedule_slip_ms": {
+    "count": 100,
+    "max": 0.407491,
+    "mean": 0.134595,
+    "min": 0.002252,
+    "p50": 0.13019,
+    "p95": 0.165211,
+    "p99": 0.341302,
+    "stdev": 0.044564
+  },
+  "session_id": 990502760,
+  "throughput": {
+    "goodput_bps": 51191.088,
+    "offered_bps": 51193.399,
+    "received_bytes": 6400,
+    "sent_bytes": 6400,
+    "timeseries": [
+      {
+        "bps": 51200.0,
+        "bytes": 6400,
+        "packets": 100,
+        "t_start_s": 0.0
+      }
+    ],
+    "timeseries_bin_s": 1.0,
+    "timeseries_origin_mono_ns": 388647473236
+  },
+  "warnings": []
+}

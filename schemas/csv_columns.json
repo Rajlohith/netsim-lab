@@ -1,0 +1,142 @@
+{
+  "sent.csv": {
+    "description": "written by the sender, one row per probe sent",
+    "columns": [
+      {
+        "name": "seq",
+        "type": "int",
+        "description": "probe sequence number, starts at 0, +1 per probe"
+      },
+      {
+        "name": "scheduled_mono_ns",
+        "type": "int",
+        "description": "sender CLOCK_MONOTONIC instant the probe was due (t0 + seq*interval)"
+      },
+      {
+        "name": "send_mono_ns",
+        "type": "int",
+        "description": "sender CLOCK_MONOTONIC when the probe was built, just before sendto()"
+      },
+      {
+        "name": "send_wall_ns",
+        "type": "int",
+        "description": "sender wall clock (CLOCK_REALTIME) at the same moment; correlation only"
+      },
+      {
+        "name": "size_bytes",
+        "type": "int",
+        "description": "UDP payload length"
+      },
+      {
+        "name": "send_errno",
+        "type": "int",
+        "description": "0 if sendto succeeded, else errno (not counted as network loss)"
+      }
+    ]
+  },
+  "echoes.csv": {
+    "description": "written by the sender, one row per echo received",
+    "columns": [
+      {
+        "name": "seq",
+        "type": "int",
+        "description": "probe sequence number, starts at 0, +1 per probe"
+      },
+      {
+        "name": "recv_mono_ns",
+        "type": "int",
+        "description": "this process's CLOCK_MONOTONIC right after recvfrom() returned"
+      },
+      {
+        "name": "recv_wall_ns",
+        "type": "int",
+        "description": "wall clock at the same moment; correlation only"
+      },
+      {
+        "name": "size_bytes",
+        "type": "int",
+        "description": "UDP payload length"
+      }
+    ]
+  },
+  "received.csv": {
+    "description": "written by the receiver, one row per valid probe received (duplicates kept)",
+    "columns": [
+      {
+        "name": "seq",
+        "type": "int",
+        "description": "probe sequence number, starts at 0, +1 per probe"
+      },
+      {
+        "name": "session_id",
+        "type": "int",
+        "description": "random id chosen by the sender per run"
+      },
+      {
+        "name": "recv_mono_ns",
+        "type": "int",
+        "description": "this process's CLOCK_MONOTONIC right after recvfrom() returned"
+      },
+      {
+        "name": "recv_wall_ns",
+        "type": "int",
+        "description": "wall clock at the same moment; correlation only"
+      },
+      {
+        "name": "hdr_send_mono_ns",
+        "type": "int",
+        "description": "sender monotonic stamp copied from the packet header (cross-process use only on one host)"
+      },
+      {
+        "name": "hdr_send_wall_ns",
+        "type": "int",
+        "description": "sender wall stamp from the packet header"
+      },
+      {
+        "name": "size_bytes",
+        "type": "int",
+        "description": "UDP payload length"
+      },
+      {
+        "name": "src_addr",
+        "type": "string",
+        "description": "source IPv4 seen by the receiver"
+      },
+      {
+        "name": "src_port",
+        "type": "int",
+        "description": "source UDP port"
+      }
+    ]
+  },
+  "events.csv": {
+    "description": "written by the orchestrator / impairment proxy",
+    "columns": [
+      {
+        "name": "event_id",
+        "type": "string",
+        "description": "pairs handoff_start/handoff_end (e.g. handoff-1)"
+      },
+      {
+        "name": "kind",
+        "type": "string",
+        "description": "scenario_start | scenario_end | handoff_start | handoff_end | note"
+      },
+      {
+        "name": "mono_ns",
+        "type": "int",
+        "description": "orchestrator CLOCK_MONOTONIC (same-host comparable with packet stamps)"
+      },
+      {
+        "name": "wall_ns",
+        "type": "int",
+        "description": "orchestrator wall clock"
+      },
+      {
+        "name": "detail",
+        "type": "string",
+        "description": "free text"
+      }
+    ]
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "netsim-udp-probe run metadata",
+  "description": "sender.meta.json / receiver.meta.json. status stays 'running' if the process died without finalising.",
+  "type": "object",
+  "required": [
+    "clock",
+    "counters",
+    "files",
+    "params",
+    "role",
+    "run_id",
+    "scenario_id",
+    "schema_version",
+    "session_id",
+    "start_mono_ns",
+    "start_wall_iso",
+    "status",
+    "tool"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "tool": {
+      "type": "string"
+    },
+    "role": {
+      "enum": [
+        "sender",
+        "receiver"
+      ]
+    },
+    "scenario_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+    },
+    "session_id": {
+      "type": "integer"
+    },
+    "status": {
+      "enum": [
+        "running",
+        "completed",
+        "interrupted",
+        "failed"
+      ]
+    },
+    "stop_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "start_wall_iso": {
+      "type": "string"
+    },
+    "start_mono_ns": {
+      "type": "integer"
+    },
+    "end_wall_iso": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "end_mono_ns": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "params": {
+      "type": "object"
+    },
+    "counters": {
+      "type": "object"
+    },
+    "clock": {
+      "type": "object",
+      "description": "monotonic/wall sources, resolution, boot_id (clock-domain id), hostname"
+    },
+    "files": {
+      "type": "object"
+    },
+    "notes": {
+      "type": "array"
+    }
+  }
+}

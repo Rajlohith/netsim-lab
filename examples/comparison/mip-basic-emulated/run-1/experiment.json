@@ -1,0 +1,54 @@
+{
+  "approach": {
+    "mechanism": "Registration with the Home Agent (signed, replay-protected); the Home Agent tunnels (IP-in-IP) packets for the home address to the current care-of address; replies go direct (triangle routing).",
+    "name": "Basic Mobile IP",
+    "recovery_point": "first accepted registration reply (the Home Agent now tunnels to the new care-of address)",
+    "scope_limits": "Break-before-make: the old link disappears with the movement.",
+    "status": "Educational Mobile IPv4-style demonstration (Stage 4). NOT RFC 5944 compliant: HMAC-SHA256 instead of keyed-MD5, no Foreign Agent, no ARP, no reverse tunnelling (see docs/MOBILE_IP.md)."
+  },
+  "effective_handoff_mode": "bbm",
+  "generated_wall_iso": "2026-10-26T11:17:35.972107Z",
+  "reason": "",
+  "schema_version": 1,
+  "software": {
+    "aioquic_available": false,
+    "platform": "linux",
+    "python": "3.12.3"
+  },
+  "spec": {
+    "approach": "mip-basic",
+    "detect_delay_ms": 20.0,
+    "duration_s": 10.0,
+    "environment": "emulated",
+    "handoff_mode": "bbm",
+    "initial_iface": "eth-a",
+    "lifetime_s": 30,
+    "link_semantics": "both-ends",
+    "moves": [
+      [
+        4.0,
+        "eth-b"
+      ],
+      [
+        7.0,
+        "eth-a"
+      ]
+    ],
+    "old_link_hold_ms": 100.0,
+    "payload": 64,
+    "probe_start_s": 0.5,
+    "rate_pps": 100.0,
+    "ro_lifetime_s": 40,
+    "run_id": "run-1",
+    "scenario_id": "mip-basic-emulated",
+    "tcp_detect": "event",
+    "tcp_detect_timeout_s": 0.5,
+    "topology": "config/topology_ro.yaml",
+    "variant": ""
+  },
+  "status": "ok",
+  "support": [
+    "supported",
+    "protocol code + byte-accurate IP-in-IP on the emulated network"
+  ]
+}

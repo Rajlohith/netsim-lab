@@ -1,0 +1,54 @@
+{
+  "approach": {
+    "mechanism": "Registration is sent from the new care-of address while the old link still carries traffic; the old link is released `old_link_hold_ms` after registration so packets already in flight can still arrive.",
+    "name": "Mobile IP with make-before-break handoff",
+    "recovery_point": "first accepted registration reply",
+    "scope_limits": "Requires two simultaneously usable links; benefit depends on the hold time (drain) of the old link.",
+    "status": "Basic Mobile IP (above) with an overlap period: the new link is up before the old one is released. A testbed extension, not a separate protocol; the live demo uses a single tunnel device so in-flight packets for the old care-of address are not accepted there (the emulator accepts both addresses during the overlap)."
+  },
+  "effective_handoff_mode": "mbb",
+  "generated_wall_iso": "2026-10-26T11:17:36.598619Z",
+  "reason": "mip-mbb in the loopback (real sockets) environment: needs kernel tunnels and routing, which loopback sockets do not provide",
+  "schema_version": 1,
+  "software": {
+    "aioquic_available": false,
+    "platform": "linux",
+    "python": "3.12.3"
+  },
+  "spec": {
+    "approach": "mip-mbb",
+    "detect_delay_ms": 20.0,
+    "duration_s": 10.0,
+    "environment": "loopback",
+    "handoff_mode": "bbm",
+    "initial_iface": "eth-a",
+    "lifetime_s": 30,
+    "link_semantics": "both-ends",
+    "moves": [
+      [
+        4.0,
+        "eth-b"
+      ],
+      [
+        7.0,
+        "eth-a"
+      ]
+    ],
+    "old_link_hold_ms": 100.0,
+    "payload": 64,
+    "probe_start_s": 0.5,
+    "rate_pps": 100.0,
+    "ro_lifetime_s": 40,
+    "run_id": "run-1",
+    "scenario_id": "mip-mbb-loopback",
+    "tcp_detect": "event",
+    "tcp_detect_timeout_s": 0.5,
+    "topology": "config/topology_ro.yaml",
+    "variant": ""
+  },
+  "status": "unsupported",
+  "support": [
+    "unsupported",
+    "needs kernel tunnels and routing, which loopback sockets do not provide"
+  ]
+}

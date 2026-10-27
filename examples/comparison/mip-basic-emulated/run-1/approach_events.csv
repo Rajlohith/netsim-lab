@@ -1,0 +1,16 @@
+seq,mono_ns,wall_ns,approach,node,kind,bytes,detail
+1,10000000000,1792746000000000000,mip-basic,mn,attach,0,new care-of address acquired
+2,10000000000,1792746000000000000,mip-basic,mn,signal_tx,62,registration request
+3,10031000000,1792746000031000000,mip-basic,mn,signal_rx,58,registration reply
+4,14000000000,1792746004000000000,mip-basic,mn,link_change,0,"link eth-b up, eth-a down (emulated movement)"
+5,14020000000,1792746004020000000,mip-basic,mn,attach,0,new care-of address acquired
+6,14020000000,1792746004020000000,mip-basic,mn,signal_tx,62,registration request
+7,14091000000,1792746004091000000,mip-basic,mn,signal_rx,58,registration reply
+8,14091000000,1792746004091000000,mip-basic,mn,recovered,0,registration accepted; home agent now tunnels to the new care-of address
+9,17000000000,1792746007000000000,mip-basic,mn,link_change,0,"link eth-a up, eth-b down (emulated movement)"
+10,17020000000,1792746007020000000,mip-basic,mn,attach,0,new care-of address acquired
+11,17020000000,1792746007020000000,mip-basic,mn,signal_tx,62,registration request
+12,17051000000,1792746007051000000,mip-basic,mn,signal_rx,58,registration reply
+13,17051000000,1792746007051000000,mip-basic,mn,recovered,0,registration accepted; home agent now tunnels to the new care-of address
+14,20500000000,1792746010500000000,mip-basic,mn,signal_tx,62,registration request
+15,20531000000,1792746010531000000,mip-basic,mn,signal_rx,58,registration reply

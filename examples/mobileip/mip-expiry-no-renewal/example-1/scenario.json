@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "scenario_id": "mip-expiry-no-renewal",
+  "run_id": "example-1",
+  "clock": {
+    "boot_id": "simulated-virtual-clock"
+  },
+  "mode": "simulation",
+  "topology": "mobility-lab",
+  "limitations": "virtual time; events and packets share one simulated clock"
+}

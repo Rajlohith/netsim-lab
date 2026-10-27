@@ -1,0 +1,670 @@
+[
+  {
+    "approach": "tcp-reconnect",
+    "environment": "emulated",
+    "handoff_mode": "bbm",
+    "metrics": {
+      "approach": "tcp-reconnect",
+      "continuity": {
+        "all_handoffs_recovered": true,
+        "connections_opened": 3,
+        "data_loss_free": true,
+        "data_loss_free_exact": true,
+        "endpoint_address_preserved": false,
+        "failure_events": 0,
+        "server_resent_after_replace": 20,
+        "transport_connection_preserved": false
+      },
+      "duplicates": 0,
+      "environment": "emulated",
+      "failures": [],
+      "goodput_bps": 51200.0,
+      "handoff_summary": {
+        "count": 2,
+        "handoff_latency_ms_max": 128.0,
+        "handoff_latency_ms_mean": 100.0,
+        "loss_packets_total": 0,
+        "service_gap_ms_max": 135.0,
+        "service_gap_ms_mean": 105.0,
+        "signalling_bytes_total": 276,
+        "signalling_messages_total": 8
+      },
+      "handoffs": [
+        {
+          "detail": "eth-a -> eth-b",
+          "event_id": "handoff-1",
+          "failures": [],
+          "handoff_latency_ms": 128.0,
+          "interruption_ms": null,
+          "loss_packets": 0,
+          "recovered": true,
+          "retransmits": 0,
+          "rtt_after_ms": 54.0,
+          "rtt_before_ms": 26.0,
+          "service_gap_ms": 135.0,
+          "signalling_bytes": 138,
+          "signalling_messages": 4
+        },
+        {
+          "detail": "eth-b -> eth-a",
+          "event_id": "handoff-2",
+          "failures": [],
+          "handoff_latency_ms": 72.0,
+          "interruption_ms": null,
+          "loss_packets": 0,
+          "recovered": true,
+          "retransmits": 0,
+          "rtt_after_ms": 26.0,
+          "rtt_before_ms": 54.0,
+          "service_gap_ms": 75.0,
+          "signalling_bytes": 138,
+          "signalling_messages": 4
+        }
+      ],
+      "handoffs_unavailable_reason": null,
+      "loss": {
+        "exact": true,
+        "lost": 0,
+        "percent": 0.0,
+        "sent": 950
+      },
+      "mobility_overhead": {
+        "basis": "no mobility-specific header; the TCP/IP headers are the same as without mobility",
+        "mobility_bytes_per_packet": 0.0
+      },
+      "mode": "emulated-tcplite",
+      "model": {
+        "detect": "event",
+        "detect_timeout_s": 0.5,
+        "tcp_stats_cn": {
+          "bytes_tx": 143970,
+          "resets_sent": 0,
+          "retransmissions": 0,
+          "segments_rx": 1902,
+          "segments_tx": 1926
+        },
+        "tcp_stats_mn": {
+          "bytes_tx": 141961,
+          "resets_sent": 0,
+          "retransmissions": 0,
+          "segments_rx": 1898,
+          "segments_tx": 1909,
+          "send_failures": 2
+        },
+        "transport": "TcpLite (simplified TCP model, see app/compare/tcplite.py)"
+      },
+      "provenance": {
+        "analytic_values": [],
+        "clock": "simulated virtual time (deterministic, no real delays)",
+        "data_origin": "simulated",
+        "network": "app.mobileip.simnet discrete-event emulator (no queues, bandwidth or kernel stack)",
+        "protocol_engine": "TcpLite (simplified TCP model, see app/compare/tcplite.py)",
+        "timing_comparable_with_other_environments": true
+      },
+      "reordered_packets": 0,
+      "rtt_ms": {
+        "count": 948,
+        "max": 165.0,
+        "min": 26.0,
+        "p50": 26.0,
+        "p95": 54.0
+      },
+      "run_id": "run-1",
+      "run_status": "complete",
+      "scenario_id": "tcp-reconnect-emulated-notify",
+      "schema_version": 1,
+      "timing_comparable": true,
+      "warnings": []
+    },
+    "reason": "",
+    "status": "ok",
+    "variant": "notify"
+  },
+  {
+    "approach": "tcp-reconnect",
+    "environment": "emulated",
+    "handoff_mode": "bbm",
+    "metrics": {
+      "approach": "tcp-reconnect",
+      "continuity": {
+        "all_handoffs_recovered": true,
+        "connections_opened": 3,
+        "data_loss_free": true,
+        "data_loss_free_exact": true,
+        "endpoint_address_preserved": false,
+        "failure_events": 0,
+        "server_resent_after_replace": 116,
+        "transport_connection_preserved": false
+      },
+      "duplicates": 0,
+      "environment": "emulated",
+      "failures": [],
+      "goodput_bps": 51200.0,
+      "handoff_summary": {
+        "count": 2,
+        "handoff_latency_ms_max": 608.0,
+        "handoff_latency_ms_mean": 580.0,
+        "loss_packets_total": 0,
+        "service_gap_ms_max": 615.0,
+        "service_gap_ms_mean": 585.0,
+        "signalling_bytes_total": 276,
+        "signalling_messages_total": 8
+      },
+      "handoffs": [
+        {
+          "detail": "eth-a -> eth-b",
+          "event_id": "handoff-1",
+          "failures": [],
+          "handoff_latency_ms": 608.0,
+          "interruption_ms": null,
+          "loss_packets": 0,
+          "recovered": true,
+          "retransmits": 0,
+          "rtt_after_ms": 54.0,
+          "rtt_before_ms": 26.0,
+          "service_gap_ms": 615.0,
+          "signalling_bytes": 138,
+          "signalling_messages": 4
+        },
+        {
+          "detail": "eth-b -> eth-a",
+          "event_id": "handoff-2",
+          "failures": [],
+          "handoff_latency_ms": 552.0,
+          "interruption_ms": null,
+          "loss_packets": 0,
+          "recovered": true,
+          "retransmits": 0,
+          "rtt_after_ms": 26.0,
+          "rtt_before_ms": 54.0,
+          "service_gap_ms": 555.0,
+          "signalling_bytes": 138,
+          "signalling_messages": 4
+        }
+      ],
+      "handoffs_unavailable_reason": null,
+      "loss": {
+        "exact": true,
+        "lost": 0,
+        "percent": 0.0,
+        "sent": 950
+      },
+      "mobility_overhead": {
+        "basis": "no mobility-specific header; the TCP/IP headers are the same as without mobility",
+        "mobility_bytes_per_packet": 0.0
+      },
+      "mode": "emulated-tcplite",
+      "model": {
+        "detect": "timeout",
+        "detect_timeout_s": 0.5,
+        "tcp_stats_cn": {
+          "bytes_tx": 154652,
+          "resets_sent": 0,
+          "retransmissions": 2,
+          "segments_rx": 1902,
+          "segments_tx": 2024
+        },
+        "tcp_stats_mn": {
+          "bytes_tx": 141961,
+          "resets_sent": 0,
+          "retransmissions": 2,
+          "segments_rx": 1898,
+          "segments_tx": 1909,
+          "send_failures": 4
+        },
+        "transport": "TcpLite (simplified TCP model, see app/compare/tcplite.py)"
+      },
+      "provenance": {
+        "analytic_values": [],
+        "clock": "simulated virtual time (deterministic, no real delays)",
+        "data_origin": "simulated",
+        "network": "app.mobileip.simnet discrete-event emulator (no queues, bandwidth or kernel stack)",
+        "protocol_engine": "TcpLite (simplified TCP model, see app/compare/tcplite.py)",
+        "timing_comparable_with_other_environments": true
+      },
+      "reordered_packets": 0,
+      "rtt_ms": {
+        "count": 948,
+        "max": 645.0,
+        "min": 26.0,
+        "p50": 26.0,
+        "p95": 381.5
+      },
+      "run_id": "run-1",
+      "run_status": "complete",
+      "scenario_id": "tcp-reconnect-emulated-stall-timeout",
+      "schema_version": 1,
+      "timing_comparable": true,
+      "warnings": []
+    },
+    "reason": "",
+    "status": "ok",
+    "variant": "stall-timeout"
+  },
+  {
+    "approach": "mip-basic",
+    "environment": "emulated",
+    "handoff_mode": "bbm",
+    "metrics": {
+      "approach": "mip-basic",
+      "continuity": {
+        "all_handoffs_recovered": true,
+        "data_loss_free": false,
+        "data_loss_free_exact": true,
+        "endpoint_address_preserved": true,
+        "failure_events": 0,
+        "note": "UDP probes are connectionless; the home address stays valid for the peer",
+        "transport_connection_preserved": null
+      },
+      "duplicates": 0,
+      "environment": "emulated",
+      "failures": [],
+      "goodput_bps": 50336.776,
+      "handoff_summary": {
+        "count": 2,
+        "handoff_latency_ms_max": 91.0,
+        "handoff_latency_ms_mean": 71.0,
+        "loss_packets_total": 16,
+        "service_gap_ms_max": 110.0,
+        "service_gap_ms_mean": 90.0,
+        "signalling_bytes_total": 240,
+        "signalling_messages_total": 4
+      },
+      "handoffs": [
+        {
+          "detail": "eth-a -> eth-b",
+          "event_id": "handoff-1",
+          "failures": [],
+          "handoff_latency_ms": 91.0,
+          "interruption_ms": 110.0,
+          "loss_packets": 8,
+          "recovered": true,
+          "retransmits": 0,
+          "rtt_after_ms": 67.0,
+          "rtt_before_ms": 33.0,
+          "service_gap_ms": 110.0,
+          "signalling_bytes": 120,
+          "signalling_messages": 2
+        },
+        {
+          "detail": "eth-b -> eth-a",
+          "event_id": "handoff-2",
+          "failures": [],
+          "handoff_latency_ms": 51.0,
+          "interruption_ms": 70.0,
+          "loss_packets": 8,
+          "recovered": true,
+          "retransmits": 0,
+          "rtt_after_ms": 33.0,
+          "rtt_before_ms": 67.0,
+          "service_gap_ms": 70.0,
+          "signalling_bytes": 120,
+          "signalling_messages": 2
+        }
+      ],
+      "handoffs_unavailable_reason": null,
+      "loss": {
+        "exact": true,
+        "lost": 16,
+        "percent": 1.684211,
+        "sent": 950
+      },
+      "mobility_overhead": {
+        "basis": "counted from byte-accurate encapsulated packets (ipip.encapsulate)",
+        "mobility_bytes_per_packet": 20.0,
+        "packets": 950
+      },
+      "mode": "emulated-mip",
+      "model": {
+        "handoff_mode": "bbm",
+        "old_link_hold_ms": null,
+        "protocol": "educational Mobile IPv4-style protocol (app.mobileip), NOT RFC 5944 compliant"
+      },
+      "provenance": {
+        "analytic_values": [],
+        "clock": "simulated virtual time (deterministic, no real delays)",
+        "data_origin": "simulated",
+        "network": "app.mobileip.simnet discrete-event emulator (no queues, bandwidth or kernel stack)",
+        "protocol_engine": "educational Mobile IPv4-style protocol (app.mobileip), NOT RFC 5944 compliant",
+        "timing_comparable_with_other_environments": true
+      },
+      "reordered_packets": 0,
+      "rtt_ms": {
+        "count": 933,
+        "max": 67.0,
+        "min": 33.0,
+        "p50": 33.0,
+        "p95": 67.0
+      },
+      "run_id": "run-1",
+      "run_status": "complete",
+      "scenario_id": "mip-basic-emulated",
+      "schema_version": 1,
+      "timing_comparable": true,
+      "warnings": []
+    },
+    "reason": "",
+    "status": "ok",
+    "variant": ""
+  },
+  {
+    "approach": "mip-mbb",
+    "environment": "emulated",
+    "handoff_mode": "bbm",
+    "metrics": {
+      "approach": "mip-mbb",
+      "continuity": {
+        "all_handoffs_recovered": true,
+        "data_loss_free": true,
+        "data_loss_free_exact": true,
+        "endpoint_address_preserved": true,
+        "failure_events": 0,
+        "note": "UDP probes are connectionless; the home address stays valid for the peer",
+        "transport_connection_preserved": null
+      },
+      "duplicates": 0,
+      "environment": "emulated",
+      "failures": [],
+      "goodput_bps": 51200.0,
+      "handoff_summary": {
+        "count": 2,
+        "handoff_latency_ms_max": 91.0,
+        "handoff_latency_ms_mean": 71.0,
+        "loss_packets_total": 0,
+        "service_gap_ms_max": 30.0,
+        "service_gap_ms_mean": 20.0,
+        "signalling_bytes_total": 240,
+        "signalling_messages_total": 4
+      },
+      "handoffs": [
+        {
+          "detail": "eth-a -> eth-b",
+          "event_id": "handoff-1",
+          "failures": [],
+          "handoff_latency_ms": 91.0,
+          "interruption_ms": null,
+          "loss_packets": 0,
+          "recovered": true,
+          "retransmits": 0,
+          "rtt_after_ms": 67.0,
+          "rtt_before_ms": 33.0,
+          "service_gap_ms": 30.0,
+          "signalling_bytes": 120,
+          "signalling_messages": 2
+        },
+        {
+          "detail": "eth-b -> eth-a",
+          "event_id": "handoff-2",
+          "failures": [],
+          "handoff_latency_ms": 51.0,
+          "interruption_ms": null,
+          "loss_packets": 0,
+          "recovered": true,
+          "retransmits": 0,
+          "rtt_after_ms": 33.0,
+          "rtt_before_ms": 67.0,
+          "service_gap_ms": 10.0,
+          "signalling_bytes": 120,
+          "signalling_messages": 2
+        }
+      ],
+      "handoffs_unavailable_reason": null,
+      "loss": {
+        "exact": true,
+        "lost": 0,
+        "percent": 0.0,
+        "sent": 950
+      },
+      "mobility_overhead": {
+        "basis": "counted from byte-accurate encapsulated packets (ipip.encapsulate)",
+        "mobility_bytes_per_packet": 20.0,
+        "packets": 950
+      },
+      "mode": "emulated-mip",
+      "model": {
+        "handoff_mode": "mbb",
+        "old_link_hold_ms": 100.0,
+        "protocol": "educational Mobile IPv4-style protocol (app.mobileip), NOT RFC 5944 compliant"
+      },
+      "provenance": {
+        "analytic_values": [],
+        "clock": "simulated virtual time (deterministic, no real delays)",
+        "data_origin": "simulated",
+        "network": "app.mobileip.simnet discrete-event emulator (no queues, bandwidth or kernel stack)",
+        "protocol_engine": "educational Mobile IPv4-style protocol (app.mobileip), NOT RFC 5944 compliant",
+        "timing_comparable_with_other_environments": true
+      },
+      "reordered_packets": 1,
+      "rtt_ms": {
+        "count": 949,
+        "max": 67.0,
+        "min": 33.0,
+        "p50": 33.0,
+        "p95": 67.0
+      },
+      "run_id": "run-1",
+      "run_status": "complete",
+      "scenario_id": "mip-mbb-emulated",
+      "schema_version": 1,
+      "timing_comparable": true,
+      "warnings": []
+    },
+    "reason": "",
+    "status": "ok",
+    "variant": ""
+  },
+  {
+    "approach": "ro-model",
+    "environment": "emulated",
+    "handoff_mode": "bbm",
+    "metrics": {
+      "approach": "ro-model",
+      "continuity": {
+        "all_handoffs_recovered": true,
+        "data_loss_free": false,
+        "data_loss_free_exact": true,
+        "endpoint_address_preserved": true,
+        "failure_events": 0,
+        "note": "UDP probes are connectionless; the home address stays valid for the peer",
+        "transport_connection_preserved": null
+      },
+      "duplicates": 0,
+      "environment": "emulated",
+      "failures": [],
+      "goodput_bps": 49527.503,
+      "handoff_summary": {
+        "count": 2,
+        "handoff_latency_ms_max": 199.0,
+        "handoff_latency_ms_mean": 151.0,
+        "loss_packets_total": 31,
+        "service_gap_ms_max": 214.0,
+        "service_gap_ms_mean": 165.0,
+        "signalling_bytes_total": 404,
+        "signalling_messages_total": 12
+      },
+      "handoffs": [
+        {
+          "detail": "eth-a -> eth-b",
+          "event_id": "handoff-1",
+          "failures": [],
+          "handoff_latency_ms": 199.0,
+          "interruption_ms": 214.0,
+          "loss_packets": 19,
+          "recovered": true,
+          "retransmits": 0,
+          "rtt_after_ms": 54.0,
+          "rtt_before_ms": 26.0,
+          "service_gap_ms": 214.0,
+          "signalling_bytes": 202,
+          "signalling_messages": 6
+        },
+        {
+          "detail": "eth-b -> eth-a",
+          "event_id": "handoff-2",
+          "failures": [],
+          "handoff_latency_ms": 103.0,
+          "interruption_ms": 116.0,
+          "loss_packets": 12,
+          "recovered": true,
+          "retransmits": 0,
+          "rtt_after_ms": 26.0,
+          "rtt_before_ms": 54.0,
+          "service_gap_ms": 116.0,
+          "signalling_bytes": 202,
+          "signalling_messages": 6
+        }
+      ],
+      "handoffs_unavailable_reason": null,
+      "loss": {
+        "exact": true,
+        "lost": 31,
+        "percent": 3.263158,
+        "sent": 950
+      },
+      "mobility_overhead": {
+        "basis": "counted from real IP-in-IP packets sent directly by the correspondent",
+        "mobility_bytes_per_packet": 20.0,
+        "packets": 950
+      },
+      "mode": "emulated-mip",
+      "model": {
+        "handoff_mode": "bbm",
+        "old_link_hold_ms": null,
+        "protocol": "educational Mobile IP + simplified route-optimisation model (app/mobileip/ro.py), NOT Mobile IPv6"
+      },
+      "provenance": {
+        "analytic_values": [],
+        "clock": "simulated virtual time (deterministic, no real delays)",
+        "data_origin": "simulated",
+        "network": "app.mobileip.simnet discrete-event emulator (no queues, bandwidth or kernel stack)",
+        "protocol_engine": "educational Mobile IP + simplified route-optimisation model (app/mobileip/ro.py), NOT Mobile IPv6",
+        "timing_comparable_with_other_environments": true
+      },
+      "reordered_packets": 0,
+      "rtt_ms": {
+        "count": 917,
+        "max": 54.0,
+        "min": 26.0,
+        "p50": 26.0,
+        "p95": 54.0
+      },
+      "run_id": "run-1",
+      "run_status": "complete",
+      "scenario_id": "ro-model-emulated",
+      "schema_version": 1,
+      "timing_comparable": true,
+      "warnings": []
+    },
+    "reason": "",
+    "status": "ok",
+    "variant": ""
+  },
+  {
+    "approach": "quic-migration",
+    "environment": "emulated",
+    "handoff_mode": "bbm",
+    "metrics": null,
+    "reason": "the aioquic library is not installed (pip install aioquic); the QUIC adapter cannot run",
+    "status": "unavailable",
+    "variant": ""
+  },
+  {
+    "approach": "tcp-reconnect",
+    "environment": "emulated",
+    "handoff_mode": "mbb",
+    "metrics": null,
+    "reason": "tcp-reconnect with make-before-break: the TCP baseline does not use link overlap (it does not pre-establish the new connection), so an MBB run would just delay link release",
+    "status": "unsupported",
+    "variant": "mbb"
+  },
+  {
+    "approach": "mip-basic",
+    "environment": "emulated",
+    "handoff_mode": "mbb",
+    "metrics": null,
+    "reason": "mip-basic with make-before-break: basic Mobile IP is break-before-make by definition here; use approach 'mip-mbb' for the overlap variant",
+    "status": "unsupported",
+    "variant": "mbb"
+  },
+  {
+    "approach": "ro-model",
+    "environment": "emulated",
+    "handoff_mode": "mbb",
+    "metrics": null,
+    "reason": "ro-model with make-before-break: the RO model is only defined for break-before-make in this stage",
+    "status": "unsupported",
+    "variant": "mbb"
+  },
+  {
+    "approach": "quic-migration",
+    "environment": "emulated",
+    "handoff_mode": "mbb",
+    "metrics": null,
+    "reason": "quic-migration with make-before-break: this harness does not exploit link overlap (no probing of the new path before the old one is released)",
+    "status": "unsupported",
+    "variant": "mbb"
+  },
+  {
+    "approach": "mip-basic",
+    "environment": "loopback",
+    "handoff_mode": "bbm",
+    "metrics": null,
+    "reason": "mip-basic in the loopback (real sockets) environment: needs kernel tunnels and routing, which loopback sockets do not provide",
+    "status": "unsupported",
+    "variant": ""
+  },
+  {
+    "approach": "mip-mbb",
+    "environment": "loopback",
+    "handoff_mode": "bbm",
+    "metrics": null,
+    "reason": "mip-mbb in the loopback (real sockets) environment: needs kernel tunnels and routing, which loopback sockets do not provide",
+    "status": "unsupported",
+    "variant": ""
+  },
+  {
+    "approach": "ro-model",
+    "environment": "loopback",
+    "handoff_mode": "bbm",
+    "metrics": null,
+    "reason": "ro-model in the loopback (real sockets) environment: needs routing and tunnels",
+    "status": "unsupported",
+    "variant": ""
+  },
+  {
+    "approach": "quic-migration",
+    "environment": "loopback",
+    "handoff_mode": "bbm",
+    "metrics": null,
+    "reason": "quic-migration in the loopback (real sockets) environment: no loopback QUIC harness implemented (the emulator drives aioquic in virtual time instead)",
+    "status": "unsupported",
+    "variant": ""
+  },
+  {
+    "approach": "ro-model",
+    "environment": "live",
+    "handoff_mode": "bbm",
+    "metrics": null,
+    "reason": "ro-model in the live namespaces (sudo) environment: the RO model has no kernel data plane / daemons (emulator only)",
+    "status": "unsupported",
+    "variant": ""
+  },
+  {
+    "approach": "tcp-reconnect",
+    "environment": "live",
+    "handoff_mode": "bbm",
+    "metrics": null,
+    "reason": "tcp-reconnect in the live namespaces (sudo) environment: not implemented in Stage 5 (it would only need the probe apps launched in the namespaces)",
+    "status": "unsupported",
+    "variant": ""
+  },
+  {
+    "approach": "quic-migration",
+    "environment": "live",
+    "handoff_mode": "bbm",
+    "metrics": null,
+    "reason": "quic-migration in the live namespaces (sudo) environment: not implemented in Stage 5",
+    "status": "unsupported",
+    "variant": ""
+  }
+]

@@ -1,0 +1,98 @@
+{
+  "approach": "ro-model",
+  "continuity": {
+    "all_handoffs_recovered": true,
+    "data_loss_free": false,
+    "data_loss_free_exact": true,
+    "endpoint_address_preserved": true,
+    "failure_events": 0,
+    "note": "UDP probes are connectionless; the home address stays valid for the peer",
+    "transport_connection_preserved": null
+  },
+  "duplicates": 0,
+  "environment": "emulated",
+  "failures": [],
+  "goodput_bps": 49527.503,
+  "handoff_summary": {
+    "count": 2,
+    "handoff_latency_ms_max": 199.0,
+    "handoff_latency_ms_mean": 151.0,
+    "loss_packets_total": 31,
+    "service_gap_ms_max": 214.0,
+    "service_gap_ms_mean": 165.0,
+    "signalling_bytes_total": 404,
+    "signalling_messages_total": 12
+  },
+  "handoffs": [
+    {
+      "detail": "eth-a -> eth-b",
+      "event_id": "handoff-1",
+      "failures": [],
+      "handoff_latency_ms": 199.0,
+      "interruption_ms": 214.0,
+      "loss_packets": 19,
+      "recovered": true,
+      "retransmits": 0,
+      "rtt_after_ms": 54.0,
+      "rtt_before_ms": 26.0,
+      "service_gap_ms": 214.0,
+      "signalling_bytes": 202,
+      "signalling_messages": 6
+    },
+    {
+      "detail": "eth-b -> eth-a",
+      "event_id": "handoff-2",
+      "failures": [],
+      "handoff_latency_ms": 103.0,
+      "interruption_ms": 116.0,
+      "loss_packets": 12,
+      "recovered": true,
+      "retransmits": 0,
+      "rtt_after_ms": 26.0,
+      "rtt_before_ms": 54.0,
+      "service_gap_ms": 116.0,
+      "signalling_bytes": 202,
+      "signalling_messages": 6
+    }
+  ],
+  "handoffs_unavailable_reason": null,
+  "loss": {
+    "exact": true,
+    "lost": 31,
+    "percent": 3.263158,
+    "sent": 950
+  },
+  "mobility_overhead": {
+    "basis": "counted from real IP-in-IP packets sent directly by the correspondent",
+    "mobility_bytes_per_packet": 20.0,
+    "packets": 950
+  },
+  "mode": "emulated-mip",
+  "model": {
+    "handoff_mode": "bbm",
+    "old_link_hold_ms": null,
+    "protocol": "educational Mobile IP + simplified route-optimisation model (app/mobileip/ro.py), NOT Mobile IPv6"
+  },
+  "provenance": {
+    "analytic_values": [],
+    "clock": "simulated virtual time (deterministic, no real delays)",
+    "data_origin": "simulated",
+    "network": "app.mobileip.simnet discrete-event emulator (no queues, bandwidth or kernel stack)",
+    "protocol_engine": "educational Mobile IP + simplified route-optimisation model (app/mobileip/ro.py), NOT Mobile IPv6",
+    "timing_comparable_with_other_environments": true
+  },
+  "reordered_packets": 0,
+  "rtt_ms": {
+    "count": 917,
+    "max": 54.0,
+    "min": 26.0,
+    "p50": 26.0,
+    "p95": 54.0
+  },
+  "run_id": "run-1",
+  "run_status": "complete",
+  "scenario_id": "ro-model-emulated",
+  "schema_version": 1,
+  "timing_comparable": true,
+  "warnings": []
+}

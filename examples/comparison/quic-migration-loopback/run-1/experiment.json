@@ -1,0 +1,54 @@
+{
+  "approach": {
+    "mechanism": "The client app keeps ONE QUIC connection; when its local address changes it sends from the new address with a fresh connection ID; the server validates the new path (PATH_CHALLENGE/RESPONSE) and continues the same streams.",
+    "name": "QUIC connection migration",
+    "recovery_point": "first new data delivered to the mobile node after the address change (path validation is not exposed by the aioquic API)",
+    "scope_limits": "Works only for applications that use QUIC. It does NOT make arbitrary TCP applications mobile.",
+    "status": "Real QUIC engine (aioquic) in the emulator (RFC 9000 section 9 connection migration). Requires aioquic."
+  },
+  "effective_handoff_mode": "bbm",
+  "generated_wall_iso": "2026-10-26T11:17:36.612669Z",
+  "reason": "quic-migration in the loopback (real sockets) environment: no loopback QUIC harness implemented (the emulator drives aioquic in virtual time instead)",
+  "schema_version": 1,
+  "software": {
+    "aioquic_available": false,
+    "platform": "linux",
+    "python": "3.12.3"
+  },
+  "spec": {
+    "approach": "quic-migration",
+    "detect_delay_ms": 20.0,
+    "duration_s": 10.0,
+    "environment": "loopback",
+    "handoff_mode": "bbm",
+    "initial_iface": "eth-a",
+    "lifetime_s": 30,
+    "link_semantics": "both-ends",
+    "moves": [
+      [
+        4.0,
+        "eth-b"
+      ],
+      [
+        7.0,
+        "eth-a"
+      ]
+    ],
+    "old_link_hold_ms": 100.0,
+    "payload": 64,
+    "probe_start_s": 0.5,
+    "rate_pps": 100.0,
+    "ro_lifetime_s": 40,
+    "run_id": "run-1",
+    "scenario_id": "quic-migration-loopback",
+    "tcp_detect": "event",
+    "tcp_detect_timeout_s": 0.5,
+    "topology": "config/topology_ro.yaml",
+    "variant": ""
+  },
+  "status": "unsupported",
+  "support": [
+    "unsupported",
+    "no loopback QUIC harness implemented (the emulator drives aioquic in virtual time instead)"
+  ]
+}

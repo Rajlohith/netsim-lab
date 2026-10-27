@@ -1,0 +1,3 @@
+event_id,kind,mono_ns,wall_ns,detail
+handoff-1,handoff_start,391359472150,1792720489172458837,proxy blackout 1.0s-1.4s
+handoff-1,handoff_end,391759458912,1792720489572445748,proxy blackout 1.0s-1.4s

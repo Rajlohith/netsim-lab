@@ -1,0 +1,40 @@
+{
+  "clock": {
+    "boot_id": "f5aac59b-418f-45db-b1cc-15adb87ed017",
+    "hostname": "vm",
+    "monotonic_resolution_ns": 1,
+    "monotonic_source": "time.monotonic_ns (CLOCK_MONOTONIC)",
+    "wall_source": "time.time_ns (CLOCK_REALTIME, may step/slew)"
+  },
+  "counters": {},
+  "end_mono_ns": null,
+  "end_wall_iso": null,
+  "end_wall_ns": null,
+  "files": {
+    "echoes": "echoes.csv",
+    "meta": "sender.meta.json",
+    "sent": "sent.csv"
+  },
+  "notes": [],
+  "params": {
+    "bind_addr": null,
+    "count": null,
+    "drain_s": 1.0,
+    "duration_s": 60.0,
+    "rate_pps": 200.0,
+    "size_bytes": 64,
+    "start_at_mono_ns": null,
+    "target": "127.0.0.1:40341"
+  },
+  "role": "sender",
+  "run_id": "example-1",
+  "scenario_id": "example-sigkill-sender",
+  "schema_version": 1,
+  "session_id": 2559459614,
+  "start_mono_ns": 394206902317,
+  "start_wall_iso": "2026-10-23T01:54:52.019887Z",
+  "start_wall_ns": 1792720492019887160,
+  "status": "running",
+  "stop_reason": null,
+  "tool": "netsim-udp-probe"
+}

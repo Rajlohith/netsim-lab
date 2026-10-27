@@ -1,0 +1,45 @@
+{
+  "clock": {
+    "boot_id": "f5aac59b-418f-45db-b1cc-15adb87ed017",
+    "hostname": "vm",
+    "monotonic_resolution_ns": 1,
+    "monotonic_source": "time.monotonic_ns (CLOCK_MONOTONIC)",
+    "wall_source": "time.time_ns (CLOCK_REALTIME, may step/slew)"
+  },
+  "counters": {
+    "echo_errors": 0,
+    "echo_sent": 260,
+    "invalid_datagrams": 0,
+    "non_probe_packets": 0,
+    "received_rows": 260,
+    "received_valid": 260
+  },
+  "end_mono_ns": 394082452104,
+  "end_wall_iso": "2026-10-23T01:54:51.895437Z",
+  "end_wall_ns": 1792720491895437122,
+  "files": {
+    "meta": "receiver.meta.json",
+    "received": "received.csv"
+  },
+  "notes": [],
+  "params": {
+    "bind": "127.0.0.1:0",
+    "bound_port": 36985,
+    "duration_s": null,
+    "echo": true,
+    "idle_timeout_s": 0.7,
+    "max_packets": null,
+    "startup_timeout_s": 30.0
+  },
+  "role": "receiver",
+  "run_id": "example-1",
+  "scenario_id": "example-handoff-blackout",
+  "schema_version": 1,
+  "session_id": 0,
+  "start_mono_ns": 390348540704,
+  "start_wall_iso": "2026-10-23T01:54:48.161526Z",
+  "start_wall_ns": 1792720488161526042,
+  "status": "completed",
+  "stop_reason": "idle_timeout",
+  "tool": "netsim-udp-probe"
+}

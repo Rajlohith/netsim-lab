@@ -1,0 +1,49 @@
+{
+  "clock": {
+    "boot_id": "f5aac59b-418f-45db-b1cc-15adb87ed017",
+    "hostname": "vm",
+    "monotonic_resolution_ns": 1,
+    "monotonic_source": "time.monotonic_ns (CLOCK_MONOTONIC)",
+    "wall_source": "time.time_ns (CLOCK_REALTIME, may step/slew)"
+  },
+  "counters": {
+    "echo_rows": 100,
+    "echoes_received": 100,
+    "foreign_echoes": 0,
+    "invalid_datagrams": 0,
+    "send_errors": 0,
+    "sent_attempted": 100,
+    "sent_ok": 100,
+    "sent_rows": 100
+  },
+  "end_mono_ns": 390118630025,
+  "end_wall_iso": "2026-10-23T01:54:47.931615Z",
+  "end_wall_ns": 1792720487931615066,
+  "files": {
+    "echoes": "echoes.csv",
+    "meta": "sender.meta.json",
+    "sent": "sent.csv"
+  },
+  "notes": [],
+  "params": {
+    "bind_addr": null,
+    "count": 100,
+    "drain_s": 0.5,
+    "duration_s": null,
+    "rate_pps": 100,
+    "size_bytes": 64,
+    "start_at_mono_ns": null,
+    "target": "127.0.0.1:54378"
+  },
+  "role": "sender",
+  "run_id": "example-1",
+  "scenario_id": "example-delay-20ms",
+  "schema_version": 1,
+  "session_id": 990502760,
+  "start_mono_ns": 388626925778,
+  "start_wall_iso": "2026-10-23T01:54:46.439911Z",
+  "start_wall_ns": 1792720486439911093,
+  "status": "completed",
+  "stop_reason": "count",
+  "tool": "netsim-udp-probe"
+}

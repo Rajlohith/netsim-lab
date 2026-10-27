@@ -1,0 +1,3 @@
+event_id,kind,mono_ns,wall_ns,detail
+scenario,scenario_start,10000000000,1792746000000000000,mip-expiry-no-renewal
+scenario,scenario_end,18000000000,1792746008000000000,ok

@@ -1,0 +1,29 @@
+seq,mono_ns,wall_ns,approach,node,kind,bytes,detail
+1,10000000000,1792746000000000000,tcp-reconnect,mn,signal_tx,40,TCP syn
+2,10000000000,1792746000000000000,tcp-reconnect,mn,note,0,connecting from 10.10.4.2 (initial connection)
+3,10026000000,1792746000026000000,tcp-reconnect,mn,signal_rx,40,TCP SYN-ACK
+4,10026000000,1792746000026000000,tcp-reconnect,mn,signal_tx,18,resume hello
+5,10026000000,1792746000026000000,tcp-reconnect,mn,conn_opened,0,"from 10.10.4.2, resume_from=0"
+6,10026000000,1792746000026000000,tcp-reconnect,mn,signal_tx,40,TCP handshake_ack
+7,14000000000,1792746004000000000,tcp-reconnect,mn,link_change,0,eth-a -> eth-b
+8,14020000000,1792746004020000000,tcp-reconnect,mn,attach,0,10.10.5.2
+9,14020000000,1792746004020000000,tcp-reconnect,mn,conn_closed,0,network change notification
+10,14020000000,1792746004020000000,tcp-reconnect,mn,signal_tx,40,TCP syn
+11,14020000000,1792746004020000000,tcp-reconnect,mn,note,0,connecting from 10.10.5.2 (network change notification)
+12,14074000000,1792746004074000000,tcp-reconnect,mn,signal_rx,40,TCP SYN-ACK
+13,14074000000,1792746004074000000,tcp-reconnect,mn,signal_tx,18,resume hello
+14,14074000000,1792746004074000000,tcp-reconnect,mn,conn_opened,0,"from 10.10.5.2, resume_from=349"
+15,14074000000,1792746004074000000,tcp-reconnect,mn,signal_tx,40,TCP handshake_ack
+16,14101000000,1792746004101000000,tcp-reconnect,mn,note,0,resume: stale connection replaced
+17,14128000000,1792746004128000000,tcp-reconnect,mn,recovered,0,first data on the new connection (seq 349)
+18,17000000000,1792746007000000000,tcp-reconnect,mn,link_change,0,eth-b -> eth-a
+19,17020000000,1792746007020000000,tcp-reconnect,mn,attach,0,10.10.4.2
+20,17020000000,1792746007020000000,tcp-reconnect,mn,conn_closed,0,network change notification
+21,17020000000,1792746007020000000,tcp-reconnect,mn,signal_tx,40,TCP syn
+22,17020000000,1792746007020000000,tcp-reconnect,mn,note,0,connecting from 10.10.4.2 (network change notification)
+23,17046000000,1792746007046000000,tcp-reconnect,mn,signal_rx,40,TCP SYN-ACK
+24,17046000000,1792746007046000000,tcp-reconnect,mn,signal_tx,18,resume hello
+25,17046000000,1792746007046000000,tcp-reconnect,mn,conn_opened,0,"from 10.10.4.2, resume_from=648"
+26,17046000000,1792746007046000000,tcp-reconnect,mn,signal_tx,40,TCP handshake_ack
+27,17059000000,1792746007059000000,tcp-reconnect,mn,note,0,resume: stale connection replaced
+28,17072000000,1792746007072000000,tcp-reconnect,mn,recovered,0,first data on the new connection (seq 648)

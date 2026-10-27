@@ -1,0 +1,41 @@
+{
+  "approach": "tcp-reconnect",
+  "continuity": {
+    "connections_opened": 3,
+    "endpoint_address_preserved": false,
+    "server_resent_after_replace": 20,
+    "transport_connection_preserved": false
+  },
+  "drops": {
+    "anb:link_down_in_flight": 4,
+    "ha:ttl_expired": 24,
+    "mn:link_down_in_flight": 4,
+    "mn:src_address_not_local": 2
+  },
+  "environment": "emulated",
+  "mode": "emulated-tcplite",
+  "model": {
+    "detect": "event",
+    "detect_timeout_s": 0.5,
+    "tcp_stats_cn": {
+      "bytes_tx": 143970,
+      "resets_sent": 0,
+      "retransmissions": 0,
+      "segments_rx": 1902,
+      "segments_tx": 1926
+    },
+    "tcp_stats_mn": {
+      "bytes_tx": 141961,
+      "resets_sent": 0,
+      "retransmissions": 0,
+      "segments_rx": 1898,
+      "segments_tx": 1909,
+      "send_failures": 2
+    },
+    "transport": "TcpLite (simplified TCP model, see app/compare/tcplite.py)"
+  },
+  "overhead": {
+    "basis": "no mobility-specific header; the TCP/IP headers are the same as without mobility",
+    "mobility_bytes_per_packet": 0.0
+  }
+}

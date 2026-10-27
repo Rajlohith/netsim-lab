@@ -1,0 +1,7 @@
+event_id,kind,mono_ns,wall_ns,detail
+scenario,scenario_start,10000000000,1792746000000000000,mip-handoff
+handoff-1,handoff_start,14000000000,1792746004000000000,eth-a -> eth-b
+handoff-1,handoff_end,14091000000,1792746004091000000,"mn state=registered, care-of=10.10.5.2"
+handoff-2,handoff_start,17000000000,1792746007000000000,eth-b -> eth-a
+handoff-2,handoff_end,17051000000,1792746007051000000,"mn state=registered, care-of=10.10.4.2"
+scenario,scenario_end,22000000000,1792746012000000000,ok

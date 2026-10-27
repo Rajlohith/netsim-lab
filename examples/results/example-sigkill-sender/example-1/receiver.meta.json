@@ -1,0 +1,45 @@
+{
+  "clock": {
+    "boot_id": "f5aac59b-418f-45db-b1cc-15adb87ed017",
+    "hostname": "vm",
+    "monotonic_resolution_ns": 1,
+    "monotonic_source": "time.monotonic_ns (CLOCK_MONOTONIC)",
+    "wall_source": "time.time_ns (CLOCK_REALTIME, may step/slew)"
+  },
+  "counters": {
+    "echo_errors": 0,
+    "echo_sent": 190,
+    "invalid_datagrams": 0,
+    "non_probe_packets": 0,
+    "received_rows": 190,
+    "received_valid": 190
+  },
+  "end_mono_ns": 396157375742,
+  "end_wall_iso": "2026-10-23T01:54:53.970360Z",
+  "end_wall_ns": 1792720493970360051,
+  "files": {
+    "meta": "receiver.meta.json",
+    "received": "received.csv"
+  },
+  "notes": [],
+  "params": {
+    "bind": "127.0.0.1:0",
+    "bound_port": 40341,
+    "duration_s": null,
+    "echo": true,
+    "idle_timeout_s": 1.0,
+    "max_packets": null,
+    "startup_timeout_s": 30.0
+  },
+  "role": "receiver",
+  "run_id": "example-1",
+  "scenario_id": "example-sigkill-sender",
+  "schema_version": 1,
+  "session_id": 0,
+  "start_mono_ns": 394153882766,
+  "start_wall_iso": "2026-10-23T01:54:51.966867Z",
+  "start_wall_ns": 1792720491966867390,
+  "status": "completed",
+  "stop_reason": "idle_timeout",
+  "tool": "netsim-udp-probe"
+}

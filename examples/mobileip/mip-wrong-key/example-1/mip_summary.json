@@ -1,0 +1,21 @@
+{
+  "agent_address": "10.10.100.1",
+  "drops": {
+    "ha:no_binding": 250
+  },
+  "ha_stats": {
+    "accepted": 0,
+    "inner_bytes": 0,
+    "outer_bytes": 0,
+    "rejected": 3,
+    "requests": 3,
+    "tunnel_packets": 0
+  },
+  "home_address": "10.10.100.2",
+  "mn_final_state": "registering",
+  "mode": "simulation",
+  "moves": [],
+  "probe_payload_bytes": 64,
+  "schema_version": 1,
+  "tunnel_overhead_basis": "counted from byte-accurate encapsulated packets (ipip.encapsulate)"
+}

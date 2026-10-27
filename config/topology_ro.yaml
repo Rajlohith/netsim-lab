@@ -1,0 +1,65 @@
+# Comparison-lab topology = config/topology.yaml PLUS two direct links from the correspondent node to the access
+# networks (an "exchange point"). Direct paths are what route optimisation / plain IP use; basic Mobile IP still
+# reaches the mobile node via the home agent. Everything else (nodes, roles, addresses of the original links) is identical.
+#
+#   cn --- ha ---+--- ana --- mn
+#    \           \--- anb ---/
+#     +-- direct links cn-ana, cn-anb
+#
+# Namespaces are named <NETSIM_NETNS_PREFIX><node key>, e.g. nsl-cn, nsl-ha, nsl-mn.
+# netem is applied on the EGRESS of each link end; link-level `netem` applies to both
+# ends, an end-level `netem` overrides it. delay_ms/jitter_ms/loss_percent/rate_mbit/limit_packets.
+version: 1
+name: mobility-lab
+
+nodes:
+  cn:  {role: correspondent-node, forwarding: false}
+  ha:  {role: home-agent,         forwarding: true}
+  mn:  {role: mobile-node,        forwarding: false}
+  ana: {role: access-network-a,   forwarding: true}
+  anb: {role: access-network-b,   forwarding: true}
+
+links:
+  - name: cn-ha
+    a: {node: cn, ifname: eth-ha,  address: 10.10.1.2/24}
+    b: {node: ha, ifname: eth-cn,  address: 10.10.1.1/24}
+    netem: {delay_ms: 5}
+  - name: ha-ana
+    a: {node: ha,  ifname: eth-ana, address: 10.10.2.1/24}
+    b: {node: ana, ifname: eth-ha,  address: 10.10.2.2/24}
+    netem: {delay_ms: 10}
+  - name: ha-anb
+    a: {node: ha,  ifname: eth-anb, address: 10.10.3.1/24}
+    b: {node: anb, ifname: eth-ha,  address: 10.10.3.2/24}
+    netem: {delay_ms: 20}
+  - name: ana-mn
+    a: {node: ana, ifname: eth-mn, address: 10.10.4.1/24}
+    b: {node: mn,  ifname: eth-a,  address: 10.10.4.2/24}
+    netem: {delay_ms: 5, rate_mbit: 50}
+  - name: anb-mn
+    a: {node: anb, ifname: eth-mn, address: 10.10.5.1/24}
+    b: {node: mn,  ifname: eth-b,  address: 10.10.5.2/24}
+    netem: {delay_ms: 15, jitter_ms: 2, rate_mbit: 10}
+  - name: cn-ana
+    a: {node: cn,  ifname: eth-ana, address: 10.10.6.1/24}
+    b: {node: ana, ifname: eth-cn,  address: 10.10.6.2/24}
+    netem: {delay_ms: 8}
+  - name: cn-anb
+    a: {node: cn,  ifname: eth-anb, address: 10.10.7.1/24}
+    b: {node: anb, ifname: eth-cn,  address: 10.10.7.2/24}
+    netem: {delay_ms: 12}
+
+routes:
+  - {node: cn,  to: default,      via: 10.10.1.1}
+  - {node: ha,  to: 10.10.4.0/24, via: 10.10.2.2}
+  - {node: ha,  to: 10.10.5.0/24, via: 10.10.3.2}
+  - {node: ana, to: default,      via: 10.10.2.1}
+  - {node: anb, to: default,      via: 10.10.3.1}
+  # MN prefers access network A; B is the standby path (higher metric).
+  - {node: mn,  to: default,      via: 10.10.4.1, metric: 100}
+  - {node: mn,  to: default,      via: 10.10.5.1, metric: 200}
+  # direct paths to the foreign networks and back (used by TCP/QUIC/route optimisation and for every reply path)
+  - {node: cn,  to: 10.10.4.0/24, via: 10.10.6.2}
+  - {node: cn,  to: 10.10.5.0/24, via: 10.10.7.2}
+  - {node: ana, to: 10.10.1.0/24, via: 10.10.6.1}
+  - {node: anb, to: 10.10.1.0/24, via: 10.10.7.1}

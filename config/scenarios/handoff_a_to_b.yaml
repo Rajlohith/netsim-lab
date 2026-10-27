@@ -1,0 +1,10 @@
+# Hard handoff of the mobile node from access network A to B and back, under continuous probes.
+# MN prefers A (metric 100). Bringing eth-a down makes the standby route via B (metric 200) take over.
+# Probes run MN -> CN with echo; handoff times are seconds after the sender's start instant.
+scenario_id: handoff-a-to-b
+source: mn
+destination: cn
+traffic: {rate_pps: 100, duration_s: 20, size: 64, port: 5005, drain_s: 1.0}
+handoffs:
+  - {at_s: 8,  node: mn, ifname: eth-a, state: down}   # A -> B
+  - {at_s: 14, node: mn, ifname: eth-a, state: up}     # B -> A (A is preferred again)

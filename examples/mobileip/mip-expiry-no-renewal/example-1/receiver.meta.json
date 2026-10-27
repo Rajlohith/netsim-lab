@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "tool": "netsim-udp-probe (simulated)",
+  "role": "receiver",
+  "scenario_id": "mip-expiry-no-renewal",
+  "run_id": "example-1",
+  "session_id": 1296650289,
+  "status": "completed",
+  "stop_reason": "duration",
+  "start_wall_iso": "2026-10-23T09:00:00.000000Z",
+  "start_wall_ns": 1792746000000000000,
+  "start_mono_ns": 10000000000,
+  "end_wall_iso": "2026-10-23T09:00:08.000000Z",
+  "end_wall_ns": 1792746008000000000,
+  "end_mono_ns": 18000000000,
+  "params": {
+    "rate_pps": 100.0,
+    "size_bytes": 64,
+    "echo": true
+  },
+  "counters": {
+    "received_rows": 152
+  },
+  "clock": {
+    "monotonic_source": "simulated virtual clock",
+    "wall_source": "simulated (fixed origin)",
+    "monotonic_resolution_ns": 1,
+    "boot_id": "simulated-virtual-clock",
+    "hostname": "simulator"
+  },
+  "files": {},
+  "notes": [
+    "SIMULATED: produced by app.mobileip.mobility_sim, not by real sockets"
+  ]
+}

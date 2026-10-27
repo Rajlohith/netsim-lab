@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "scenario_id": "tcp-reconnect-emulated-notify",
+  "run_id": "run-1",
+  "clock": {
+    "boot_id": "simulated-virtual-clock"
+  },
+  "mode": "simulation"
+}

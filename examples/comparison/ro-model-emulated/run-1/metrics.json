@@ -1,0 +1,278 @@
+{
+  "duplicates": 0,
+  "generated_wall_iso": "2026-10-26T11:17:36.548569Z",
+  "handoffs": [
+    {
+      "action_duration_ms": 199.0,
+      "detail": "eth-a -> eth-b",
+      "end_missing": false,
+      "end_mono_ns": 14199000000,
+      "event_id": "handoff-1",
+      "interruption_ms": 214.0,
+      "loss_burst": {
+        "first_seq": 349,
+        "last_seq": 367,
+        "packets": 19,
+        "send_span_ms": 180.0
+      },
+      "margin_ms": 250.0,
+      "max_interarrival_gap_in_window_ms": 214.0,
+      "overlapping_loss_bursts": 1,
+      "recovered": true,
+      "rtt_median_after_ms": 54.0,
+      "rtt_median_before_ms": 26.0,
+      "rtt_samples_after": 10,
+      "rtt_samples_before": 10,
+      "start_mono_ns": 14000000000
+    },
+    {
+      "action_duration_ms": 103.0,
+      "detail": "eth-b -> eth-a",
+      "end_missing": false,
+      "end_mono_ns": 17103000000,
+      "event_id": "handoff-2",
+      "interruption_ms": 116.0,
+      "loss_burst": {
+        "first_seq": 648,
+        "last_seq": 659,
+        "packets": 12,
+        "send_span_ms": 110.0
+      },
+      "margin_ms": 250.0,
+      "max_interarrival_gap_in_window_ms": 116.0,
+      "overlapping_loss_bursts": 1,
+      "recovered": true,
+      "rtt_median_after_ms": 26.0,
+      "rtt_median_before_ms": 54.0,
+      "rtt_samples_after": 10,
+      "rtt_samples_before": 10,
+      "start_mono_ns": 17000000000
+    }
+  ],
+  "handoffs_unavailable_reason": null,
+  "inputs": {
+    "echoes.csv": {
+      "present": true,
+      "rows": 917,
+      "skipped_rows": 0,
+      "truncated_tail": false
+    },
+    "events.csv": {
+      "present": true,
+      "rows": 6,
+      "skipped_rows": 0,
+      "truncated_tail": false
+    },
+    "received.csv": {
+      "present": true,
+      "rows": 919,
+      "skipped_rows": 0,
+      "truncated_tail": false
+    },
+    "sent.csv": {
+      "present": true,
+      "rows": 950,
+      "skipped_rows": 0,
+      "truncated_tail": false
+    }
+  },
+  "interarrival_gaps_ms": {
+    "count": 918,
+    "max": 214.0,
+    "max_gap_detail": {
+      "after_seq": 348,
+      "before_seq": 368,
+      "end_mono_ns": 14207000000,
+      "start_mono_ns": 13993000000
+    },
+    "mean": 10.337691,
+    "min": 10.0,
+    "p50": 10.0,
+    "p95": 10.0,
+    "p99": 10.0,
+    "stdev": 7.5843
+  },
+  "jitter": {
+    "rfc3550_final_ms": 0.0,
+    "rfc3550_max_ms": 0.875,
+    "rfc3550_mean_ms": 0.030501,
+    "rtt_delta_mean_ms": 0.0,
+    "samples": 918
+  },
+  "loss": {
+    "basis": "sender_log",
+    "bursts": [
+      {
+        "count": 19,
+        "first_send_mono_ns": 13990000000,
+        "first_seq": 349,
+        "last_send_mono_ns": 14170000000,
+        "last_seq": 367
+      },
+      {
+        "count": 12,
+        "first_send_mono_ns": 16980000000,
+        "first_seq": 648,
+        "last_send_mono_ns": 17090000000,
+        "last_seq": 659
+      }
+    ],
+    "delivered": 919,
+    "exact": true,
+    "longest_burst_packets": 19,
+    "loss_percent": 3.263158,
+    "lost": 31,
+    "lost_seqs": [
+      349,
+      350,
+      351,
+      352,
+      353,
+      354,
+      355,
+      356,
+      357,
+      358,
+      359,
+      360,
+      361,
+      362,
+      363,
+      364,
+      365,
+      366,
+      367,
+      648,
+      649,
+      650,
+      651,
+      652,
+      653,
+      654,
+      655,
+      656,
+      657,
+      658,
+      659
+    ],
+    "received_not_in_sent_log": 0,
+    "send_errors": 0,
+    "sent_ok": 950
+  },
+  "owd_ms": {
+    "count": 919,
+    "max": 27.0,
+    "mean": 17.265506,
+    "min": 13.0,
+    "p50": 13.0,
+    "p95": 27.0,
+    "p99": 27.0,
+    "stdev": 6.447308
+  },
+  "owd_unavailable_reason": null,
+  "reordered_packets": 0,
+  "role_status": {
+    "receiver": "completed",
+    "sender": "completed"
+  },
+  "rtt_info": {
+    "delivered_without_echo": 2,
+    "echoed": 917
+  },
+  "rtt_ms": {
+    "count": 917,
+    "max": 54.0,
+    "mean": 34.48855,
+    "min": 26.0,
+    "p50": 26.0,
+    "p95": 54.0,
+    "p99": 54.0,
+    "stdev": 12.876518
+  },
+  "run_id": "run-1",
+  "run_status": "complete",
+  "scenario_id": "ro-model-emulated",
+  "schema_version": 1,
+  "sender_schedule_slip_ms": {
+    "count": 950,
+    "max": 0.0,
+    "mean": 0.0,
+    "min": 0.0,
+    "p50": 0.0,
+    "p95": 0.0,
+    "p99": 0.0,
+    "stdev": 0.0
+  },
+  "session_id": 1296650289,
+  "throughput": {
+    "goodput_bps": 49527.503,
+    "offered_bps": 51200.0,
+    "received_bytes": 58816,
+    "sent_bytes": 60800,
+    "timeseries": [
+      {
+        "bps": 51200.0,
+        "bytes": 6400,
+        "packets": 100,
+        "t_start_s": 0.0
+      },
+      {
+        "bps": 51200.0,
+        "bytes": 6400,
+        "packets": 100,
+        "t_start_s": 1.0
+      },
+      {
+        "bps": 51200.0,
+        "bytes": 6400,
+        "packets": 100,
+        "t_start_s": 2.0
+      },
+      {
+        "bps": 40960.0,
+        "bytes": 5120,
+        "packets": 80,
+        "t_start_s": 3.0
+      },
+      {
+        "bps": 51200.0,
+        "bytes": 6400,
+        "packets": 100,
+        "t_start_s": 4.0
+      },
+      {
+        "bps": 51200.0,
+        "bytes": 6400,
+        "packets": 100,
+        "t_start_s": 5.0
+      },
+      {
+        "bps": 45568.0,
+        "bytes": 5696,
+        "packets": 89,
+        "t_start_s": 6.0
+      },
+      {
+        "bps": 51200.0,
+        "bytes": 6400,
+        "packets": 100,
+        "t_start_s": 7.0
+      },
+      {
+        "bps": 51200.0,
+        "bytes": 6400,
+        "packets": 100,
+        "t_start_s": 8.0
+      },
+      {
+        "bps": 25600.0,
+        "bytes": 3200,
+        "packets": 50,
+        "t_start_s": 9.0
+      }
+    ],
+    "timeseries_bin_s": 1.0,
+    "timeseries_origin_mono_ns": 10513000000
+  },
+  "warnings": []
+}
