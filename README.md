@@ -2,7 +2,7 @@
 
 Scaffold for a network-emulation + ML project targeting **Zorin OS** and **Fedora Linux**.
 Stack: Python, FastAPI, React/JavaScript, Linux network namespaces + iproute2 + `tc netem`,
-scikit-learn, Pandas, NumPy, Matplotlib. Stage 2 adds the namespace-based mobility topology; ML/analysis are still placeholders.
+scikit-learn, Pandas, NumPy, Matplotlib. Stage 2 adds the namespace-based mobility topology; Stage 6 adds handoff-degradation prediction (`python -m app.ml`, simulated data only; see `docs/HANDOFF_PREDICTION.md`); `analysis/` is still a placeholder.
 
 ## Prerequisites
 | | Zorin OS (Ubuntu-based) | Fedora |

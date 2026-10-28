@@ -1,0 +1,8 @@
+group,model,threshold,precision,recall,f1,false_alarm_rate,false_alarm_events_per_hour,tp,fp,tn,fn,episodes_assessable,episodes_detected,warning_median_s,average_precision,roc_auc
+all_features,threshold_baseline,0.5,0.221497,0.597418,0.323175,0.666294,749.109,509,1789,896,343,215,134,0.8695,0.229301,0.465562
+all_features,logreg,0.695015,0.425698,0.447183,0.436176,0.191434,415.267,381,514,2171,471,215,117,0.811,0.417633,0.709857
+all_features,random_forest,0.489734,0.386477,0.543427,0.451707,0.273743,679.898,463,735,1950,389,215,146,0.7945,0.387848,0.701573
+measurements_only,logreg,0.626189,0.276377,0.630282,0.384258,0.52365,724.682,537,1406,1279,315,215,151,0.842,0.255815,0.559859
+measurements_only,random_forest,0.192539,0.291229,0.911972,0.441477,0.704283,903.817,777,1891,794,75,215,204,0.8435,0.339216,0.653871
+reference,always_alarm,,0.240882,1,0.388243,1,,852,2685,0,0,,,,,
+reference,never_alarm,,,0,0,0,,0,0,2685,852,,,,,

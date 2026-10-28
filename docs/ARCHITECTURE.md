@@ -36,7 +36,8 @@ netsim-lab/
 │   │   ├── quic_sim.py              aioquic in virtual time (needs aioquic; unverified here)
 │   │   ├── events.py normalize.py matrix.py cli.py   common events -> comparison_metrics.json -> matrix
 │   ├── mobileip/ro.py ro_sim.py     simplified route-optimisation model (+ MBB in mobility_sim.py / demo.py)
-│   ├── ml/  analysis/               [later stages] placeholders
+│   ├── ml/                          Stage 6: features, labels, dataset, splits, models, evaluate, bundle, predict (docs/HANDOFF_PREDICTION.md)
+│   ├── analysis/                    [later stage] placeholder
 │   └── tests/                       unit tests (fake host), real-kernel lab (kernel_lab.py netlink executor), gated live tests, stubs/
 ├── config/topology.yaml, scenarios/ lab definition + handoff scenarios (repeatable)
 ├── schemas/  examples/results/      raw-data schemas, real example runs (loopback)

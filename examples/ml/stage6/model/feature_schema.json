@@ -1,0 +1,303 @@
+{
+  "schema_version": 1,
+  "features": [
+    {
+      "name": "rtt_last_ms",
+      "group": "rtt",
+      "unit": "ms",
+      "window": "latest echo",
+      "source": "sent.csv + echoes.csv",
+      "definition": "RTT of the most recently ARRIVED echo (arrival - send, sender clock)",
+      "missing_value": "NaN (imputed with the training median + indicator in the model pipeline)"
+    },
+    {
+      "name": "rtt_mean_short_ms",
+      "group": "rtt",
+      "unit": "ms",
+      "window": "short",
+      "source": "sent.csv + echoes.csv",
+      "definition": "mean RTT of echoes that arrived in (t-short, t]",
+      "missing_value": "NaN (imputed with the training median + indicator in the model pipeline)"
+    },
+    {
+      "name": "rtt_max_short_ms",
+      "group": "rtt",
+      "unit": "ms",
+      "window": "short",
+      "source": "sent.csv + echoes.csv",
+      "definition": "max RTT of echoes that arrived in (t-short, t]",
+      "missing_value": "NaN (imputed with the training median + indicator in the model pipeline)"
+    },
+    {
+      "name": "rtt_std_short_ms",
+      "group": "rtt",
+      "unit": "ms",
+      "window": "short",
+      "source": "sent.csv + echoes.csv",
+      "definition": "sample std-dev of RTT in the short window (needs >= 2 echoes)",
+      "missing_value": "NaN (imputed with the training median + indicator in the model pipeline)"
+    },
+    {
+      "name": "rtt_mean_long_ms",
+      "group": "rtt",
+      "unit": "ms",
+      "window": "long",
+      "source": "sent.csv + echoes.csv",
+      "definition": "mean RTT of echoes that arrived in (t-long, t]",
+      "missing_value": "NaN (imputed with the training median + indicator in the model pipeline)"
+    },
+    {
+      "name": "rtt_trend_ms",
+      "group": "rtt",
+      "unit": "ms",
+      "window": "short vs long",
+      "source": "sent.csv + echoes.csv",
+      "definition": "rtt_mean_short - rtt_mean_long (positive = RTT rising)",
+      "missing_value": "NaN (imputed with the training median + indicator in the model pipeline)"
+    },
+    {
+      "name": "rtt_slope_ms_per_s",
+      "group": "rtt",
+      "unit": "ms/s",
+      "window": "short",
+      "source": "sent.csv + echoes.csv",
+      "definition": "least-squares slope of RTT over echo arrival time in the short window (needs >= 3 echoes)",
+      "missing_value": "NaN (imputed with the training median + indicator in the model pipeline)"
+    },
+    {
+      "name": "jitter_ms",
+      "group": "rtt",
+      "unit": "ms",
+      "window": "short",
+      "source": "sent.csv + echoes.csv",
+      "definition": "mean |RTT(seq+1) - RTT(seq)| over seq-consecutive echoes in the short window (RTT-delta jitter, as in traffic/metrics.py)",
+      "missing_value": "NaN (imputed with the training median + indicator in the model pipeline)"
+    },
+    {
+      "name": "loss_rate_short",
+      "group": "loss",
+      "unit": "fraction",
+      "window": "short",
+      "source": "sent.csv + echoes.csv",
+      "definition": "share of probes SENT in (t-short-grace, t-grace] whose echo had not arrived by t",
+      "missing_value": "NaN (imputed with the training median + indicator in the model pipeline)"
+    },
+    {
+      "name": "loss_rate_long",
+      "group": "loss",
+      "unit": "fraction",
+      "window": "long",
+      "source": "sent.csv + echoes.csv",
+      "definition": "same over (t-long-grace, t-grace]",
+      "missing_value": "NaN (imputed with the training median + indicator in the model pipeline)"
+    },
+    {
+      "name": "time_since_last_echo_ms",
+      "group": "loss",
+      "unit": "ms",
+      "window": "latest echo",
+      "source": "echoes.csv",
+      "definition": "t - arrival time of the newest echo",
+      "missing_value": "NaN (imputed with the training median + indicator in the model pipeline)"
+    },
+    {
+      "name": "echo_overdue_ratio",
+      "group": "loss",
+      "unit": "probe intervals",
+      "window": "latest echo",
+      "source": "sent.csv + echoes.csv",
+      "definition": "time_since_last_echo / probe interval, where the interval is the median spacing of the (up to 200) most recent probes sent <= t. In steady state it stays below 1 (it only reflects the phase of the probe clock); >= 1 means an echo is overdue",
+      "missing_value": "NaN (imputed with the training median + indicator in the model pipeline)"
+    },
+    {
+      "name": "goodput_short_kbps",
+      "group": "throughput",
+      "unit": "kbit/s",
+      "window": "short",
+      "source": "echoes.csv",
+      "definition": "echoed payload bits / observed span, short window (probe load is constant: this is delivered load, not capacity)",
+      "missing_value": "NaN (imputed with the training median + indicator in the model pipeline)"
+    },
+    {
+      "name": "goodput_long_kbps",
+      "group": "throughput",
+      "unit": "kbit/s",
+      "window": "long",
+      "source": "echoes.csv",
+      "definition": "same over the long window",
+      "missing_value": "NaN (imputed with the training median + indicator in the model pipeline)"
+    },
+    {
+      "name": "retransmit_count_long",
+      "group": "timeout",
+      "unit": "count",
+      "window": "long",
+      "source": "approach_events.csv",
+      "definition": "approach 'retransmit' events (mobility-signalling retransmissions) in (t-long, t]",
+      "missing_value": "NaN (imputed with the training median + indicator in the model pipeline)"
+    },
+    {
+      "name": "timeout_failure_count_long",
+      "group": "timeout",
+      "unit": "count",
+      "window": "long",
+      "source": "approach_events.csv",
+      "definition": "approach 'failure' events (registration timeout/failure, connection failure) in (t-long, t]",
+      "missing_value": "NaN (imputed with the training median + indicator in the model pipeline)"
+    },
+    {
+      "name": "handoffs_started_recent",
+      "group": "history",
+      "unit": "count",
+      "window": "history_window",
+      "source": "events.csv",
+      "definition": "handoffs whose handoff_start is in (t-history_window, t]",
+      "missing_value": "NaN (imputed with the training median + indicator in the model pipeline)"
+    },
+    {
+      "name": "handoffs_started_total",
+      "group": "history",
+      "unit": "count",
+      "window": "run so far",
+      "source": "events.csv",
+      "definition": "handoffs started at or before t",
+      "missing_value": "NaN (imputed with the training median + indicator in the model pipeline)"
+    },
+    {
+      "name": "time_since_last_handoff_start_s",
+      "group": "history",
+      "unit": "s",
+      "window": "run so far",
+      "source": "events.csv",
+      "definition": "t - start of the latest handoff that started <= t (NaN if none yet)",
+      "missing_value": "NaN (imputed with the training median + indicator in the model pipeline)"
+    },
+    {
+      "name": "time_since_last_handoff_end_s",
+      "group": "history",
+      "unit": "s",
+      "window": "run so far",
+      "source": "events.csv",
+      "definition": "t - end of the latest handoff that ENDED <= t (NaN if none yet)",
+      "missing_value": "NaN (imputed with the training median + indicator in the model pipeline)"
+    },
+    {
+      "name": "last_handoff_duration_ms",
+      "group": "history",
+      "unit": "ms",
+      "window": "run so far",
+      "source": "events.csv",
+      "definition": "end - start of the latest handoff that ended <= t (NaN if none yet)",
+      "missing_value": "NaN (imputed with the training median + indicator in the model pipeline)"
+    },
+    {
+      "name": "handoff_in_progress",
+      "group": "history",
+      "unit": "0/1",
+      "window": "instant",
+      "source": "events.csv",
+      "definition": "1 if a handoff started <= t has not ended by t",
+      "missing_value": "NaN (imputed with the training median + indicator in the model pipeline)"
+    }
+  ],
+  "feature_sets": {
+    "all": [
+      "rtt_last_ms",
+      "rtt_mean_short_ms",
+      "rtt_max_short_ms",
+      "rtt_std_short_ms",
+      "rtt_mean_long_ms",
+      "rtt_trend_ms",
+      "rtt_slope_ms_per_s",
+      "jitter_ms",
+      "loss_rate_short",
+      "loss_rate_long",
+      "time_since_last_echo_ms",
+      "echo_overdue_ratio",
+      "goodput_short_kbps",
+      "goodput_long_kbps",
+      "retransmit_count_long",
+      "timeout_failure_count_long",
+      "handoffs_started_recent",
+      "handoffs_started_total",
+      "time_since_last_handoff_start_s",
+      "time_since_last_handoff_end_s",
+      "last_handoff_duration_ms",
+      "handoff_in_progress"
+    ],
+    "measurements_only": [
+      "rtt_last_ms",
+      "rtt_mean_short_ms",
+      "rtt_max_short_ms",
+      "rtt_std_short_ms",
+      "rtt_mean_long_ms",
+      "rtt_trend_ms",
+      "rtt_slope_ms_per_s",
+      "jitter_ms",
+      "loss_rate_short",
+      "loss_rate_long",
+      "time_since_last_echo_ms",
+      "echo_overdue_ratio",
+      "goodput_short_kbps",
+      "goodput_long_kbps",
+      "retransmit_count_long",
+      "timeout_failure_count_long"
+    ]
+  },
+  "approach_event_capability": {
+    "retransmit_count_long": [
+      "mip-basic",
+      "mip-mbb",
+      "ro-model"
+    ],
+    "timeout_failure_count_long": [
+      "mip-basic",
+      "mip-mbb",
+      "quic-migration",
+      "ro-model",
+      "tcp-reconnect"
+    ]
+  },
+  "unavailable_features": [
+    {
+      "name": "signal_strength_dbm",
+      "reason": "no radio model: the emulator has fixed link delays and an up/down state. Simulated network measurements are NOT physical radio signal strength."
+    },
+    {
+      "name": "snr_db",
+      "reason": "no radio model (see signal_strength_dbm)"
+    },
+    {
+      "name": "link_quality_indicator",
+      "reason": "the emulator exposes no link-layer quality indicator"
+    },
+    {
+      "name": "position_or_speed",
+      "reason": "the simulated mobile node has no position or velocity; movement is a scheduled interface switch"
+    },
+    {
+      "name": "queue_length_or_buffer_occupancy",
+      "reason": "simnet has no queues (documented in docs/MOBILITY_COMPARISON.md)"
+    },
+    {
+      "name": "available_bandwidth_estimate",
+      "reason": "probes are a constant low-rate load; they cannot estimate capacity"
+    },
+    {
+      "name": "tcp_retransmissions_for_tcp_approach",
+      "reason": "TcpLite keeps a retransmission counter but the adapter does not log it, so it is not observable from the run files"
+    },
+    {
+      "name": "owd_ms",
+      "reason": "one-way delay needs receiver-side timestamps in the same clock domain; available only in same-host runs and deliberately not used (the predictor runs at the sender)"
+    },
+    {
+      "name": "quic_path_validation_signal",
+      "reason": "aioquic is not installed here; the QUIC adapter was never run (PROJECT_STATUS K1)"
+    }
+  ],
+  "notes": [
+    "All measurements are SIMULATED network measurements from the Stage 4/5 emulator (virtual time, fixed link delays).",
+    "No feature is, or approximates, physical radio signal strength."
+  ]
+}

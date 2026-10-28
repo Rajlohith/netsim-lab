@@ -1,0 +1,15 @@
+{
+  "files": {
+    "feature_schema.json": "c3398e3eba5e9bad56e23c012d5122409475020b1f1fef0a3906091922824cb5",
+    "label_definition.json": "e7c56a791361a3ec9dd8f4118470334452af9f03719091e3ee991bf917039eb7",
+    "metrics.json": "9a34c314440ddef6d931cec31a1ed27fd1a340e226331669fc7d68dd3c26e254",
+    "models/logreg.joblib": "33389c93ba2efd204a36cff169d42ceabe71fa30942e045f28ebc4ff91512ca4",
+    "models/random_forest.joblib": "5e7275d9af6f96d019eacab20a034163325a11a3e7a4f60b3931ff67fe7472f6",
+    "models/threshold_baseline.json": "bb5b4dffe742efe12676cae9e7091181ba527a6baab70a01dae5be767e4d31a3",
+    "preprocessing.json": "b16e1317deedca3972ca0a66364ce6e7a4286e05afe7e5877dba502ab5835bc9",
+    "thresholds.json": "f0644daa686c3eb9d2147cb67a230a6f28ad753e1995bf2af1a21cc417cf25bc",
+    "training_metadata.json": "185c84189584a9b8facad0cd02da29553dc2e9576a12594f983c23051569d1c7"
+  },
+  "model_version": "1.0.0+debc5c7f7.c518c666a",
+  "schema_version": 1
+}

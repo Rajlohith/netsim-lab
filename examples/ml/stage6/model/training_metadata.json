@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "model_version": "1.0.0+debc5c7f7.c518c666a",
+  "pipeline_version": "1.0.0",
+  "created_utc": "2026-10-28T01:20:50Z",
+  "libraries": {
+    "python": "3.12.3",
+    "platform": "Linux-6.18.44-fc-v180-x86_64-with-glibc2.39",
+    "numpy": "2.4.4",
+    "pandas": "3.0.2",
+    "scikit-learn": "1.8.0",
+    "joblib": "1.5.3"
+  },
+  "config": {
+    "label": {
+      "horizon_s": 1.0,
+      "min_gap_ms": 60.0,
+      "gap_interval_factor": 3.0,
+      "handoff_margin_ms": 250.0,
+      "open_handoff_window_s": 5.0
+    },
+    "features": {
+      "short_window_s": 1.0,
+      "long_window_s": 5.0,
+      "loss_grace_ms": 250.0,
+      "history_window_s": 30.0
+    },
+    "sampling": {
+      "step_s": 0.25,
+      "min_history_s": 2.0
+    }
+  },
+  "config_fingerprint": "518c666ae6633af0cf9f7a6379f9a62a5aaab36e470e08ec66fd29b78b57f40f",
+  "dataset_sha256": "ebc5c7f77a2ac25321261f0db8d39905a77c09e0fbb8c1d59f762575d43a259e",
+  "data_origin": [
+    "simulated"
+  ],
+  "class_balance": {
+    "episodes_with_positive_examples": 869,
+    "excluded_censored_horizon": 480,
+    "excluded_in_episode": 1077,
+    "imbalance_ratio_neg_per_pos": 4.107257359370446,
+    "included": 17523,
+    "negatives": 14092,
+    "positives": 3431,
+    "prevalence": 0.1957998059692975
+  },
+  "split": {
+    "by": "scenario",
+    "seed": 0,
+    "fractions": [
+      0.6,
+      0.2,
+      0.2
+    ],
+    "seed_attempt_used": 0,
+    "groups": {
+      "train": [
+        "ml-mip-bbm-r100-d100-exp",
+        "ml-mip-bbm-r100-d20-uni",
+        "ml-mip-bbm-r50-d100-exp",
+        "ml-mip-bbm-r50-d100-uni",
+        "ml-mip-bbm-r50-d20-exp",
+        "ml-mip-bbm-r50-d20-uni",
+        "ml-mip-mbb-r100-d100-exp",
+        "ml-mip-mbb-r100-d100-uni",
+        "ml-mip-mbb-r100-d20-uni",
+        "ml-mip-mbb-r50-d100-exp",
+        "ml-mip-mbb-r50-d100-uni",
+        "ml-mip-mbb-r50-d20-uni",
+        "ml-ro-r100-d100-exp",
+        "ml-ro-r100-d20-uni",
+        "ml-ro-r50-d100-exp",
+        "ml-ro-r50-d100-uni",
+        "ml-ro-r50-d20-exp",
+        "ml-ro-r50-d20-uni",
+        "ml-tcp-evt-r100-d100-exp",
+        "ml-tcp-evt-r100-d20-exp",
+        "ml-tcp-tmo-r100-d100-exp",
+        "ml-tcp-tmo-r100-d100-uni",
+        "ml-tcp-tmo-r50-d100-uni",
+        "ml-tcp-tmo-r50-d20-exp"
+      ],
+      "validation": [
+        "ml-mip-mbb-r100-d20-exp",
+        "ml-mip-mbb-r50-d20-exp",
+        "ml-ro-r100-d100-uni",
+        "ml-tcp-evt-r100-d20-uni",
+        "ml-tcp-evt-r50-d100-uni",
+        "ml-tcp-tmo-r100-d20-exp",
+        "ml-tcp-tmo-r50-d100-exp",
+        "ml-tcp-tmo-r50-d20-uni"
+      ],
+      "test": [
+        "ml-mip-bbm-r100-d100-uni",
+        "ml-mip-bbm-r100-d20-exp",
+        "ml-ro-r100-d20-exp",
+        "ml-tcp-evt-r100-d100-uni",
+        "ml-tcp-evt-r50-d100-exp",
+        "ml-tcp-evt-r50-d20-exp",
+        "ml-tcp-evt-r50-d20-uni",
+        "ml-tcp-tmo-r100-d20-uni"
+      ]
+    }
+  },
+  "models": [
+    "logreg",
+    "random_forest",
+    "threshold_baseline"
+  ],
+  "argv": [
+    "pipeline",
+    "--dataset-dir",
+    "examples/ml/stage6/dataset",
+    "--out-dir",
+    "examples/ml/stage6"
+  ],
+  "disclaimer": "Trained on SIMULATED network measurements from the Stage 4/5 emulator. Not valid for real networks; no feature is physical radio signal strength.",
+  "seed": 0,
+  "split_by": "scenario",
+  "train_rows": 11448,
+  "feature_set": "all"
+}

@@ -24,11 +24,12 @@ def test_expected_files_exist():
     assert not missing, f"missing: {missing}"
 
 
-def test_ml_and_analysis_are_still_placeholders():
-    """Stage 2 must not implement later stages (ML / analysis)."""
-    for d in ("ml", "analysis"):
-        py = [p.name for p in (ROOT / "backend/app" / d).glob("*.py")]
-        assert py == ["__init__.py"], d
+def test_analysis_is_still_a_placeholder_and_ml_is_implemented():
+    """Stage 2 asserted that ml/ and analysis/ were both placeholders. Stage 6 implements ml/ (this assertion was changed on
+    purpose); analysis/ (a dashboard / plotting layer) is still a placeholder."""
+    assert [p.name for p in (ROOT / "backend/app/analysis").glob("*.py")] == ["__init__.py"]
+    ml = {p.name for p in (ROOT / "backend/app/ml").glob("*.py")}
+    assert {"features.py", "labels.py", "dataset.py", "splits.py", "models.py", "evaluate.py", "bundle.py", "predict.py", "pipeline.py"} <= ml
 
 
 def test_subprocess_and_sudo_confined_to_runner():

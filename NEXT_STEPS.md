@@ -1,7 +1,10 @@
-# NEXT_STEPS — exact starting point for Stage 6
+# NEXT_STEPS — state after Stage 6 (handoff prediction)
 
-**Gate 0 (blocking): Stage 6 has not been started and its specification has not been given.** The only thing known is that a
-dashboard is intended and was explicitly postponed. Wait for the user's approval and Stage 6 brief before writing any Stage 6 code.
+**Stage 6 is implemented** (`backend/app/ml/`, `docs/HANDOFF_PREDICTION.md`, shipped results in `examples/ml/stage6/`). Open items from it: (1) the emulator has no pre-handoff degradation, so evaluating prediction on real-kernel/live measurements (P1 items below) is the only way to learn whether symptoms precede handoffs; (2) add a stochastic loss/jitter model or live runs to the data generator before drawing conclusions; (3) QUIC and TCP-retransmission features remain unavailable. The text below is the pre-Stage-6 handoff and is kept for the unverified items.
+
+## (historical) pre-Stage-6 notes
+
+**Gate 0 (still blocking): the dashboard was explicitly postponed.** Wait for the user's brief before starting it.
 
 ## A. First 15 minutes in a new chat
 1. Unzip, `cd netsim-lab`, read `PROJECT_STATUS.md` (honest state) and `docs/MOBILITY_COMPARISON.md` (what each approach is and is not).

@@ -1,12 +1,12 @@
-# PROJECT_STATUS — mobile-ip-handoff (netsim-lab), state after Stage 5 verification
+# PROJECT_STATUS — mobile-ip-handoff (netsim-lab), state after Stage 6 (handoff prediction)
 
-Generated from an actual run: <!-- BEGIN:stamp -->**2026-10-26 16:21:45Z**, git commit `3b25ef3`, Python 3.12.3, Linux-6.18.44-fc-v153-x86_64-with-glibc2.39.<!-- END:stamp -->
-Stage 6 has **not** been started. Nothing here is marked complete unless it was exercised; "written but never run" is said explicitly.
+Generated from an actual run: <!-- BEGIN:stamp -->**2026-10-28 01:23:38Z**, git commit `None`, Python 3.12.3, Linux-6.18.44-fc-v180-x86_64-with-glibc2.39.<!-- END:stamp -->
+Stage 6 (handoff-degradation prediction, `backend/app/ml/`, `docs/HANDOFF_PREDICTION.md`) is implemented and its tests ran (see section 5). The dashboard has **not** been started. Nothing here is marked complete unless it was exercised; "written but never run" is said explicitly.
 
 ## 1. Headline
 * Stages 1–5 are built: project foundation, Linux network-namespace lab, UDP traffic/metrics tools, an educational Mobile IP, and a
   five-approach comparison framework.
-<!-- BEGIN:headline -->* **Tests: 293 ran -> 281 passed, 0 failed, 12 skipped; 2 modules not runnable** (`test_api`, `test_config`: FastAPI / pydantic / pytest are not installed in the sandbox, so the Stage 1 API and settings tests have **never been executed**).<!-- END:headline -->
+<!-- BEGIN:headline -->* **Tests: 356 ran -> 344 passed, 0 failed, 12 skipped; 2 modules not runnable** (`test_api`, `test_config`: FastAPI / pydantic / pytest are not installed in the sandbox, so the Stage 1 API and settings tests have **never been executed**).<!-- END:headline -->
 * **Could not be verified in this environment** (no network, no iproute2/`tc`/`ping`/`sudo`; kernel lacks `ipip`/`gre`/`dummy`, no visible `netem`):
   real IP-in-IP tunnels, `tc netem` delay/loss/rate, the `ip`/`tc` command-line syntax, the `setpriv` launch of daemons, the QUIC adapter against the
   real `aioquic`, the FastAPI app, the frontend (`npm install` impossible), and everything under `NETSIM_RUN_PRIVILEGED=1`.
@@ -44,6 +44,7 @@ Three environments exist for experiments: **emulated** (deterministic virtual-ti
 | 3 Traffic & metrics | **verified** | real UDP sockets on loopback, SIGTERM/SIGKILL tests, **real kernel namespaces** |
 | 4 Basic Mobile IP | protocol **verified**; data plane **simulated**; kernel tunnels **untested** | unit tests, real UDP on loopback, emulator |
 | 5 Comparison | 4 of 5 approaches **verified in the emulator**; QUIC **untested** | see section 4 |
+| 6 Handoff prediction | pipeline **implemented and run end to end on simulated data**; models trained and evaluated on held-out scenario families (shipped in `examples/ml/stage6/`); **no predictive skill beyond generator regularities** (see `docs/HANDOFF_PREDICTION.md` section 7); never run on real-network data | 63 new unit/integration tests (real emulator runs), reproducibility check (rerun from the shipped dataset gives identical results.json except timestamp) |
 
 ## 4. The five approaches
 | Approach | Classification | Evidence | Not verified / limits |
@@ -55,7 +56,7 @@ Three environments exist for experiments: **emulated** (deterministic virtual-ti
 | QUIC connection migration | **Untested** | adapter written against aioquic's sans-IO API; glue logic exercised on a **stub** (`tests/stubs`, labelled) | **never run against real aioquic** (not installable here); expect fixes on first run; applies only to QUIC applications |
 
 ## 5. Test results (generated)
-<!-- BEGIN:tests -->Totals: **281 passed / 0 failed / 12 skipped / 2 not runnable** -- per-module table below, full detail in `docs/TEST_REPORT.md` and `docs/test_results.json`.
+<!-- BEGIN:tests -->Totals: **344 passed / 0 failed / 12 skipped / 2 not runnable** -- per-module table below, full detail in `docs/TEST_REPORT.md` and `docs/test_results.json`.
 
 | Module | Status | Ran | Failed | Skipped |
 |---|---|---|---|---|
@@ -81,6 +82,11 @@ Three environments exist for experiments: **emulated** (deterministic virtual-ti
 | `test_mip_messages` | pass | 7 | 0 | 0 |
 | `test_mip_sim` | pass | 17 | 0 | 0 |
 | `test_mip_udp` | pass | 10 | 0 | 0 |
+| `test_ml_evaluate` | pass | 10 | 0 | 0 |
+| `test_ml_features` | pass | 10 | 0 | 0 |
+| `test_ml_labels` | pass | 9 | 0 | 0 |
+| `test_ml_pipeline` | pass | 27 | 0 | 0 |
+| `test_ml_splits` | pass | 7 | 0 | 0 |
 | `test_netem_config` | pass | 5 | 0 | 0 |
 | `test_netem_integration` | pass | 7 | 0 | 7 |
 | `test_netem_manager` | pass | 12 | 0 | 1 |

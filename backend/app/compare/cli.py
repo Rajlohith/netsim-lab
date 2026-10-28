@@ -29,6 +29,8 @@ def main(argv=None) -> int:
     r.add_argument("--hold-ms", type=float, default=100.0, help="make-before-break old-link hold")
     r.add_argument("--variant", default="")
     r.add_argument("--execute", action="store_true", help="live environment: really run privileged commands")
+    r.add_argument("--predict-model", type=Path, default=None, metavar="MODEL_DIR",
+                   help="Stage 6 (opt-in): after the run, write handoff_predictions.csv/json into the run directory using this model bundle")
     m = sub.add_parser("matrix", help="run the standard comparison set and write comparison.md/json")
     m.add_argument("--out-dir", type=Path, default=Path("data/results/comparison"))
     m.add_argument("--duration", type=float, default=10.0)
@@ -65,6 +67,10 @@ def main(argv=None) -> int:
         if res.metrics:
             print(json.dumps({k: res.metrics[k] for k in ("handoff_summary", "loss", "mobility_overhead", "continuity")}, indent=2))
             print(f"run directory: {res.run_dir}")
+        if a.predict_model is not None and res.status == "ok" and res.run_dir:
+            from ..ml.integration import annotate_run      # lazy: the ML stack is only needed when asked for
+            summ = annotate_run(res.run_dir, a.predict_model)
+            print(f"predictions: {summ['decision_points']} decision points, {summ['alarms']} alarms -> {res.run_dir}/handoff_predictions.csv")
         return 0 if res.status in ("ok", "unsupported", "unavailable") else 1
     base = ExperimentSpec("tcp-reconnect", duration_s=a.duration)
     results, path = run_matrix(a.out_dir, base)

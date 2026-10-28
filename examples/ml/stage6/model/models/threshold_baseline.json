@@ -1,0 +1,69 @@
+{
+  "kind": "threshold_baseline",
+  "candidates": [
+    "rtt_trend_ms",
+    "rtt_slope_ms_per_s",
+    "rtt_std_short_ms",
+    "jitter_ms",
+    "loss_rate_short",
+    "loss_rate_long",
+    "echo_overdue_ratio",
+    "retransmit_count_long",
+    "timeout_failure_count_long"
+  ],
+  "feature": "loss_rate_long",
+  "threshold": 0.004,
+  "threshold_is_infinite": false,
+  "degenerate_never_alarms": false,
+  "rule": "alarm iff loss_rate_long >= 0.004",
+  "fit_on": "training split only (best F1 per feature over a quantile grid)",
+  "per_feature_fit": [
+    {
+      "feature": "rtt_trend_ms",
+      "best_f1": 0.206425,
+      "threshold": 0.11288962300199971
+    },
+    {
+      "feature": "rtt_slope_ms_per_s",
+      "best_f1": 0.021312,
+      "threshold": 3.5789143699999997
+    },
+    {
+      "feature": "rtt_std_short_ms",
+      "best_f1": 0.063517,
+      "threshold": 17.198041783
+    },
+    {
+      "feature": "jitter_ms",
+      "best_f1": 0.062742,
+      "threshold": 0.8268000000000029
+    },
+    {
+      "feature": "loss_rate_short",
+      "best_f1": 0.078441,
+      "threshold": 0.01
+    },
+    {
+      "feature": "loss_rate_long",
+      "best_f1": 0.340926,
+      "threshold": 0.004
+    },
+    {
+      "feature": "echo_overdue_ratio",
+      "best_f1": 0.0,
+      "threshold": 70.6
+    },
+    {
+      "feature": "retransmit_count_long",
+      "best_f1": null,
+      "threshold": null,
+      "note": "no admissible threshold (feature never shows a symptom in training data)"
+    },
+    {
+      "feature": "timeout_failure_count_long",
+      "best_f1": null,
+      "threshold": null,
+      "note": "no admissible threshold (feature never shows a symptom in training data)"
+    }
+  ]
+}

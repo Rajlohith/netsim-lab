@@ -1,0 +1,29 @@
+{
+  "target": "a handoff-related connectivity degradation episode STARTS within the next horizon_s seconds",
+  "episode": "a handoff (events.csv handoff_start) accompanied by an echo-arrival gap >= max(min_gap_ms, gap_interval_factor * probe interval) that overlaps [handoff_start, handoff_end + handoff_margin_ms]",
+  "onset": "the handoff_start instant (link change), not the first symptom seen by the sender",
+  "positive": "label = 1 iff an episode onset lies in (t, t + horizon_s]",
+  "excluded": [
+    "excluded_in_episode: onset <= t <= episode end (degradation already under way)",
+    "excluded_censored_horizon: t + horizon_s is after the end of the observed run (label unknowable)"
+  ],
+  "decision_times": "first probe + min_history_s, then every step_s",
+  "features": "only observations with timestamp <= t (enforced by extract_features, tested by truncating the run at t)",
+  "parameters": {
+    "horizon_s": 1.0,
+    "min_gap_ms": 60.0,
+    "gap_interval_factor": 3.0,
+    "handoff_margin_ms": 250.0,
+    "open_handoff_window_s": 5.0
+  },
+  "sampling": {
+    "step_s": 0.25,
+    "min_history_s": 2.0
+  },
+  "feature_windows": {
+    "short_window_s": 1.0,
+    "long_window_s": 5.0,
+    "loss_grace_ms": 250.0,
+    "history_window_s": 30.0
+  }
+}

@@ -54,3 +54,13 @@ compare-list:
 .PHONY: test-report
 test-report:      ## run every test module and regenerate docs/TEST_REPORT.md
 	$(PY) scripts/run_all_tests.py
+
+.PHONY: ml-features ml-generate ml-pipeline ml-test
+ml-features:      ## Stage 6: feature schema, availability, unavailable features
+	PYTHONPATH=backend $(PY) -m app.ml features
+ml-generate:      ## Stage 6: run 120 controlled emulator experiments into data/ml/raw (~8 min, resumable)
+	PYTHONPATH=backend $(PY) -m app.ml generate --raw-dir data/ml/raw --seeds 3 --duration 40
+ml-pipeline:      ## Stage 6: dataset -> split -> train -> evaluate -> model bundle, results, plots
+	PYTHONPATH=backend $(PY) -m app.ml pipeline --raw-dir data/ml/raw --out-dir data/ml/stage6
+ml-test:          ## Stage 6 tests (~1 min)
+	cd backend && PYTHONPATH=. $(PY) -m unittest tests.test_ml_features tests.test_ml_labels tests.test_ml_evaluate tests.test_ml_splits tests.test_ml_pipeline
