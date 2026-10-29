@@ -64,3 +64,21 @@ ml-pipeline:      ## Stage 6: dataset -> split -> train -> evaluate -> model bun
 	PYTHONPATH=backend $(PY) -m app.ml pipeline --raw-dir data/ml/raw --out-dir data/ml/stage6
 ml-test:          ## Stage 6 tests (~1 min)
 	cd backend && PYTHONPATH=. $(PY) -m unittest tests.test_ml_features tests.test_ml_labels tests.test_ml_evaluate tests.test_ml_splits tests.test_ml_pipeline
+
+.PHONY: exp-list exp-plan exp-example exp-standard exp-analyze exp-plots exp-reproduce exp-test
+exp-list:         ## Stage 7: approaches / configurations / where they can run (JSON)
+	PYTHONPATH=backend $(PY) -m app.compare list --json
+exp-plan:         ## Stage 7: design of the example campaign (no run)
+	PYTHONPATH=backend $(PY) -m app.compare plan --config config/experiments/stage7_example.yaml
+exp-example:      ## Stage 7: run/resume the example campaign (372 runs, ~6-8 min), analyse, plot, with Stage 6 predictions
+	PYTHONPATH=backend $(PY) -m app.compare campaign --config config/experiments/stage7_example.yaml --out-dir data/experiments/stage7-example --predict-model examples/ml/stage6/model
+exp-standard:     ## Stage 7: the full 20-replicate campaign (1,680 runs, ~30 min, ~330 MB raw data)
+	PYTHONPATH=backend $(PY) -m app.compare campaign --config config/experiments/stage7_standard.yaml --out-dir data/experiments/stage7-standard
+exp-analyze:      ## Stage 7: recompute statistics/exports/report from SAVED results (DIR=...)
+	PYTHONPATH=backend $(PY) -m app.compare analyze $(DIR)
+exp-plots:        ## Stage 7: charts from saved analysis (DIR=...)
+	PYTHONPATH=backend $(PY) -m app.compare plots $(DIR)
+exp-reproduce:    ## Stage 7: re-run a sample of saved runs and check they are byte-identical (DIR=...)
+	PYTHONPATH=backend $(PY) -m app.compare reproduce $(DIR) --sample 10
+exp-test:         ## Stage 7 tests (~3 min)
+	cd backend && PYTHONPATH=. $(PY) -m unittest tests.test_exp_stats tests.test_exp_conditions tests.test_exp_campaign tests.test_exp_export tests.test_exp_predictions

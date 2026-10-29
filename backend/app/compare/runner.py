@@ -15,6 +15,7 @@ from ..mobileip.analyze import analyze_mip_run
 from ..mobileip.events import read_events as read_mip_events
 from ..mobileip.mobility_sim import MobilitySim, MobilitySpec
 from ..mobileip.ro_sim import RoSim
+from ..netem.conditions import NetworkConditions, apply_conditions
 from ..traffic.clock import iso_utc, wall_ns
 from . import events as ev
 from .approaches import APPROACHES, ENV_LABELS, MBB_CAPABLE, MBB_REASON, SUPPORT
@@ -62,6 +63,11 @@ def validate(spec: ExperimentSpec):
         ifaces = {e.ifname for _l, e in cfg.interfaces_of(mn)}
     except Exception as e:
         return f"cannot use topology {spec.topology}: {e}"
+    if not isinstance(spec.conditions, NetworkConditions):
+        return f"conditions must be a NetworkConditions, got {type(spec.conditions).__name__}"
+    cond_bad = spec.conditions.validate(cfg)
+    if cond_bad:
+        return cond_bad
     if spec.initial_iface not in ifaces:
         return f"initial_iface {spec.initial_iface!r} is not a mobile-node interface; known: {sorted(ifaces)}"
     cur, last_t = spec.initial_iface, -1.0
@@ -129,9 +135,58 @@ def run_experiment(spec: ExperimentSpec, out_dir, live=None) -> ExperimentResult
                                                "recovery_point": info.recovery_point, "scope_limits": info.scope_limits},
         "support": SUPPORT.get(spec.approach, {}).get(spec.environment),
         "generated_wall_iso": iso_utc(wall_ns()),
-        "software": {"python": platform.python_version(), "platform": sys.platform, "aioquic_available": quic_available()},
+        "software": software_versions(),
+        "effective_links": effective_links(spec),
+        "condition_applicability": condition_applicability(spec),
     }, indent=2, sort_keys=True))
     return ExperimentResult(status, reason, spec, run_dir, metrics)
+
+
+_SOFTWARE_CACHE: dict = {}
+
+
+def software_versions() -> dict:
+    """Versions of the interpreter, platform and the libraries that influence results (Stage 7: recorded with every run).
+    The first three keys are the ones Stage 5/6 wrote; the rest are additions. Cached per process."""
+    if not _SOFTWARE_CACHE:
+        import importlib
+        from .. import __version__ as project_version
+        d = {"python": platform.python_version(), "platform": sys.platform, "aioquic_available": quic_available(),
+             "os": platform.platform(), "netsim_lab": project_version, "framework": "stage7-experiments"}
+        for mod in ("numpy", "scipy", "pandas", "matplotlib", "sklearn", "joblib", "yaml"):
+            try:
+                d[mod] = getattr(importlib.import_module(mod), "__version__", "unknown")
+            except Exception:                                   # not installed: say so instead of omitting silently
+                d[mod] = None
+        _SOFTWARE_CACHE.update(d)
+    return dict(_SOFTWARE_CACHE)
+
+
+def effective_links(spec: ExperimentSpec):
+    """The link parameters the run actually used (topology file + conditions): one-way delay and per-direction loss.
+    Only the parameters the emulator honours are listed (jitter, rate and queue limits in the YAML are ignored by it)."""
+    try:
+        from ..netem.topology_config import load_config
+        cfg = apply_conditions(load_config(spec.topology), spec.conditions)
+        return [{"link": l.name, "delay_ms": l.effective_netem(l.a).delay_ms,
+                 "loss_percent_a_to_b": l.effective_netem(l.a).loss_percent,
+                 "loss_percent_b_to_a": l.effective_netem(l.b).loss_percent} for l in cfg.links]
+    except Exception as e:                                       # an invalid spec has no effective topology
+        return {"unavailable": f"{type(e).__name__}: {e}"}
+
+
+def condition_applicability(spec: ExperimentSpec) -> dict:
+    """For each NON-default condition: does it apply to this approach? (a Home Agent distance cannot affect an approach that
+    never uses the Home Agent; the run is still executed, and the note says the setting had no path to act through)."""
+    c, ha_users = spec.conditions, TUNNELLED
+    uses_ha = spec.approach in ha_users
+    out = {}
+    for name, active in (("ha_distance_ms", c.ha_distance_ms > 0), ("registration_loss_percent", c.registration_loss_percent > 0),
+                         ("ha_processing_ms", c.ha_processing_ms != 1.0)):
+        if active:
+            out[name] = ("applies" if uses_ha else
+                         f"not applicable: {spec.approach} has no Home Agent / Mobile IP registration, the setting has no effect")
+    return out
 
 
 def _dispatch(spec, out_dir, live):
@@ -175,7 +230,7 @@ def _run_mip_emulated(spec, out_dir):
                       probe_payload=spec.payload, initial_iface=spec.initial_iface, moves=tuple(spec.moves),
                       lifetime_s=spec.lifetime_s, detect_delay_ms=spec.detect_delay_ms, probe_start_s=spec.probe_start_s,
                       make_before_break=(kind == "mbb"), old_link_hold_ms=spec.old_link_hold_ms, topology=spec.topology,
-                      link_semantics=spec.link_semantics)
+                      link_semantics=spec.link_semantics, conditions=spec.conditions, ha_processing_ms=spec.conditions.ha_processing_ms)
     sim = RoSim(ms, out_dir, ro_lifetime_s=spec.ro_lifetime_s) if kind == "ro" else MobilitySim(ms, out_dir)
     run_dir = sim.run()
     mm = analyze_mip_run(run_dir)

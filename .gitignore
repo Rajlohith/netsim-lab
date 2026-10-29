@@ -17,3 +17,7 @@ data/*
 .vscode/
 .idea/
 .DS_Store
+
+*.csv
+*.json
+*.png

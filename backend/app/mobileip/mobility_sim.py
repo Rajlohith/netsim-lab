@@ -10,9 +10,11 @@ from __future__ import annotations
 
 import ipaddress
 import json
+import random
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from ..netem.conditions import NetworkConditions, apply_conditions
 from ..netem.topology_config import load_config
 from ..traffic import wire
 from ..traffic.clock import iso_utc
@@ -54,6 +56,7 @@ class MobilitySpec:
     old_link_hold_ms: float = 0.0          # extra time the old link stays up after registration (MBB only)
     link_semantics: str = "both-ends"      # "both-ends" (default) | "kernel-veth": see simnet.SimLink.go_down
     topology: Path = ROOT / "config" / "topology.yaml"
+    conditions: NetworkConditions = field(default_factory=NetworkConditions)     # Stage 7: latency / loss / HA distance / registration
 
 
 class SimHaDataPlane(HaDataPlane):
@@ -93,7 +96,9 @@ class MobilitySim:
         self.run_dir = Path(out_dir) / spec.scenario_id / spec.run_id
         self.run_dir.mkdir(parents=True)
         self.sim = Sim()
-        self.cfg = load_config(spec.topology)
+        self.cfg = apply_conditions(load_config(spec.topology), spec.conditions)
+        self.sim.loss_seed = spec.conditions.seed
+        self._reg_rng = random.Random(f"netsim-registration-loss:{spec.conditions.seed}")
         self.nodes = build_from_topology(self.sim, self.cfg)
         self.cn, self.ha_node, self.mn_node = self.nodes["cn"], self.nodes["ha"], self.nodes["mn"]
         self.cn_addr = next(iter(self.cn.ifaces.values()))[0].ip
@@ -152,6 +157,8 @@ class MobilitySim:
     def _ha_udp(self, node, src, sport, dst, data):
         def process():
             for out in self.ha.handle_datagram(data, (str(src), sport)):
+                if self._reg_lost("ha"):
+                    continue
                 node.send_udp(AGENT_ADDR, out.dst[0], M.DEFAULT_PORT, out.dst[1], out.data)
         self.sim.after(int(self.spec.ha_processing_ms * 1e6), process)
 
@@ -180,9 +187,19 @@ class MobilitySim:
             self.mip.emit(node, "tunnel_drop", detail=reason)
 
     # ---- Mobile Node side ----------------------------------------------------------------------
+    def _reg_lost(self, node):
+        """Stage 7 registration-condition: independent loss of Mobile IP registration messages (0 by default: no draw)."""
+        p = self.spec.conditions.registration_loss_percent / 100.0
+        if p > 0.0 and self._reg_rng.random() < p:
+            self.sim.drop(node, "registration_loss_injected")
+            return True
+        return False
+
     def _mn_send(self, outs):
         for o in outs:
             if self.mn.care_of is None:
+                continue
+            if self._reg_lost("mn"):
                 continue
             self.mn_node.send_udp(self.mn.care_of, o.dst[0], MN_CTRL_PORT, o.dst[1], o.data)
 

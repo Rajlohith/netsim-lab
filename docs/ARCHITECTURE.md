@@ -27,7 +27,7 @@ netsim-lab/
 │   │   ├── simnet.py mobility_sim.py  discrete-event emulator + the handoff scenario (deterministic)
 │   │   ├── runtime.py demo.py cli.py  real-UDP drivers, live namespace demo, CLI
 │   │   └── events.py metrics.py analyze.py   mip_events*.csv -> mip_metrics.json
-│   ├── compare/                     Stage 5: common experiment interface (see docs/MOBILITY_COMPARISON.md)
+│   ├── compare/                     Stage 5: common experiment interface (docs/MOBILITY_COMPARISON.md); Stage 7: campaign, analysis, stats, plots, reproduce (docs/EXPERIMENTS.md)
 │   │   ├── experiment.py runner.py  ExperimentSpec, run_experiment (ok/unsupported/unavailable/failed), adapters
 │   │   ├── approaches.py            registry: what each approach is/is not, support per environment
 │   │   ├── apps.py                  shared stream workload + resume protocol (TCP baseline, QUIC)

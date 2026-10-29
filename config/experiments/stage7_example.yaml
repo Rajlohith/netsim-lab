@@ -1,0 +1,21 @@
+# Stage 7 example campaign (the one whose results ship in examples/experiments/stage7/).
+# 12 replicates per (condition, approach configuration); one-factor-at-a-time around the baseline; ~370 runs, ~6-8 minutes on one core.
+name: stage7-example
+base_seed: 20261028          # every schedule and loss stream is derived from this; change it to draw a different, equally valid sample
+replicates: 12
+duration_s: 12.0
+rate_pps: 100.0
+payload: 64
+environment: emulated
+approaches: auto             # every approach registered in app/compare/approaches.py; unavailable ones are reported, not dropped
+schedule:
+  first_move_s: [3.5, 4.5]   # first handoff time ~ U(3.5, 4.5) s (seeded per replicate)
+  dwell_s: 3.0               # second handoff = first + dwell + U(-jitter, +jitter)
+  dwell_jitter_s: 0.25
+sweeps:                      # NON-baseline levels; the baseline is always run
+  latency_scale: [2.0]       # every link delay x2
+  loss_percent: [2]          # 2 % independent loss per direction on both access links
+  ha_distance_ms: [100]      # +100 ms one-way on every link touching the Home Agent (Mobile IP based approaches only)
+  detect_delay_ms: [100]     # movement detection 100 ms instead of 20 ms
+  dwell_s: [1.5]             # rapid second handoff
+  registration_loss_percent: [30]   # 30 % of Mobile IP registration messages lost (Mobile IP based approaches only)

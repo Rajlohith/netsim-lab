@@ -102,3 +102,22 @@ MBB_REASON = {
     "ro-model": "the RO model is only defined for break-before-make in this stage",
     "quic-migration": "this harness does not exploit link overlap (no probing of the new path before the old one is released)",
 }
+
+
+# Stage 7: configurations of one approach that the experiment framework treats as separate, comparable "approach configurations".
+# Everything else (approach ids, where each can run, why not) is discovered from APPROACHES / SUPPORT above, not listed again.
+# (variant label, ExperimentSpec overrides)
+VARIANTS = {
+    "tcp-reconnect": (("notify", {"tcp_detect": "event"}), ("stall-timeout", {"tcp_detect": "timeout"})),
+}
+
+
+def approach_configs(approaches=None) -> list:
+    """[(config_id, approach_id, variant, overrides)] for the requested approach ids (default: every registered approach)."""
+    out = []
+    for a in (approaches or list(APPROACHES)):
+        if a not in APPROACHES:
+            raise KeyError(f"unknown approach {a!r}; known: {sorted(APPROACHES)}")
+        for variant, kw in VARIANTS.get(a, (("", {}),)):
+            out.append((f"{a}-{variant}" if variant else a, a, variant, dict(kw)))
+    return out

@@ -1,4 +1,10 @@
-# NEXT_STEPS — state after Stage 6 (handoff prediction)
+# NEXT_STEPS — state after Stage 7 (experiment and analysis framework)
+
+**Stage 7 is implemented** (`docs/EXPERIMENTS.md`, results in `examples/experiments/stage7/`). Open items from it: (1) run `make exp-standard` (20 replicates, wider sweeps, ~30 min) and install `aioquic` so QUIC is measured; (2) the emulator makes many metrics deterministic: add jitter/queueing (or live runs, `data_origin = real-kernel-namespaces`) before drawing conclusions about variability; (3) TcpLite needs fast retransmit/SACK before TCP-under-loss results mean anything about real TCP; (4) two-factor designs to estimate interactions; (5) the dashboard (still postponed) can read `analysis/*.json` as its data contract.
+
+---
+
+# (Stage 6 note) state after Stage 6 (handoff prediction)
 
 **Stage 6 is implemented** (`backend/app/ml/`, `docs/HANDOFF_PREDICTION.md`, shipped results in `examples/ml/stage6/`). Open items from it: (1) the emulator has no pre-handoff degradation, so evaluating prediction on real-kernel/live measurements (P1 items below) is the only way to learn whether symptoms precede handoffs; (2) add a stochastic loss/jitter model or live runs to the data generator before drawing conclusions; (3) QUIC and TCP-retransmission features remain unavailable. The text below is the pre-Stage-6 handoff and is kept for the unverified items.
 

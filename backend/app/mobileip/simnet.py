@@ -1,13 +1,15 @@
 """Tiny discrete-event IPv4 network emulator (SIMPLIFIED EMULATION, not the Linux kernel).
 
 Packets are real IPv4/UDP byte strings (built/parsed with ipip.py); routing is longest-prefix match with
-metrics over *up* interfaces; links are point-to-point with a fixed delay and an up/down state. There is no
-queueing, bandwidth limit, ARP, ICMP or fragmentation. Time is virtual, so runs are exactly repeatable.
+metrics over *up* interfaces; links are point-to-point with a fixed delay, an up/down state and (Stage 7, off unless the
+topology/conditions ask for it) seeded independent random packet loss per direction. There is no
+queueing, bandwidth limit, jitter, ARP, ICMP or fragmentation. Time is virtual, so runs are exactly repeatable.
 """
 from __future__ import annotations
 
 import heapq
 import ipaddress
+import random
 from dataclasses import dataclass, field
 
 from . import ipip
@@ -47,6 +49,7 @@ class Sim:
         self.nodes, self.links = {}, {}
         self.drops: list = []                      # (mono_ns, node, reason)
         self.drop_counts: dict = {}
+        self.loss_seed: int = 0                    # Stage 7: seed of the per-link loss streams (only used when a link has loss > 0)
 
     def at(self, t_ns: int, fn):
         self._n += 1
@@ -84,6 +87,24 @@ class SimLink:
     up: bool = True                 # carrier: can frames cross the link?
     mtu: int = 1500
     keep_up_ends: set = field(default_factory=set)   # nodes whose end stays administratively UP while the carrier is down
+    # Stage 7: independent random loss per direction (probability 0..1 per packet that is actually put on the wire).
+    # Default 0 -> no random numbers are drawn and behaviour is byte-identical to Stages 1-6.
+    loss_a_to_b: float = 0.0
+    loss_b_to_a: float = 0.0
+    seed: int = 0
+    _rng: dict = field(default_factory=dict, repr=False)
+
+    def lose(self, from_a: bool) -> bool:
+        """Draw the loss decision for one packet entering the link. One dedicated, seeded stream per (link, direction), so
+        the outcome does not depend on what happens on other links or in other processes (random.Random(str) is stable)."""
+        p = self.loss_a_to_b if from_a else self.loss_b_to_a
+        if p <= 0.0:
+            return False
+        key = "ab" if from_a else "ba"
+        r = self._rng.get(key)
+        if r is None:
+            r = self._rng[key] = random.Random(f"netsim-loss:{self.seed}:{self.name}:{key}")
+        return r.random() < p
 
     def go_down(self, keep_up_ends=()):
         """keep_up_ends=() : both ends lose address+routes (old emulator behaviour).
@@ -179,7 +200,10 @@ class SimNode:
             return self.sim.drop(self.name, "link_down")
         if len(packet) > link.mtu:
             return self.sim.drop(self.name, "mtu_exceeded")
-        peer_node, peer_if = link.b if link.a == (self.name, ifname) else link.a
+        from_a = link.a == (self.name, ifname)
+        peer_node, peer_if = link.b if from_a else link.a
+        if link.lose(from_a):
+            return self.sim.drop(self.name, "link_loss")
 
         def arrive():
             if not link.up:
@@ -232,7 +256,10 @@ def build_from_topology(sim: Sim, cfg) -> dict:
     nodes = {k: SimNode(sim, k, n.forwarding) for k, n in cfg.nodes.items()}
     for l in cfg.links:
         delay = int(l.effective_netem(l.a).delay_ms * 1e6)
-        link = SimLink(l.name, (l.a.node, l.a.ifname), (l.b.node, l.b.ifname), delay)
+        link = SimLink(l.name, (l.a.node, l.a.ifname), (l.b.node, l.b.ifname), delay,
+                       loss_a_to_b=l.effective_netem(l.a).loss_percent / 100.0,
+                       loss_b_to_a=l.effective_netem(l.b).loss_percent / 100.0,
+                       seed=getattr(sim, "loss_seed", 0))
         sim.links[l.name] = link
         nodes[l.a.node].add_iface(l.a.ifname, l.a.address, link)
         nodes[l.b.node].add_iface(l.b.ifname, l.b.address, link)

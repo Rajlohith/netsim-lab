@@ -1,12 +1,12 @@
-# PROJECT_STATUS — mobile-ip-handoff (netsim-lab), state after Stage 6 (handoff prediction)
+# PROJECT_STATUS — mobile-ip-handoff (netsim-lab), state after Stage 7 (experiment and analysis framework)
 
-Generated from an actual run: <!-- BEGIN:stamp -->**2026-10-28 01:23:38Z**, git commit `None`, Python 3.12.3, Linux-6.18.44-fc-v180-x86_64-with-glibc2.39.<!-- END:stamp -->
-Stage 6 (handoff-degradation prediction, `backend/app/ml/`, `docs/HANDOFF_PREDICTION.md`) is implemented and its tests ran (see section 5). The dashboard has **not** been started. Nothing here is marked complete unless it was exercised; "written but never run" is said explicitly.
+Generated from an actual run: <!-- BEGIN:stamp -->**2026-10-29 01:40:21Z**, git commit `None`, Python 3.12.3, Linux-6.18.44-fc-v185-x86_64-with-glibc2.39.<!-- END:stamp -->
+Stage 7 (replicated experiments, statistics, exports, charts; `backend/app/compare/{campaign,analysis,stats,plots,reproduce}.py`, `docs/EXPERIMENTS.md`) is implemented, its tests ran (section 5) and a 372-run example campaign with analysis ships in `examples/experiments/stage7/`. Stage 6 (handoff-degradation prediction, `backend/app/ml/`, `docs/HANDOFF_PREDICTION.md`) is implemented and its tests ran. The dashboard has **not** been started. Nothing here is marked complete unless it was exercised; "written but never run" is said explicitly.
 
 ## 1. Headline
 * Stages 1–5 are built: project foundation, Linux network-namespace lab, UDP traffic/metrics tools, an educational Mobile IP, and a
   five-approach comparison framework.
-<!-- BEGIN:headline -->* **Tests: 356 ran -> 344 passed, 0 failed, 12 skipped; 2 modules not runnable** (`test_api`, `test_config`: FastAPI / pydantic / pytest are not installed in the sandbox, so the Stage 1 API and settings tests have **never been executed**).<!-- END:headline -->
+<!-- BEGIN:headline -->* **Tests: 450 ran -> 438 passed, 0 failed, 12 skipped; 2 modules not runnable** (`test_api`, `test_config`: FastAPI / pydantic / pytest are not installed in the sandbox, so the Stage 1 API and settings tests have **never been executed**).<!-- END:headline -->
 * **Could not be verified in this environment** (no network, no iproute2/`tc`/`ping`/`sudo`; kernel lacks `ipip`/`gre`/`dummy`, no visible `netem`):
   real IP-in-IP tunnels, `tc netem` delay/loss/rate, the `ip`/`tc` command-line syntax, the `setpriv` launch of daemons, the QUIC adapter against the
   real `aioquic`, the FastAPI app, the frontend (`npm install` impossible), and everything under `NETSIM_RUN_PRIVILEGED=1`.
@@ -44,6 +44,7 @@ Three environments exist for experiments: **emulated** (deterministic virtual-ti
 | 3 Traffic & metrics | **verified** | real UDP sockets on loopback, SIGTERM/SIGKILL tests, **real kernel namespaces** |
 | 4 Basic Mobile IP | protocol **verified**; data plane **simulated**; kernel tunnels **untested** | unit tests, real UDP on loopback, emulator |
 | 5 Comparison | 4 of 5 approaches **verified in the emulator**; QUIC **untested** | see section 4 |
+| 7 Experiments & analysis | **implemented and run end to end**: 372-run emulated campaign (12 replicates/cell), statistics, CSV/JSON/Markdown exports, charts, byte-for-byte reproduction check; QUIC and live environments **not run** | `tests/test_exp_*.py` (statistics checked against known values/coverage simulations; fault-injected failed/interrupted/crashed runs; regeneration from saved results), `docs/EXPERIMENTS.md` §10 |
 | 6 Handoff prediction | pipeline **implemented and run end to end on simulated data**; models trained and evaluated on held-out scenario families (shipped in `examples/ml/stage6/`); **no predictive skill beyond generator regularities** (see `docs/HANDOFF_PREDICTION.md` section 7); never run on real-network data | 63 new unit/integration tests (real emulator runs), reproducibility check (rerun from the shipped dataset gives identical results.json except timestamp) |
 
 ## 4. The five approaches
@@ -56,7 +57,7 @@ Three environments exist for experiments: **emulated** (deterministic virtual-ti
 | QUIC connection migration | **Untested** | adapter written against aioquic's sans-IO API; glue logic exercised on a **stub** (`tests/stubs`, labelled) | **never run against real aioquic** (not installable here); expect fixes on first run; applies only to QUIC applications |
 
 ## 5. Test results (generated)
-<!-- BEGIN:tests -->Totals: **344 passed / 0 failed / 12 skipped / 2 not runnable** -- per-module table below, full detail in `docs/TEST_REPORT.md` and `docs/test_results.json`.
+<!-- BEGIN:tests -->Totals: **438 passed / 0 failed / 12 skipped / 2 not runnable** -- per-module table below, full detail in `docs/TEST_REPORT.md` and `docs/test_results.json`.
 
 | Module | Status | Ran | Failed | Skipped |
 |---|---|---|---|---|
@@ -72,6 +73,11 @@ Three environments exist for experiments: **emulated** (deterministic virtual-ti
 | `test_compare_tcplite` | pass | 13 | 0 | 0 |
 | `test_compare_validation` | pass | 7 | 0 | 0 |
 | `test_config` | not-runnable | 0 | 0 | 0 |
+| `test_exp_campaign` | pass | 25 | 0 | 0 |
+| `test_exp_conditions` | pass | 20 | 0 | 0 |
+| `test_exp_export` | pass | 22 | 0 | 0 |
+| `test_exp_predictions` | pass | 7 | 0 | 0 |
+| `test_exp_stats` | pass | 20 | 0 | 0 |
 | `test_kernel_wire_formats` | pass | 5 | 0 | 1 |
 | `test_live_kernel_lab` | pass | 12 | 0 | 0 |
 | `test_mip_agents` | pass | 24 | 0 | 0 |
@@ -139,6 +145,7 @@ comparison topology gives the correspondent direct links to the access networks.
 4. **Interface accepted nonsense as `ok`**: `duration_s=0`, negative rate, unknown interfaces, unordered moves, and payloads that exceed the MTU once tunnelled (100 % loss, status `ok`). Now `invalid` / `unsupported` with reasons.
 5. **QUIC adapter timer re-armed forever** at the same virtual instant (hang); simulator now raises on an event storm.
 6. **Documentation error**: the live testbed does *not* loop stale packets when only the mobile node's link end goes down (real kernel: ICMP host unreachable after ~3 s); it loops only if both ends are down. Both behaviours are now modelled (`link_semantics`).
+7. **(Stage 7) TcpLite retransmitted only the head segment on a timeout** although documented as go-back-N; invisible without random loss, but with 0.5 % loss delivery collapsed (52 % of probes undelivered). Fixed (all outstanding segments are resent); the Stage 5 matrix was rerun before/after: every handoff/loss/RTT metric and raw CSV is byte-identical, only internal TcpLite counters of the `stall-timeout` run changed. Regression coverage: `tests/test_exp_conditions.py::BackwardsCompatibility` and the loss runs in `test_exp_campaign.py`. TcpLite still has no fast retransmit/SACK/congestion control, so it is flagged `model_limit_note` under loss.
 
 ## 9. Known issues and limitations (prioritised)
 | # | Severity | Issue |
@@ -153,6 +160,9 @@ comparison topology gives the correspondent direct links to the access networks.
 | K8 | Low | Mobile IP is educational, not RFC 5944 compliant; the route-optimisation model is not Mobile IPv6 (both documented, with security limits) |
 | K9 | Low | No lock file (only `requirements-verified.txt` listing what the tests ran against); kernel-lab tests need Python ≥ 3.12 (`os.unshare`/`os.setns`) |
 | K10 | Low | Minor duplication between `mobility_sim.py` and `compare/probe_files.py` recorders |
+| K11 | Medium | Stage 7 results are simulator-generated: fixed link delays, independent per-packet loss, no jitter/queues; one topology, traffic load and handoff pattern; one-factor-at-a-time sweeps (no interactions) |
+| K12 | Medium | Stage 7: several metrics are identical in every replicate (the emulator is deterministic there); they are reported as deterministic differences, not as statistics. QUIC was not measured (aioquic missing); the 20-replicate standard campaign is defined (`config/experiments/stage7_standard.yaml`) but was not run |
+| K13 | Low | The Stage 6 model, applied to Stage 7 conditions, warns inconsistently (see `docs/EXPERIMENTS.md` §10); it was never validated on real data |
 
 ## 10. Dependencies
 Runtime: `requirements.txt` (fastapi, uvicorn, pydantic, pydantic-settings, numpy, pandas, scikit-learn, matplotlib, PyYAML). Dev: `requirements-dev.txt`

@@ -1,0 +1,23 @@
+# Stage 7 standard campaign: 20 replicates, wider sweeps. ~1,600 runs, ~25-30 minutes and ~330 MB of raw data on one core.
+# Not shipped (size); reproduce with:  make exp-standard
+name: stage7-standard
+base_seed: 20261028
+replicates: 20
+duration_s: 12.0
+rate_pps: 100.0
+payload: 64
+environment: emulated
+approaches: auto
+schedule:
+  first_move_s: [3.5, 4.5]
+  dwell_s: 3.0
+  dwell_jitter_s: 0.25
+sweeps:
+  latency_scale: [0.5, 2.0, 4.0]
+  loss_percent: [1, 2, 5]
+  ha_distance_ms: [25, 50, 100, 200]
+  detect_delay_ms: [100, 250]
+  dwell_s: [1.0, 2.0]
+  registration_loss_percent: [10, 30, 50]
+  ha_processing_ms: [50, 200]
+  old_link_hold_ms: [0, 300]

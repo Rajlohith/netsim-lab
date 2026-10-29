@@ -1,4 +1,4 @@
-# NetSim Lab — Stages 1–5: Foundation, Network Emulation, Traffic & Metrics, Basic Mobile IP, Mobility Comparison
+# NetSim Lab — Stages 1–7: Foundation, Network Emulation, Traffic & Metrics, Basic Mobile IP, Mobility Comparison, Handoff Prediction, Experiments & Analysis
 
 Scaffold for a network-emulation + ML project targeting **Zorin OS** and **Fedora Linux**.
 Stack: Python, FastAPI, React/JavaScript, Linux network namespaces + iproute2 + `tc netem`,
@@ -83,6 +83,21 @@ PYTHONPATH=backend python -m app.compare list                  # what can run wh
 PYTHONPATH=backend python -m app.compare matrix --out-dir data/results/comparison
 PYTHONPATH=backend python -m app.compare run --approach mip-mbb --hold-ms 100
 pip install aioquic                                            # enables the QUIC adapter (untested in the dev sandbox)
+```
+
+## Stage 7 — experiments and statistical analysis
+Replicated, reproducible comparison campaigns over every registered approach with configurable latency, packet loss, Home Agent distance,
+handoff timing and registration conditions; run table with seeds/versions/conditions, failed/incomplete/interrupted runs kept and reported,
+medians with exact confidence intervals, matched-pair tests with Holm correction, CSV/JSON/Markdown exports, charts and Stage 6 predictions
+recorded next to the measurements. All values are simulator-generated. Full guide: [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md); shipped
+results: `examples/experiments/stage7/analysis/REPORT.md`.
+```bash
+PYTHONPATH=backend python -m app.compare plan --config config/experiments/stage7_example.yaml        # design, no run
+PYTHONPATH=backend python -m app.compare campaign --config config/experiments/stage7_example.yaml \
+        --out-dir data/experiments/stage7-example --predict-model examples/ml/stage6/model             # ~15-35 min on one core; resumable
+PYTHONPATH=backend python -m app.compare analyze examples/experiments/stage7                           # statistics from saved results
+PYTHONPATH=backend python -m app.compare plots examples/experiments/stage7                             # charts
+PYTHONPATH=backend python -m app.compare reproduce examples/experiments/stage7 --sample 10             # byte-for-byte re-run check
 ```
 
 ## Project status and tests

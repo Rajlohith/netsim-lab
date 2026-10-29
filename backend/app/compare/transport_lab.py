@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 
 from ..mobileip.simnet import Sim, build_from_topology
+from ..netem.conditions import apply_conditions
 from ..netem.topology_config import load_config
 from ..traffic import wire
 from .apps import StreamProbeClient, StreamProbeServer
@@ -40,7 +41,8 @@ class TransportLab:
         self.run_dir = Path(out_dir) / spec.scenario_id / spec.run_id
         self.run_dir.mkdir(parents=True)
         self.sim = Sim()
-        self.cfg = load_config(spec.topology)
+        self.cfg = apply_conditions(load_config(spec.topology), spec.conditions)
+        self.sim.loss_seed = spec.conditions.seed
         self.nodes = build_from_topology(self.sim, self.cfg)
         self.cn, self.mn = self.nodes["cn"], self.nodes["mn"]
         self.cn_addr = next(iter(self.cn.ifaces.values()))[0].ip
