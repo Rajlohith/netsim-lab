@@ -1,0 +1,8 @@
+{
+  "approach": "mip-mbb",
+  "handoff_mode": "mbb",
+  "label": "example: make-before-break under 2% loss, with predictions",
+  "predict": true,
+  "scenario": "lossy-access",
+  "seed": 7
+}

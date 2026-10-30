@@ -1,15 +1,27 @@
-# Architecture (through Stage 5)
+# Architecture (through Stage 8)
 
 ```
 netsim-lab/
 ├── backend/app/
-│   ├── main.py, config.py, api/     FastAPI (unprivileged), /api/health
+│   ├── main.py, config.py           FastAPI app factory (service started by the lifespan handler), settings (Stage 1)
+│   ├── api/                         Stage 8 HTTP layer ONLY (docs/API.md): schemas.py (pydantic), errors.py (one error envelope),
+│   │   │                            deps.py (service/auth), health.py, routes/{catalog,experiments}.py
+│   ├── services/                    Stage 8 business logic, NO FastAPI/pydantic import (unit-testable anywhere)
+│   │   ├── settings.py errors.py    NETSIM_API_* settings (plain dataclass), service errors with an HTTP status hint
+│   │   ├── catalog.py model_registry.py   approaches/scenarios (config/api/scenarios.yaml), verified model bundles
+│   │   ├── validation.py            whitelist + limits + the runner's own check() -> structured issues
+│   │   ├── store.py                 SQLite: state machine, duplicate-active UNIQUE index, idempotency, transition log
+│   │   ├── jobs.py                  scheduler thread: queue, concurrency, cancel, timeout, recovery, retention
+│   │   ├── process_launcher.py      ONLY process spawn of the API (fixed argv, no shell, own process group)
+│   │   ├── worker.py                `python -m app.services.worker <job dir>`: run_experiment (+ annotate_run) in its own process
+│   │   ├── results.py exports.py    read finished runs from files; JSON/CSV/ZIP exports
+│   │   └── experiments.py           ExperimentService facade used by the routes
 │   ├── netem/                       Stage 2: network emulation
 │   │   ├── topology_config.py       YAML -> validated dataclasses (NetemSpec, Link, Route, ...)
 │   │   ├── names.py                 namespace / interface naming rules
 │   │   ├── plan.py                  pure command builders (no execution)
 │   │   ├── safety.py                allow-list applied to every argv
-│   │   ├── runner.py                ONLY place that spawns processes (sudo -n per command)
+│   │   ├── runner.py                ONLY place that spawns privileged processes (sudo -n per command)
 │   │   ├── topology.py              create / destroy / status / shape / ping orchestration
 │   │   ├── measure.py               ping output parser
 │   │   └── cli.py, __main__.py      python -m app.netem <command>

@@ -82,3 +82,14 @@ exp-reproduce:    ## Stage 7: re-run a sample of saved runs and check they are b
 	PYTHONPATH=backend $(PY) -m app.compare reproduce $(DIR) --sample 10
 exp-test:         ## Stage 7 tests (~3 min)
 	cd backend && PYTHONPATH=. $(PY) -m unittest tests.test_exp_stats tests.test_exp_conditions tests.test_exp_campaign tests.test_exp_export tests.test_exp_predictions
+
+.PHONY: api-test api-openapi api-smoke
+api-test:         ## Stage 8 API tests (service layer ~1 min; HTTP tests need fastapi+httpx)
+	cd backend && PYTHONPATH=. $(PY) -m unittest tests.test_api_validation tests.test_api_store tests.test_api_jobs tests.test_api_results tests.test_api_http
+api-openapi:      ## regenerate schemas/api/openapi.json from the code (needs fastapi)
+	$(PY) scripts/export_openapi.py
+api-smoke:        ## start the job manager without HTTP, run one real experiment through the worker, print the summary
+	PYTHONPATH=backend NETSIM_API_DATA_DIR=$${TMPDIR:-/tmp}/netsim-api-smoke $(PY) scripts/api_smoke.py
+.PHONY: api-examples
+api-examples:     ## regenerate examples/api/stage8 from real runs (add --check via: $(PY) scripts/generate_api_examples.py --check)
+	PYTHONPATH=backend $(PY) scripts/generate_api_examples.py

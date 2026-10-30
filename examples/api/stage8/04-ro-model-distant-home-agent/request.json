@@ -1,0 +1,6 @@
+{
+  "approach": "ro-model",
+  "label": "example: route-optimisation model, distant Home Agent",
+  "scenario": "distant-home-agent",
+  "seed": 5
+}

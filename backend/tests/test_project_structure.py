@@ -33,11 +33,28 @@ def test_analysis_is_still_a_placeholder_and_ml_is_implemented():
 
 
 def test_subprocess_and_sudo_confined_to_runner():
-    """Only netem/runner.py may spawn processes or mention sudo (safety.py/cli/docs strings excepted)."""
-    allowed = {"runner.py"}
-    for f in (ROOT / "backend/app").rglob("*.py"):
-        if f.name in allowed:
-            continue
+    """Only the reviewed modules below may spawn processes: netem/runner.py (privileged namespace commands, Stage 2) and, since Stage 8,
+    services/process_launcher.py (the fixed-argv experiment worker). Everything else must not import subprocess or call os.system."""
+    allowed = {"netem/runner.py", "compare/runner.py", "services/process_launcher.py"}   # compare/runner.py spawns nothing; it is listed only because the
+    for f in (ROOT / "backend/app").rglob("*.py"):                                        # pre-Stage-8 test matched on the file NAME runner.py
+        rel = f.relative_to(ROOT / "backend/app").as_posix()
         text = f.read_text()
-        assert "import subprocess" not in text and "subprocess." not in text, f
         assert "os.system" not in text, f
+        if rel in allowed:
+            continue
+        assert "import subprocess" not in text and "subprocess." not in text, f
+
+
+def test_api_launcher_is_fixed_argv_and_never_privileged():
+    """Stage 8: the API can start exactly one kind of process, without a shell, without sudo, and nothing else in api/services spawns or forks."""
+    app = ROOT / "backend/app"
+    launcher = (app / "services/process_launcher.py").read_text()
+    assert "shell=False" in launcher and "shell=True" not in launcher
+    assert "start_new_session=True" in launcher
+    for f in list((app / "services").rglob("*.py")) + list((app / "api").rglob("*.py")):
+        t = f.read_text()
+        assert '"sudo"' not in t and "'sudo'" not in t, f                                  # never an argv element
+        assert "shell=True" not in t, f
+        assert "os.fork" not in t and "os.exec" not in t and "os.popen" not in t, f
+        if f.name != "process_launcher.py":
+            assert "Popen" not in t and "multiprocessing" not in t, f

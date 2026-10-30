@@ -1,0 +1,3 @@
+approach,scenario,environment,event_id,detail,recovered,handoff_latency_ms,service_gap_ms,interruption_ms,loss_packets,rtt_before_ms,rtt_after_ms,signalling_messages,signalling_bytes,retransmits,failures
+mip-mbb,lossy-access,emulated,handoff-1,eth-a -> eth-b,true,91.0,30.0,,0,33.0,67.0,2,120,0,
+mip-mbb,lossy-access,emulated,handoff-2,eth-b -> eth-a,true,51.0,20.0,20.0,1,67.0,33.0,2,120,0,

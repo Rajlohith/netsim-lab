@@ -1,12 +1,14 @@
-# PROJECT_STATUS — mobile-ip-handoff (netsim-lab), state after Stage 7 (experiment and analysis framework)
+# PROJECT_STATUS — mobile-ip-handoff (netsim-lab), state after Stage 8 (backend API)
 
-Generated from an actual run: <!-- BEGIN:stamp -->**2026-10-29 01:40:21Z**, git commit `None`, Python 3.12.3, Linux-6.18.44-fc-v185-x86_64-with-glibc2.39.<!-- END:stamp -->
-Stage 7 (replicated experiments, statistics, exports, charts; `backend/app/compare/{campaign,analysis,stats,plots,reproduce}.py`, `docs/EXPERIMENTS.md`) is implemented, its tests ran (section 5) and a 372-run example campaign with analysis ships in `examples/experiments/stage7/`. Stage 6 (handoff-degradation prediction, `backend/app/ml/`, `docs/HANDOFF_PREDICTION.md`) is implemented and its tests ran. The dashboard has **not** been started. Nothing here is marked complete unless it was exercised; "written but never run" is said explicitly.
+Generated from an actual run: <!-- BEGIN:stamp -->**2026-10-29 21:01:51Z**, git base commit `b5d53a4` (+ uncommitted Stage 8 changes), Python 3.12.3, Linux-6.18.44-fc-v185-x86_64-with-glibc2.39, uid 0 (the API tests therefore set `allow_root`; the server default refuses root).<!-- END:stamp -->
+**Stage 8 (backend API; `backend/app/services/`, `backend/app/api/`, `docs/API.md`) is implemented: its service layer (validation, SQLite store, job manager with real worker processes, cancellation, recovery, exports, prediction access) was run and tested end to end (section 5); the FastAPI routing layer was written but could NOT be executed here (FastAPI/pydantic/httpx are not installed, no network) - its 13 HTTP tests are skipped, not passed.** Stage 7 (replicated experiments, statistics, exports, charts; `backend/app/compare/{campaign,analysis,stats,plots,reproduce}.py`, `docs/EXPERIMENTS.md`) is implemented, its tests ran (section 5) and a 372-run example campaign with analysis ships in `examples/experiments/stage7/`. Stage 6 (handoff-degradation prediction, `backend/app/ml/`, `docs/HANDOFF_PREDICTION.md`) is implemented and its tests ran. The dashboard has **not** been started. Nothing here is marked complete unless it was exercised; "written but never run" is said explicitly.
 
 ## 1. Headline
 * Stages 1–5 are built: project foundation, Linux network-namespace lab, UDP traffic/metrics tools, an educational Mobile IP, and a
   five-approach comparison framework.
-<!-- BEGIN:headline -->* **Tests: 450 ran -> 438 passed, 0 failed, 12 skipped; 2 modules not runnable** (`test_api`, `test_config`: FastAPI / pydantic / pytest are not installed in the sandbox, so the Stage 1 API and settings tests have **never been executed**).<!-- END:headline -->
+* **Stage 8 verification split:** service layer **run and tested** (82 new tests that ran and passed: validation 22, store 11, jobs 31, results/exports/models/auth 18); HTTP layer (`app/main.py`, `app/api/*`) **syntax-checked only** (`py_compile`), `test_api_http` = 13 tests **skipped**. First thing to do on a machine with the dependencies: `make api-test`.
+* **Upload note:** the received `netsim-lab.zip` had no `examples/` directory (192 files tracked in its git history were deleted in the working tree, and the Stage 7 campaign data - raw runs, analysis tables, charts - was never in git because `.gitignore` ignores `*.csv/*.json/*.png`). Tracked files were restored with `git checkout -- examples`; **the Stage 7 campaign data (372 runs) is still missing** and was not regenerated (`make exp-example`, ~15-35 min). `.gitignore` now re-includes `examples/` and `schemas/`.
+<!-- BEGIN:headline -->* **Tests: 546 ran -> 521 passed, 0 failed, 25 skipped; 2 modules not runnable** (`test_api`, `test_config`: FastAPI / pydantic / pytest are not installed in the sandbox, so the Stage 1 API and settings tests have **never been executed**; the 13 skips of `test_api_http` are the same cause).<!-- END:headline -->
 * **Could not be verified in this environment** (no network, no iproute2/`tc`/`ping`/`sudo`; kernel lacks `ipip`/`gre`/`dummy`, no visible `netem`):
   real IP-in-IP tunnels, `tc netem` delay/loss/rate, the `ip`/`tc` command-line syntax, the `setpriv` launch of daemons, the QUIC adapter against the
   real `aioquic`, the FastAPI app, the frontend (`npm install` impossible), and everything under `NETSIM_RUN_PRIVILEGED=1`.
@@ -44,6 +46,7 @@ Three environments exist for experiments: **emulated** (deterministic virtual-ti
 | 3 Traffic & metrics | **verified** | real UDP sockets on loopback, SIGTERM/SIGKILL tests, **real kernel namespaces** |
 | 4 Basic Mobile IP | protocol **verified**; data plane **simulated**; kernel tunnels **untested** | unit tests, real UDP on loopback, emulator |
 | 5 Comparison | 4 of 5 approaches **verified in the emulator**; QUIC **untested** | see section 4 |
+| 8 Backend API | service layer **implemented, run and tested** (real worker processes, real experiments, SQLite, cancellation, restart recovery, exports); FastAPI routes **implemented but never executed** | `tests/test_api_{validation,store,jobs,results}.py` ran; `test_api_http.py` skipped (no fastapi/httpx) |
 | 7 Experiments & analysis | **implemented and run end to end**: 372-run emulated campaign (12 replicates/cell), statistics, CSV/JSON/Markdown exports, charts, byte-for-byte reproduction check; QUIC and live environments **not run** | `tests/test_exp_*.py` (statistics checked against known values/coverage simulations; fault-injected failed/interrupted/crashed runs; regeneration from saved results), `docs/EXPERIMENTS.md` §10 |
 | 6 Handoff prediction | pipeline **implemented and run end to end on simulated data**; models trained and evaluated on held-out scenario families (shipped in `examples/ml/stage6/`); **no predictive skill beyond generator regularities** (see `docs/HANDOFF_PREDICTION.md` section 7); never run on real-network data | 63 new unit/integration tests (real emulator runs), reproducibility check (rerun from the shipped dataset gives identical results.json except timestamp) |
 
@@ -57,11 +60,16 @@ Three environments exist for experiments: **emulated** (deterministic virtual-ti
 | QUIC connection migration | **Untested** | adapter written against aioquic's sans-IO API; glue logic exercised on a **stub** (`tests/stubs`, labelled) | **never run against real aioquic** (not installable here); expect fixes on first run; applies only to QUIC applications |
 
 ## 5. Test results (generated)
-<!-- BEGIN:tests -->Totals: **438 passed / 0 failed / 12 skipped / 2 not runnable** -- per-module table below, full detail in `docs/TEST_REPORT.md` and `docs/test_results.json`.
+<!-- BEGIN:tests -->Totals: **521 passed / 0 failed / 25 skipped / 2 not runnable** -- per-module table below, full detail in `docs/TEST_REPORT.md` and `docs/test_results.json`.
 
 | Module | Status | Ran | Failed | Skipped |
 |---|---|---|---|---|
 | `test_api` | not-runnable | 0 | 0 | 0 |
+| `test_api_http` | pass | 13 | 0 | 13 |
+| `test_api_jobs` | pass | 31 | 0 | 0 |
+| `test_api_results` | pass | 18 | 0 | 0 |
+| `test_api_store` | pass | 11 | 0 | 0 |
+| `test_api_validation` | pass | 22 | 0 | 0 |
 | `test_compare_apps` | pass | 8 | 0 | 0 |
 | `test_compare_emulated` | pass | 7 | 0 | 0 |
 | `test_compare_interface` | pass | 17 | 0 | 0 |
@@ -99,7 +107,7 @@ Three environments exist for experiments: **emulated** (deterministic virtual-ti
 | `test_netem_measure_cli` | pass | 9 | 0 | 0 |
 | `test_netem_plan` | pass | 7 | 0 | 0 |
 | `test_netem_safety` | pass | 4 | 0 | 0 |
-| `test_project_structure` | pass | 3 | 0 | 0 |
+| `test_project_structure` | pass | 4 | 0 | 0 |
 | `test_scientific_stack` | pass | 1 | 0 | 0 |
 | `test_traffic_loopback` | pass | 7 | 0 | 0 |
 | `test_traffic_metrics` | pass | 23 | 0 | 0 |
@@ -107,10 +115,11 @@ Three environments exist for experiments: **emulated** (deterministic virtual-ti
 | `test_traffic_termination` | pass | 7 | 0 | 0 |
 | `test_traffic_wire_schema` | pass | 6 | 0 | 0 |
 
-Why tests were skipped (all environmental):
+Skipped tests and why:
 
-| Modules | Reason |
+| Module | Reason |
 |---|---|
+| `test_api_http` | fastapi/httpx not installed |
 | `test_compare_quic` | aioquic not installed (pip install aioquic) |
 | `test_kernel_wire_formats` | ipip link creation result code 95 (0 means this kernel CAN do tunnels) |
 | `test_mip_live` | set NETSIM_RUN_PRIVILEGED=1 to run live Mobile IP tests |
@@ -146,12 +155,19 @@ comparison topology gives the correspondent direct links to the access networks.
 5. **QUIC adapter timer re-armed forever** at the same virtual instant (hang); simulator now raises on an event storm.
 6. **Documentation error**: the live testbed does *not* loop stale packets when only the mobile node's link end goes down (real kernel: ICMP host unreachable after ~3 s); it loops only if both ends are down. Both behaviours are now modelled (`link_semantics`).
 7. **(Stage 7) TcpLite retransmitted only the head segment on a timeout** although documented as go-back-N; invisible without random loss, but with 0.5 % loss delivery collapsed (52 % of probes undelivered). Fixed (all outstanding segments are resent); the Stage 5 matrix was rerun before/after: every handoff/loss/RTT metric and raw CSV is byte-identical, only internal TcpLite counters of the `stall-timeout` run changed. Regression coverage: `tests/test_exp_conditions.py::BackwardsCompatibility` and the loss runs in `test_exp_campaign.py`. TcpLite still has no fast retransmit/SACK/congestion control, so it is flagged `model_limit_note` under loss.
+8. **(Stage 8) Terminal status visible before cleanup finished**: a cancelled experiment was marked `cancelled` first and its half-written outputs/`partial_outputs` flag were fixed afterwards, so a client polling at that instant saw a stale flag and leftover files. Found by `test_cancelling_a_real_long_experiment...` under CPU load; cleanup now runs before the terminal transition.
 
 ## 9. Known issues and limitations (prioritised)
 | # | Severity | Issue |
 |---|---|---|
 | K1 | High | QUIC adapter never run against real aioquic; expect API mismatches |
 | K2 | High | Live path unverified: `ip`/`tc` syntax, `setpriv`, daemons in namespaces, **kernel ipip tunnels** (this kernel cannot create them), `tc netem` |
+| K14 | High | **Stage 8 FastAPI layer never executed** (routes, exception handlers, lifespan, CORS, bearer-token dependency, pydantic request models): only syntax-checked; `/openapi.json` was not generated (`schemas/api/openapi.json` is intentionally absent). Possible failure points: pydantic strict-type unions, `Header(alias=...)`, `FileResponse` background cleanup |
+| K15 | Medium | API runs one process per data directory (flock), no multi-host workers, no per-client rate limits, no TLS, optional single bearer token only; only single experiments (no campaigns) are exposed; predictions only for experiments created with `predict: true` |
+| K16 | Medium | API experiment runs are emulated or real loopback TCP only; progress is phase-level (no percentage); no live metric stream exists, so no WebSocket was built |
+| K17 | Medium | Stage 7 example campaign data missing from the received upload (see headline) |
+| K18 | Low | Worker resource limits use `RLIMIT_FSIZE/CPU` and a wall-clock timeout only (no memory limit); worker cancellation/recovery use POSIX process groups and `/proc` (Linux only) |
+| K19 | Low | Tests that start real worker processes are timing-based (they poll with 30-90 s timeouts); they passed repeatedly, one race in the code was found by them under load (defect 8) |
 | K3 | High | Stage 1 FastAPI app, settings tests (pytest-style, need fixtures) and the frontend have never been run |
 | K4 | Medium | Emulator is a model: no queues, bandwidth, ARP, ICMP, fragmentation; TcpLite lacks congestion control/SACK/fast retransmit |
 | K5 | Medium | Live make-before-break uses a single tunnel device (benefit limited to link overlap) |

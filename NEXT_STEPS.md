@@ -1,4 +1,17 @@
-# NEXT_STEPS — state after Stage 7 (experiment and analysis framework)
+# NEXT_STEPS — state after Stage 8 (backend API)
+
+**Stage 8 is implemented** (`backend/app/services/`, `backend/app/api/`, `docs/API.md`). Everything below was verified only as stated in
+`STAGE8_MANIFEST.md` / `PROJECT_STATUS.md`. **P0 on your machine:** `make setup && make api-test && make api-openapi`. The FastAPI layer (routes, error
+handlers, lifespan, CORS, auth dependency) could **not be executed** where this stage was built (FastAPI/pydantic/httpx/pytest not installed, no
+network); `backend/tests/test_api_http.py` (13 tests) was written for it and is skipped until those packages exist. Fix whatever it finds before building on the API.
+Then: (1) run `uvicorn app.main:app` and click through `/docs`; (2) generate and commit `schemas/api/openapi.json`; (3) the dashboard can now be built
+on `/api` (it is still not started; poll `/api/experiments/{id}/transitions`, no WebSocket exists because there are no live metrics);
+(4) open design items: per-client rate limiting, TLS/reverse proxy, multi-process workers sharing one database (currently one API process per data
+directory, enforced by a lock), campaigns through the API (only single experiments are exposed), on-demand predictions for runs created without `predict`.
+
+---
+
+# (Stage 7 note)
 
 **Stage 7 is implemented** (`docs/EXPERIMENTS.md`, results in `examples/experiments/stage7/`). Open items from it: (1) run `make exp-standard` (20 replicates, wider sweeps, ~30 min) and install `aioquic` so QUIC is measured; (2) the emulator makes many metrics deterministic: add jitter/queueing (or live runs, `data_origin = real-kernel-namespaces`) before drawing conclusions about variability; (3) TcpLite needs fast retransmit/SACK before TCP-under-loss results mean anything about real TCP; (4) two-factor designs to estimate interactions; (5) the dashboard (still postponed) can read `analysis/*.json` as its data contract.
 

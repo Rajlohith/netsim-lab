@@ -1,4 +1,4 @@
-# NetSim Lab — Stages 1–7: Foundation, Network Emulation, Traffic & Metrics, Basic Mobile IP, Mobility Comparison, Handoff Prediction, Experiments & Analysis
+# NetSim Lab — Stages 1–8: Foundation, Network Emulation, Traffic & Metrics, Basic Mobile IP, Mobility Comparison, Handoff Prediction, Experiments & Analysis, Backend API
 
 Scaffold for a network-emulation + ML project targeting **Zorin OS** and **Fedora Linux**.
 Stack: Python, FastAPI, React/JavaScript, Linux network namespaces + iproute2 + `tc netem`,
@@ -99,6 +99,19 @@ PYTHONPATH=backend python -m app.compare analyze examples/experiments/stage7    
 PYTHONPATH=backend python -m app.compare plots examples/experiments/stage7                             # charts
 PYTHONPATH=backend python -m app.compare reproduce examples/experiments/stage7 --sample 10             # byte-for-byte re-run check
 ```
+
+## Stage 8 — backend API
+FastAPI backend that starts experiments as **managed background jobs** (separate worker processes, SQLite metadata, queue, concurrency limit,
+duplicate-run prevention, safe cancellation, restart recovery), and serves status, metrics, handoff events, Stage 6 predictions, history and
+JSON/CSV/ZIP exports of the real results. Polling, not WebSocket (runs produce metrics only when they finish). The privileged `live`
+environment is never reachable through the API. Full reference: [docs/API.md](docs/API.md).
+```bash
+make run-api                                  # http://127.0.0.1:8000/docs  (unprivileged)
+curl -s -X POST localhost:8000/api/experiments -H 'content-type: application/json' -d '{"approach":"mip-basic","scenario":"lossy-access","seed":1}'
+make api-smoke                                # same service layer without HTTP (no FastAPI needed): one real run through a worker process
+make api-test                                 # Stage 8 tests (the HTTP tests need fastapi + httpx; they are skipped otherwise)
+```
+Settings: `NETSIM_API_*` variables in `.env.example`. Existing CLI workflows (`python -m app.compare ...`) are unchanged.
 
 ## Project status and tests
 Read **[PROJECT_STATUS.md](PROJECT_STATUS.md)** (what is implemented, simulated or untested, test results, known issues) and

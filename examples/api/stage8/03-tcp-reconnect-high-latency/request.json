@@ -1,0 +1,6 @@
+{
+  "approach": "tcp-reconnect",
+  "label": "example: TCP reconnection, doubled delays",
+  "scenario": "high-latency",
+  "seed": 3
+}

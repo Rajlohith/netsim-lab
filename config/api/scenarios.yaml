@@ -1,0 +1,54 @@
+# Network scenarios offered by the API (GET /api/scenarios).
+#
+# A scenario is a NAMED SET OF EXPERIMENT PARAMETERS (handoff schedule + network conditions) that is applied on top of the
+# defaults of ExperimentSpec (backend/app/compare/experiment.py); fields sent explicitly in a request override the scenario.
+# They are the one-factor-at-a-time levels of the Stage 7 example campaign (config/experiments/stage7_example.yaml), so API runs
+# and campaign runs are comparable. The simulator-generated nature of the results does not change with the scenario.
+#
+# parameters: duration_s, detect_delay_ms, moves [[seconds, interface], ...], conditions {latency_scale, loss_percent,
+#             ha_distance_ms, registration_loss_percent, ha_processing_ms}
+# requires_home_agent: the setting can only act through the Home Agent / Mobile IP registration; for approaches without one the
+#             run still executes and the response carries a warning that the setting has no effect (not an error).
+scenarios:
+  - id: baseline
+    title: Baseline
+    description: Defaults of the common experiment interface - two handoffs (eth-a -> eth-b at 4 s, back at 7 s), topology link delays unchanged, no random loss.
+    parameters: {}
+
+  - id: high-latency
+    title: Doubled link delays
+    description: Every link delay of the topology multiplied by 2.
+    parameters:
+      conditions: {latency_scale: 2.0}
+
+  - id: lossy-access
+    title: 2 % loss on the access links
+    description: Independent random packet loss of 2 % per direction on both access links (ana-mn, anb-mn), applied to data, echoes and signalling.
+    parameters:
+      conditions: {loss_percent: 2}
+
+  - id: distant-home-agent
+    title: Home Agent 100 ms further away
+    description: +100 ms one-way delay on every link that touches the Home Agent.
+    requires_home_agent: true
+    parameters:
+      conditions: {ha_distance_ms: 100}
+
+  - id: slow-movement-detection
+    title: Movement detection takes 100 ms
+    description: The mobile node needs 100 ms (instead of 20 ms) to notice that its link changed.
+    parameters:
+      detect_delay_ms: 100
+
+  - id: rapid-second-handoff
+    title: Rapid second handoff
+    description: The second handoff follows the first after 1.5 s instead of 3 s (moves at 4.0 s and 5.5 s).
+    parameters:
+      moves: [[4.0, eth-b], [5.5, eth-a]]
+
+  - id: lossy-registration
+    title: 30 % of Mobile IP registration messages lost
+    description: Extra loss of 30 % applied only to Mobile IP registration requests and replies, on top of any link loss.
+    requires_home_agent: true
+    parameters:
+      conditions: {registration_loss_percent: 30}

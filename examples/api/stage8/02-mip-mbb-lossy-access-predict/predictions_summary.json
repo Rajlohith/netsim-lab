@@ -1,0 +1,29 @@
+{
+  "alarms": 0,
+  "decision_points": 39,
+  "experiment_id": "api-mip-mbb-emulated-lossy-access/run-1",
+  "files": {
+    "csv": "handoff_predictions.csv"
+  },
+  "ground_truth_episodes": [],
+  "handoff_outcomes": [
+    {
+      "event_id": "handoff-1",
+      "onset_ns": 14000000000,
+      "outcome": "benign"
+    },
+    {
+      "event_id": "handoff-2",
+      "onset_ns": 17000000000,
+      "outcome": "benign"
+    }
+  ],
+  "model_name": "random_forest",
+  "model_version": "1.0.0+debc5c7f7.c518c666a",
+  "note": "This run is not in the training split of this model (it may be in validation/test, or unseen).",
+  "provenance": "Predictions of SIMULATED handoff degradation from simulated network measurements (RTT, probe loss, jitter, delivered throughput, handoff history). Not radio signal strength; not valid for real networks.",
+  "run_dir": "run-1",
+  "run_in_training_split": false,
+  "schema_version": 1,
+  "threshold": 0.4897337883274953
+}
