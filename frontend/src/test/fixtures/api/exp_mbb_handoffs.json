@@ -1,0 +1,61 @@
+{
+  "approach": "mip-mbb",
+  "count": 2,
+  "environment": "emulated",
+  "experiment_id": "exp-33735f5023a6bc9f",
+  "handoffs": [
+    {
+      "detail": "eth-a -> eth-b",
+      "event_id": "handoff-1",
+      "failures": [],
+      "handoff_latency_ms": 91.0,
+      "interruption_ms": null,
+      "loss_packets": 0,
+      "recovered": true,
+      "retransmits": 0,
+      "rtt_after_ms": 67.0,
+      "rtt_before_ms": 33.0,
+      "service_gap_ms": 30.0,
+      "signalling_bytes": 120,
+      "signalling_messages": 2
+    },
+    {
+      "detail": "eth-b -> eth-a",
+      "event_id": "handoff-2",
+      "failures": [],
+      "handoff_latency_ms": 51.0,
+      "interruption_ms": 20.0,
+      "loss_packets": 1,
+      "recovered": true,
+      "retransmits": 0,
+      "rtt_after_ms": 33.0,
+      "rtt_before_ms": 67.0,
+      "service_gap_ms": 20.0,
+      "signalling_bytes": 120,
+      "signalling_messages": 2
+    }
+  ],
+  "provenance": {
+    "analytic_values": [],
+    "clock": "simulated virtual time (deterministic, no real delays)",
+    "data_origin": "simulated",
+    "is_live": false,
+    "network": "app.mobileip.simnet discrete-event emulator (no queues, bandwidth or kernel stack)",
+    "note": "Produced by the discrete-event simulator in virtual time and read from files AFTER the run finished. Not live, not a real network.",
+    "timing_comparable_with_other_environments": true
+  },
+  "scenario": "lossy-access",
+  "source_file": "comparison_metrics.json (handoffs)",
+  "status": "completed",
+  "summary": {
+    "count": 2,
+    "handoff_latency_ms_max": 91.0,
+    "handoff_latency_ms_mean": 71.0,
+    "loss_packets_total": 1,
+    "service_gap_ms_max": 30.0,
+    "service_gap_ms_mean": 25.0,
+    "signalling_bytes_total": 240,
+    "signalling_messages_total": 4
+  },
+  "unavailable_reason": null
+}

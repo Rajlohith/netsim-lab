@@ -1,0 +1,148 @@
+{
+  "approach": "mip-basic",
+  "cancel_requested": false,
+  "configuration": {
+    "approach": "mip-basic",
+    "conditions": {
+      "ha_distance_ms": 0.0,
+      "ha_processing_ms": 1.0,
+      "latency_scale": 1.0,
+      "loss_percent": 0.0,
+      "registration_loss_percent": 0.0
+    },
+    "detect_delay_ms": 20.0,
+    "duration_s": 10.0,
+    "environment": "emulated",
+    "handoff_mode": "bbm",
+    "initial_iface": "eth-a",
+    "label": "fixture: mip-basic baseline",
+    "moves": [
+      {
+        "at_s": 4.0,
+        "interface": "eth-b"
+      },
+      {
+        "at_s": 7.0,
+        "interface": "eth-a"
+      }
+    ],
+    "old_link_hold_ms": 100.0,
+    "payload": 64,
+    "predict": false,
+    "prediction_algorithm": null,
+    "prediction_model": null,
+    "rate_pps": 100.0,
+    "scenario": "baseline",
+    "seed": 1,
+    "tcp_detect": "event"
+  },
+  "created_at": "2026-10-30T11:10:48.357484Z",
+  "data": {
+    "is_live": false,
+    "live_metrics_available": false,
+    "note": "Experiments run in the simulator's virtual time (or on loopback sockets) and their metrics are produced when the run ends. There are no live or partial metrics: everything served is read from files after completion.",
+    "origin": "simulated"
+  },
+  "environment": "emulated",
+  "error": null,
+  "finished_at": "2026-10-30T11:10:55.284669Z",
+  "id": "exp-b598ce85b2251b3d",
+  "label": "fixture: mip-basic baseline",
+  "links": {
+    "cancel": "/api/experiments/exp-b598ce85b2251b3d/cancel",
+    "events": "/api/experiments/exp-b598ce85b2251b3d/events",
+    "export": "/api/experiments/exp-b598ce85b2251b3d/export",
+    "handoffs": "/api/experiments/exp-b598ce85b2251b3d/handoffs",
+    "metrics": "/api/experiments/exp-b598ce85b2251b3d/metrics",
+    "predictions": "/api/experiments/exp-b598ce85b2251b3d/predictions",
+    "self": "/api/experiments/exp-b598ce85b2251b3d",
+    "transitions": "/api/experiments/exp-b598ce85b2251b3d/transitions"
+  },
+  "partial_outputs": false,
+  "prediction": {
+    "algorithm": null,
+    "error": null,
+    "model": null,
+    "requested": false,
+    "status": "not_requested"
+  },
+  "progress": {
+    "fraction": 1.0,
+    "note": null,
+    "phase": "done",
+    "queue_position": null,
+    "step": null,
+    "steps_total": null
+  },
+  "resolved_spec": {
+    "approach": "mip-basic",
+    "conditions": {
+      "ha_distance_ms": 0.0,
+      "ha_processing_ms": 1.0,
+      "latency_scale": 1.0,
+      "link_delay_ms": {},
+      "loss_links": [
+        "ana-mn",
+        "anb-mn"
+      ],
+      "loss_percent": 0.0,
+      "registration_loss_percent": 0.0,
+      "seed": 1
+    },
+    "detect_delay_ms": 20.0,
+    "duration_s": 10.0,
+    "environment": "emulated",
+    "handoff_mode": "bbm",
+    "initial_iface": "eth-a",
+    "lifetime_s": 30,
+    "link_semantics": "both-ends",
+    "moves": [
+      [
+        4.0,
+        "eth-b"
+      ],
+      [
+        7.0,
+        "eth-a"
+      ]
+    ],
+    "old_link_hold_ms": 100.0,
+    "payload": 64,
+    "probe_start_s": 0.5,
+    "rate_pps": 100.0,
+    "ro_lifetime_s": 40,
+    "run_id": "run-1",
+    "scenario_id": "api-mip-basic-emulated-baseline",
+    "seed": 1,
+    "tcp_detect": "event",
+    "tcp_detect_timeout_s": 0.5,
+    "topology": "config/topology_ro.yaml",
+    "variant": ""
+  },
+  "result": {
+    "available": true,
+    "summary": {
+      "all_handoffs_recovered": true,
+      "data_origin": "simulated",
+      "failure_events": 0,
+      "goodput_bps": 50336.776,
+      "handoff_count": 2,
+      "handoff_latency_ms_max": 91.0,
+      "handoff_latency_ms_mean": 71.0,
+      "loss_is_exact": true,
+      "loss_packets_total": 16,
+      "loss_percent": 1.684211,
+      "mobility_overhead_bytes_per_packet": 20.0,
+      "packets_lost": 16,
+      "packets_sent": 950,
+      "rtt_p50_ms": 33.0,
+      "run_status": "complete",
+      "service_gap_ms_max": 110.0,
+      "service_gap_ms_mean": 90.0
+    }
+  },
+  "scenario": "baseline",
+  "started_at": "2026-10-30T11:10:48.359915Z",
+  "status": "completed",
+  "updated_at": "2026-10-30T11:10:55.284669Z"
+}

@@ -1,0 +1,374 @@
+{
+  "links": [
+    {
+      "a": {
+        "address": "10.10.1.2/24",
+        "ifname": "eth-ha",
+        "netem": {
+          "delay_ms": 5,
+          "jitter_ms": 0.0,
+          "limit_packets": null,
+          "loss_percent": 0.0,
+          "rate_mbit": null
+        },
+        "node": "cn"
+      },
+      "b": {
+        "address": "10.10.1.1/24",
+        "ifname": "eth-cn",
+        "netem": {
+          "delay_ms": 5,
+          "jitter_ms": 0.0,
+          "limit_packets": null,
+          "loss_percent": 0.0,
+          "rate_mbit": null
+        },
+        "node": "ha"
+      },
+      "name": "cn-ha"
+    },
+    {
+      "a": {
+        "address": "10.10.2.1/24",
+        "ifname": "eth-ana",
+        "netem": {
+          "delay_ms": 10,
+          "jitter_ms": 0.0,
+          "limit_packets": null,
+          "loss_percent": 0.0,
+          "rate_mbit": null
+        },
+        "node": "ha"
+      },
+      "b": {
+        "address": "10.10.2.2/24",
+        "ifname": "eth-ha",
+        "netem": {
+          "delay_ms": 10,
+          "jitter_ms": 0.0,
+          "limit_packets": null,
+          "loss_percent": 0.0,
+          "rate_mbit": null
+        },
+        "node": "ana"
+      },
+      "name": "ha-ana"
+    },
+    {
+      "a": {
+        "address": "10.10.3.1/24",
+        "ifname": "eth-anb",
+        "netem": {
+          "delay_ms": 20,
+          "jitter_ms": 0.0,
+          "limit_packets": null,
+          "loss_percent": 0.0,
+          "rate_mbit": null
+        },
+        "node": "ha"
+      },
+      "b": {
+        "address": "10.10.3.2/24",
+        "ifname": "eth-ha",
+        "netem": {
+          "delay_ms": 20,
+          "jitter_ms": 0.0,
+          "limit_packets": null,
+          "loss_percent": 0.0,
+          "rate_mbit": null
+        },
+        "node": "anb"
+      },
+      "name": "ha-anb"
+    },
+    {
+      "a": {
+        "address": "10.10.4.1/24",
+        "ifname": "eth-mn",
+        "netem": {
+          "delay_ms": 5,
+          "jitter_ms": 0.0,
+          "limit_packets": null,
+          "loss_percent": 0.0,
+          "rate_mbit": 50
+        },
+        "node": "ana"
+      },
+      "b": {
+        "address": "10.10.4.2/24",
+        "ifname": "eth-a",
+        "netem": {
+          "delay_ms": 5,
+          "jitter_ms": 0.0,
+          "limit_packets": null,
+          "loss_percent": 0.0,
+          "rate_mbit": 50
+        },
+        "node": "mn"
+      },
+      "name": "ana-mn"
+    },
+    {
+      "a": {
+        "address": "10.10.5.1/24",
+        "ifname": "eth-mn",
+        "netem": {
+          "delay_ms": 15,
+          "jitter_ms": 2,
+          "limit_packets": null,
+          "loss_percent": 0.0,
+          "rate_mbit": 10
+        },
+        "node": "anb"
+      },
+      "b": {
+        "address": "10.10.5.2/24",
+        "ifname": "eth-b",
+        "netem": {
+          "delay_ms": 15,
+          "jitter_ms": 2,
+          "limit_packets": null,
+          "loss_percent": 0.0,
+          "rate_mbit": 10
+        },
+        "node": "mn"
+      },
+      "name": "anb-mn"
+    },
+    {
+      "a": {
+        "address": "10.10.6.1/24",
+        "ifname": "eth-ana",
+        "netem": {
+          "delay_ms": 8,
+          "jitter_ms": 0.0,
+          "limit_packets": null,
+          "loss_percent": 0.0,
+          "rate_mbit": null
+        },
+        "node": "cn"
+      },
+      "b": {
+        "address": "10.10.6.2/24",
+        "ifname": "eth-cn",
+        "netem": {
+          "delay_ms": 8,
+          "jitter_ms": 0.0,
+          "limit_packets": null,
+          "loss_percent": 0.0,
+          "rate_mbit": null
+        },
+        "node": "ana"
+      },
+      "name": "cn-ana"
+    },
+    {
+      "a": {
+        "address": "10.10.7.1/24",
+        "ifname": "eth-anb",
+        "netem": {
+          "delay_ms": 12,
+          "jitter_ms": 0.0,
+          "limit_packets": null,
+          "loss_percent": 0.0,
+          "rate_mbit": null
+        },
+        "node": "cn"
+      },
+      "b": {
+        "address": "10.10.7.2/24",
+        "ifname": "eth-cn",
+        "netem": {
+          "delay_ms": 12,
+          "jitter_ms": 0.0,
+          "limit_packets": null,
+          "loss_percent": 0.0,
+          "rate_mbit": null
+        },
+        "node": "anb"
+      },
+      "name": "cn-anb"
+    }
+  ],
+  "name": "mobility-lab",
+  "nodes": [
+    {
+      "forwarding": false,
+      "interfaces": [
+        {
+          "address": "10.10.1.2/24",
+          "ifname": "eth-ha",
+          "link": "cn-ha"
+        },
+        {
+          "address": "10.10.6.1/24",
+          "ifname": "eth-ana",
+          "link": "cn-ana"
+        },
+        {
+          "address": "10.10.7.1/24",
+          "ifname": "eth-anb",
+          "link": "cn-anb"
+        }
+      ],
+      "key": "cn",
+      "role": "correspondent-node"
+    },
+    {
+      "forwarding": true,
+      "interfaces": [
+        {
+          "address": "10.10.1.1/24",
+          "ifname": "eth-cn",
+          "link": "cn-ha"
+        },
+        {
+          "address": "10.10.2.1/24",
+          "ifname": "eth-ana",
+          "link": "ha-ana"
+        },
+        {
+          "address": "10.10.3.1/24",
+          "ifname": "eth-anb",
+          "link": "ha-anb"
+        }
+      ],
+      "key": "ha",
+      "role": "home-agent"
+    },
+    {
+      "forwarding": false,
+      "interfaces": [
+        {
+          "address": "10.10.4.2/24",
+          "ifname": "eth-a",
+          "link": "ana-mn"
+        },
+        {
+          "address": "10.10.5.2/24",
+          "ifname": "eth-b",
+          "link": "anb-mn"
+        }
+      ],
+      "key": "mn",
+      "role": "mobile-node"
+    },
+    {
+      "forwarding": true,
+      "interfaces": [
+        {
+          "address": "10.10.2.2/24",
+          "ifname": "eth-ha",
+          "link": "ha-ana"
+        },
+        {
+          "address": "10.10.4.1/24",
+          "ifname": "eth-mn",
+          "link": "ana-mn"
+        },
+        {
+          "address": "10.10.6.2/24",
+          "ifname": "eth-cn",
+          "link": "cn-ana"
+        }
+      ],
+      "key": "ana",
+      "role": "access-network-a"
+    },
+    {
+      "forwarding": true,
+      "interfaces": [
+        {
+          "address": "10.10.3.2/24",
+          "ifname": "eth-ha",
+          "link": "ha-anb"
+        },
+        {
+          "address": "10.10.5.1/24",
+          "ifname": "eth-mn",
+          "link": "anb-mn"
+        },
+        {
+          "address": "10.10.7.2/24",
+          "ifname": "eth-cn",
+          "link": "cn-anb"
+        }
+      ],
+      "key": "anb",
+      "role": "access-network-b"
+    }
+  ],
+  "notes": [
+    "This is the configured lab topology (the file the experiments use). Link delay/jitter/rate/loss are the configured `tc netem` values.",
+    "Emulated runs build their links from this file in the discrete-event simulator (virtual time); loopback runs use real loopback sockets with no path delay; privileged live namespace runs (CLI only, never through the API) apply the values with tc netem."
+  ],
+  "routes": [
+    {
+      "metric": null,
+      "node": "cn",
+      "to": "default",
+      "via": "10.10.1.1"
+    },
+    {
+      "metric": null,
+      "node": "ha",
+      "to": "10.10.4.0/24",
+      "via": "10.10.2.2"
+    },
+    {
+      "metric": null,
+      "node": "ha",
+      "to": "10.10.5.0/24",
+      "via": "10.10.3.2"
+    },
+    {
+      "metric": null,
+      "node": "ana",
+      "to": "default",
+      "via": "10.10.2.1"
+    },
+    {
+      "metric": null,
+      "node": "anb",
+      "to": "default",
+      "via": "10.10.3.1"
+    },
+    {
+      "metric": 100,
+      "node": "mn",
+      "to": "default",
+      "via": "10.10.4.1"
+    },
+    {
+      "metric": 200,
+      "node": "mn",
+      "to": "default",
+      "via": "10.10.5.1"
+    },
+    {
+      "metric": null,
+      "node": "cn",
+      "to": "10.10.4.0/24",
+      "via": "10.10.6.2"
+    },
+    {
+      "metric": null,
+      "node": "cn",
+      "to": "10.10.5.0/24",
+      "via": "10.10.7.2"
+    },
+    {
+      "metric": null,
+      "node": "ana",
+      "to": "10.10.1.0/24",
+      "via": "10.10.6.1"
+    },
+    {
+      "metric": null,
+      "node": "anb",
+      "to": "10.10.1.0/24",
+      "via": "10.10.7.1"
+    }
+  ],
+  "source_file": "config/topology_ro.yaml"
+}

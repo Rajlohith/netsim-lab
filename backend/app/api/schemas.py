@@ -190,6 +190,15 @@ class ScenariosOut(_Out):
     scenarios: List[Dict[str, Any]]
 
 
+class TopologyOut(_Out):
+    name: str
+    source_file: str
+    nodes: List[Dict[str, Any]]
+    links: List[Dict[str, Any]]
+    routes: List[Dict[str, Any]]
+    notes: List[str]
+
+
 class CapabilitiesOut(_Out):
     environments: Dict[str, Any]
     limits: Dict[str, Any]

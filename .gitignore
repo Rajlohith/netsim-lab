@@ -24,3 +24,7 @@ data/*
 # shipped example results and schemas ARE tracked (the global ignores above silently dropped the Stage 7 example data from git)
 !examples/**
 !schemas/**
+
+# Stage 9: real captured API responses used as frontend contract fixtures
+!frontend/src/test/fixtures/
+!frontend/src/test/fixtures/**

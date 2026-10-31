@@ -1,0 +1,304 @@
+{
+  "approach": "ro-model",
+  "clock_note": "mono_ns/wall_ns are the run's own clock: virtual time for emulated runs, the real monotonic clock for loopback runs",
+  "environment": "emulated",
+  "events": [
+    {
+      "approach": "ro-model",
+      "bytes": 0,
+      "detail": "new care-of address acquired",
+      "kind": "attach",
+      "mono_ns": 10000000000,
+      "node": "mn",
+      "seq": 1,
+      "wall_ns": 1792746000000000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 62,
+      "detail": "registration request",
+      "kind": "signal_tx",
+      "mono_ns": 10000000000,
+      "node": "mn",
+      "seq": 2,
+      "wall_ns": 1792746000000000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 58,
+      "detail": "registration reply",
+      "kind": "signal_rx",
+      "mono_ns": 10231000000,
+      "node": "mn",
+      "seq": 3,
+      "wall_ns": 1792746000231000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 9,
+      "detail": "CoTI 9B",
+      "kind": "signal_tx",
+      "mono_ns": 10231000000,
+      "node": "mn",
+      "seq": 4,
+      "wall_ns": 1792746000231000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 9,
+      "detail": "HoTI 9B",
+      "kind": "signal_tx",
+      "mono_ns": 10231000000,
+      "node": "mn",
+      "seq": 5,
+      "wall_ns": 1792746000231000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 19,
+      "detail": "CoT 19B",
+      "kind": "signal_rx",
+      "mono_ns": 10257000000,
+      "node": "mn",
+      "seq": 6,
+      "wall_ns": 1792746000257000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 19,
+      "detail": "HoT 19B",
+      "kind": "signal_rx",
+      "mono_ns": 10464000000,
+      "node": "mn",
+      "seq": 7,
+      "wall_ns": 1792746000464000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 32,
+      "detail": "BU 32B",
+      "kind": "signal_tx",
+      "mono_ns": 10464000000,
+      "node": "mn",
+      "seq": 8,
+      "wall_ns": 1792746000464000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 22,
+      "detail": "BA 22B",
+      "kind": "signal_rx",
+      "mono_ns": 10490000000,
+      "node": "mn",
+      "seq": 9,
+      "wall_ns": 1792746000490000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 0,
+      "detail": "link eth-b up, eth-a down (emulated movement)",
+      "kind": "link_change",
+      "mono_ns": 14000000000,
+      "node": "mn",
+      "seq": 10,
+      "wall_ns": 1792746004000000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 0,
+      "detail": "new care-of address acquired",
+      "kind": "attach",
+      "mono_ns": 14020000000,
+      "node": "mn",
+      "seq": 11,
+      "wall_ns": 1792746004020000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 62,
+      "detail": "registration request",
+      "kind": "signal_tx",
+      "mono_ns": 14020000000,
+      "node": "mn",
+      "seq": 12,
+      "wall_ns": 1792746004020000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 58,
+      "detail": "registration reply",
+      "kind": "signal_rx",
+      "mono_ns": 14291000000,
+      "node": "mn",
+      "seq": 13,
+      "wall_ns": 1792746004291000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 9,
+      "detail": "CoTI 9B",
+      "kind": "signal_tx",
+      "mono_ns": 14291000000,
+      "node": "mn",
+      "seq": 14,
+      "wall_ns": 1792746004291000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 19,
+      "detail": "CoT 19B",
+      "kind": "signal_rx",
+      "mono_ns": 14345000000,
+      "node": "mn",
+      "seq": 15,
+      "wall_ns": 1792746004345000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 32,
+      "detail": "BU 32B",
+      "kind": "signal_tx",
+      "mono_ns": 14345000000,
+      "node": "mn",
+      "seq": 16,
+      "wall_ns": 1792746004345000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 22,
+      "detail": "BA 22B",
+      "kind": "signal_rx",
+      "mono_ns": 14399000000,
+      "node": "mn",
+      "seq": 17,
+      "wall_ns": 1792746004399000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 0,
+      "detail": "route-optimisation binding active at the correspondent",
+      "kind": "recovered",
+      "mono_ns": 14399000000,
+      "node": "mn",
+      "seq": 18,
+      "wall_ns": 1792746004399000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 0,
+      "detail": "link eth-a up, eth-b down (emulated movement)",
+      "kind": "link_change",
+      "mono_ns": 17000000000,
+      "node": "mn",
+      "seq": 19,
+      "wall_ns": 1792746007000000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 0,
+      "detail": "new care-of address acquired",
+      "kind": "attach",
+      "mono_ns": 17020000000,
+      "node": "mn",
+      "seq": 20,
+      "wall_ns": 1792746007020000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 62,
+      "detail": "registration request",
+      "kind": "signal_tx",
+      "mono_ns": 17020000000,
+      "node": "mn",
+      "seq": 21,
+      "wall_ns": 1792746007020000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 58,
+      "detail": "registration reply",
+      "kind": "signal_rx",
+      "mono_ns": 17251000000,
+      "node": "mn",
+      "seq": 22,
+      "wall_ns": 1792746007251000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 9,
+      "detail": "CoTI 9B",
+      "kind": "signal_tx",
+      "mono_ns": 17251000000,
+      "node": "mn",
+      "seq": 23,
+      "wall_ns": 1792746007251000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 19,
+      "detail": "CoT 19B",
+      "kind": "signal_rx",
+      "mono_ns": 17277000000,
+      "node": "mn",
+      "seq": 24,
+      "wall_ns": 1792746007277000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 32,
+      "detail": "BU 32B",
+      "kind": "signal_tx",
+      "mono_ns": 17277000000,
+      "node": "mn",
+      "seq": 25,
+      "wall_ns": 1792746007277000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 22,
+      "detail": "BA 22B",
+      "kind": "signal_rx",
+      "mono_ns": 17303000000,
+      "node": "mn",
+      "seq": 26,
+      "wall_ns": 1792746007303000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 0,
+      "detail": "route-optimisation binding active at the correspondent",
+      "kind": "recovered",
+      "mono_ns": 17303000000,
+      "node": "mn",
+      "seq": 27,
+      "wall_ns": 1792746007303000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 62,
+      "detail": "registration request",
+      "kind": "signal_tx",
+      "mono_ns": 20500000000,
+      "node": "mn",
+      "seq": 28,
+      "wall_ns": 1792746010500000000
+    },
+    {
+      "approach": "ro-model",
+      "bytes": 58,
+      "detail": "registration reply",
+      "kind": "signal_rx",
+      "mono_ns": 20731000000,
+      "node": "mn",
+      "seq": 29,
+      "wall_ns": 1792746010731000000
+    }
+  ],
+  "experiment_id": "exp-ec66d16749a27205",
+  "next_after_seq": null,
+  "provenance": null,
+  "scenario": "distant-home-agent",
+  "source_file": "approach_events.csv",
+  "status": "completed",
+  "total": 29
+}

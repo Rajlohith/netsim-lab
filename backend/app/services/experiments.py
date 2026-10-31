@@ -56,6 +56,9 @@ class ExperimentService:
     def scenarios(self) -> dict:
         return {"scenarios": self.catalog.scenarios()}
 
+    def topology(self) -> dict:
+        return self.catalog.topology()
+
     def capabilities(self) -> dict:
         return self.catalog.capabilities(model_ids=self.models.ids()) | {"request_fields": list(ALLOWED_FIELDS), "api_version": __version__}
 

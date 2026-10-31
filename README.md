@@ -113,6 +113,13 @@ make api-test                                 # Stage 8 tests (the HTTP tests ne
 ```
 Settings: `NETSIM_API_*` variables in `.env.example`. Existing CLI workflows (`python -m app.compare ...`) are unchanged.
 
+## Stage 9 — React dashboard
+
+`make frontend-install && make run-api` (one terminal) and `make frontend-dev` (another) → http://localhost:5173. Seven pages (topology, experiment
+configuration with start/stop, live metrics, handoff prediction, approach comparison, model evaluation, experiment history with exports) over the
+real Stage 8 API. Nothing on a page is hard-coded data: every number comes from an endpoint, and empty/loading/error states are explicit.
+Details, verification status and limitations: **docs/FRONTEND.md**. Tests: `make frontend-test`; no-network substitute: `make frontend-verify`.
+
 ## Project status and tests
 Read **[PROJECT_STATUS.md](PROJECT_STATUS.md)** (what is implemented, simulated or untested, test results, known issues) and
 **[NEXT_STEPS.md](NEXT_STEPS.md)**. Reproduce the test report with `python scripts/run_all_tests.py` (unittest only, no pytest needed);

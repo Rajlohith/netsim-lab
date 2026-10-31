@@ -1,0 +1,16 @@
+{
+  "error": {
+    "code": "validation_failed",
+    "context": {},
+    "issues": [
+      {
+        "code": "environment_not_exposed",
+        "field": "environment",
+        "message": "environment 'live' cannot be used through the API: privileged network-namespace operations are never exposed through the API; use the CLI (docs/PRIVILEGED_OPERATIONS.md); exposed: ['emulated', 'loopback']"
+      }
+    ],
+    "message": "the experiment request is not valid",
+    "request_id": null
+  },
+  "status": 422
+}

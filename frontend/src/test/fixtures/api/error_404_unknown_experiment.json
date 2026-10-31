@@ -1,0 +1,10 @@
+{
+  "error": {
+    "code": "not_found",
+    "context": {},
+    "issues": [],
+    "message": "no experiment 'exp-0000000000000000'",
+    "request_id": null
+  },
+  "status": 404
+}

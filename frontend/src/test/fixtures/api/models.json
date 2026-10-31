@@ -1,0 +1,33 @@
+{
+  "models": [
+    {
+      "algorithms": [
+        "logreg",
+        "random_forest",
+        "threshold_baseline"
+      ],
+      "available": true,
+      "class_balance": {
+        "episodes_with_positive_examples": 869,
+        "excluded_censored_horizon": 480,
+        "excluded_in_episode": 1077,
+        "imbalance_ratio_neg_per_pos": 4.107257359370446,
+        "included": 17523,
+        "negatives": 14092,
+        "positives": 3431,
+        "prevalence": 0.1957998059692975
+      },
+      "created_utc": "2026-10-28T01:20:50Z",
+      "data_origin": [
+        "simulated"
+      ],
+      "dataset_sha256": "ebc5c7f77a2ac25321261f0db8d39905a77c09e0fbb8c1d59f762575d43a259e",
+      "disclaimer": "Trained on SIMULATED network measurements from the Stage 4/5 emulator. Not valid for real networks; no feature is physical radio signal strength.",
+      "id": "stage6",
+      "label_horizon_s": 1.0,
+      "manifest_verified": true,
+      "model_version": "1.0.0+debc5c7f7.c518c666a",
+      "reason": null
+    }
+  ]
+}

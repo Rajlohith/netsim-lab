@@ -1,0 +1,93 @@
+{
+  "issues": [],
+  "resolved": {
+    "configuration": {
+      "approach": "mip-basic",
+      "conditions": {
+        "ha_distance_ms": 0.0,
+        "ha_processing_ms": 1.0,
+        "latency_scale": 1.0,
+        "loss_percent": 0.0,
+        "registration_loss_percent": 0.0
+      },
+      "detect_delay_ms": 20.0,
+      "duration_s": 10.0,
+      "environment": "emulated",
+      "handoff_mode": "bbm",
+      "initial_iface": "eth-a",
+      "label": null,
+      "moves": [
+        {
+          "at_s": 4.0,
+          "interface": "eth-b"
+        },
+        {
+          "at_s": 7.0,
+          "interface": "eth-a"
+        }
+      ],
+      "old_link_hold_ms": 100.0,
+      "payload": 64,
+      "predict": false,
+      "prediction_algorithm": null,
+      "prediction_model": null,
+      "rate_pps": 100.0,
+      "scenario": "baseline",
+      "seed": 0,
+      "tcp_detect": "event"
+    },
+    "fingerprint": "ab0b867a5d1ce5c71d453cb29441a1775d5731933336228c3089ec8c91c047ff",
+    "spec": {
+      "approach": "mip-basic",
+      "conditions": {
+        "ha_distance_ms": 0.0,
+        "ha_processing_ms": 1.0,
+        "latency_scale": 1.0,
+        "link_delay_ms": {},
+        "loss_links": [
+          "ana-mn",
+          "anb-mn"
+        ],
+        "loss_percent": 0.0,
+        "registration_loss_percent": 0.0,
+        "seed": 0
+      },
+      "detect_delay_ms": 20.0,
+      "duration_s": 10.0,
+      "environment": "emulated",
+      "handoff_mode": "bbm",
+      "initial_iface": "eth-a",
+      "lifetime_s": 30,
+      "link_semantics": "both-ends",
+      "moves": [
+        [
+          4.0,
+          "eth-b"
+        ],
+        [
+          7.0,
+          "eth-a"
+        ]
+      ],
+      "old_link_hold_ms": 100.0,
+      "payload": 64,
+      "probe_start_s": 0.5,
+      "rate_pps": 100.0,
+      "ro_lifetime_s": 40,
+      "run_id": "run-1",
+      "scenario_id": "api-mip-basic-emulated-baseline",
+      "seed": 0,
+      "tcp_detect": "event",
+      "tcp_detect_timeout_s": 0.5,
+      "topology": "config/topology_ro.yaml",
+      "variant": ""
+    },
+    "support": {
+      "reason": null,
+      "status": "ok"
+    },
+    "would_conflict_with": null
+  },
+  "valid": true,
+  "warnings": []
+}

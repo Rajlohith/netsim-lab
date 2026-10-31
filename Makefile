@@ -14,6 +14,16 @@ frontend-install:
 	cd frontend && npm install
 frontend-dev:
 	cd frontend && npm run dev
+frontend-test:    ## vitest: unit, SSR view and (jsdom) interaction tests
+	cd frontend && npm test
+frontend-build:   ## production build (vite)
+	cd frontend && npm run build
+frontend-verify:  ## no-network substitute: esbuild bundle + SSR/logic tests without vitest (see docs/FRONTEND.md)
+	cd frontend && npm run verify:bundle && npm run verify:sandbox
+frontend-integration: ## dashboard API layer against the service layer (stdlib adapter); needs python deps + esbuild
+	sh frontend/scripts/run-integration.sh
+frontend-fixtures: ## re-capture the real API responses used as test fixtures
+	PYTHONPATH=backend $(PY) scripts/capture_frontend_fixtures.py
 lint:
 	$(PY) -m ruff check backend
 

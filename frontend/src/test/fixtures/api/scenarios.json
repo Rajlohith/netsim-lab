@@ -1,0 +1,259 @@
+{
+  "scenarios": [
+    {
+      "defaults_from": "ExperimentSpec defaults (backend/app/compare/experiment.py) for every parameter not listed in the scenario file",
+      "description": "Defaults of the common experiment interface - two handoffs (eth-a -> eth-b at 4 s, back at 7 s), topology link delays unchanged, no random loss.",
+      "effective_for_approaches": [
+        "mip-basic",
+        "mip-mbb",
+        "quic-migration",
+        "ro-model",
+        "tcp-reconnect"
+      ],
+      "id": "baseline",
+      "note": null,
+      "parameters": {
+        "conditions": {
+          "ha_distance_ms": 0.0,
+          "ha_processing_ms": 1.0,
+          "latency_scale": 1.0,
+          "loss_percent": 0.0,
+          "registration_loss_percent": 0.0
+        },
+        "detect_delay_ms": 20.0,
+        "duration_s": 10.0,
+        "moves": [
+          {
+            "at_s": 4.0,
+            "interface": "eth-b"
+          },
+          {
+            "at_s": 7.0,
+            "interface": "eth-a"
+          }
+        ]
+      },
+      "requires_home_agent": false,
+      "source": "config/api/scenarios.yaml (one-factor levels of the Stage 7 example campaign)",
+      "title": "Baseline"
+    },
+    {
+      "defaults_from": "ExperimentSpec defaults (backend/app/compare/experiment.py) for every parameter not listed in the scenario file",
+      "description": "Every link delay of the topology multiplied by 2.",
+      "effective_for_approaches": [
+        "mip-basic",
+        "mip-mbb",
+        "quic-migration",
+        "ro-model",
+        "tcp-reconnect"
+      ],
+      "id": "high-latency",
+      "note": null,
+      "parameters": {
+        "conditions": {
+          "ha_distance_ms": 0.0,
+          "ha_processing_ms": 1.0,
+          "latency_scale": 2.0,
+          "loss_percent": 0.0,
+          "registration_loss_percent": 0.0
+        },
+        "detect_delay_ms": 20.0,
+        "duration_s": 10.0,
+        "moves": [
+          {
+            "at_s": 4.0,
+            "interface": "eth-b"
+          },
+          {
+            "at_s": 7.0,
+            "interface": "eth-a"
+          }
+        ]
+      },
+      "requires_home_agent": false,
+      "source": "config/api/scenarios.yaml (one-factor levels of the Stage 7 example campaign)",
+      "title": "Doubled link delays"
+    },
+    {
+      "defaults_from": "ExperimentSpec defaults (backend/app/compare/experiment.py) for every parameter not listed in the scenario file",
+      "description": "Independent random packet loss of 2 % per direction on both access links (ana-mn, anb-mn), applied to data, echoes and signalling.",
+      "effective_for_approaches": [
+        "mip-basic",
+        "mip-mbb",
+        "quic-migration",
+        "ro-model",
+        "tcp-reconnect"
+      ],
+      "id": "lossy-access",
+      "note": null,
+      "parameters": {
+        "conditions": {
+          "ha_distance_ms": 0.0,
+          "ha_processing_ms": 1.0,
+          "latency_scale": 1.0,
+          "loss_percent": 2,
+          "registration_loss_percent": 0.0
+        },
+        "detect_delay_ms": 20.0,
+        "duration_s": 10.0,
+        "moves": [
+          {
+            "at_s": 4.0,
+            "interface": "eth-b"
+          },
+          {
+            "at_s": 7.0,
+            "interface": "eth-a"
+          }
+        ]
+      },
+      "requires_home_agent": false,
+      "source": "config/api/scenarios.yaml (one-factor levels of the Stage 7 example campaign)",
+      "title": "2 % loss on the access links"
+    },
+    {
+      "defaults_from": "ExperimentSpec defaults (backend/app/compare/experiment.py) for every parameter not listed in the scenario file",
+      "description": "+100 ms one-way delay on every link that touches the Home Agent.",
+      "effective_for_approaches": [
+        "mip-basic",
+        "mip-mbb",
+        "ro-model"
+      ],
+      "id": "distant-home-agent",
+      "note": "the setting acts through the Home Agent: for the other approaches the run executes unchanged and the response carries a warning",
+      "parameters": {
+        "conditions": {
+          "ha_distance_ms": 100,
+          "ha_processing_ms": 1.0,
+          "latency_scale": 1.0,
+          "loss_percent": 0.0,
+          "registration_loss_percent": 0.0
+        },
+        "detect_delay_ms": 20.0,
+        "duration_s": 10.0,
+        "moves": [
+          {
+            "at_s": 4.0,
+            "interface": "eth-b"
+          },
+          {
+            "at_s": 7.0,
+            "interface": "eth-a"
+          }
+        ]
+      },
+      "requires_home_agent": true,
+      "source": "config/api/scenarios.yaml (one-factor levels of the Stage 7 example campaign)",
+      "title": "Home Agent 100 ms further away"
+    },
+    {
+      "defaults_from": "ExperimentSpec defaults (backend/app/compare/experiment.py) for every parameter not listed in the scenario file",
+      "description": "The mobile node needs 100 ms (instead of 20 ms) to notice that its link changed.",
+      "effective_for_approaches": [
+        "mip-basic",
+        "mip-mbb",
+        "quic-migration",
+        "ro-model",
+        "tcp-reconnect"
+      ],
+      "id": "slow-movement-detection",
+      "note": null,
+      "parameters": {
+        "conditions": {
+          "ha_distance_ms": 0.0,
+          "ha_processing_ms": 1.0,
+          "latency_scale": 1.0,
+          "loss_percent": 0.0,
+          "registration_loss_percent": 0.0
+        },
+        "detect_delay_ms": 100,
+        "duration_s": 10.0,
+        "moves": [
+          {
+            "at_s": 4.0,
+            "interface": "eth-b"
+          },
+          {
+            "at_s": 7.0,
+            "interface": "eth-a"
+          }
+        ]
+      },
+      "requires_home_agent": false,
+      "source": "config/api/scenarios.yaml (one-factor levels of the Stage 7 example campaign)",
+      "title": "Movement detection takes 100 ms"
+    },
+    {
+      "defaults_from": "ExperimentSpec defaults (backend/app/compare/experiment.py) for every parameter not listed in the scenario file",
+      "description": "The second handoff follows the first after 1.5 s instead of 3 s (moves at 4.0 s and 5.5 s).",
+      "effective_for_approaches": [
+        "mip-basic",
+        "mip-mbb",
+        "quic-migration",
+        "ro-model",
+        "tcp-reconnect"
+      ],
+      "id": "rapid-second-handoff",
+      "note": null,
+      "parameters": {
+        "conditions": {
+          "ha_distance_ms": 0.0,
+          "ha_processing_ms": 1.0,
+          "latency_scale": 1.0,
+          "loss_percent": 0.0,
+          "registration_loss_percent": 0.0
+        },
+        "detect_delay_ms": 20.0,
+        "duration_s": 10.0,
+        "moves": [
+          {
+            "at_s": 4.0,
+            "interface": "eth-b"
+          },
+          {
+            "at_s": 5.5,
+            "interface": "eth-a"
+          }
+        ]
+      },
+      "requires_home_agent": false,
+      "source": "config/api/scenarios.yaml (one-factor levels of the Stage 7 example campaign)",
+      "title": "Rapid second handoff"
+    },
+    {
+      "defaults_from": "ExperimentSpec defaults (backend/app/compare/experiment.py) for every parameter not listed in the scenario file",
+      "description": "Extra loss of 30 % applied only to Mobile IP registration requests and replies, on top of any link loss.",
+      "effective_for_approaches": [
+        "mip-basic",
+        "mip-mbb",
+        "ro-model"
+      ],
+      "id": "lossy-registration",
+      "note": "the setting acts through the Home Agent: for the other approaches the run executes unchanged and the response carries a warning",
+      "parameters": {
+        "conditions": {
+          "ha_distance_ms": 0.0,
+          "ha_processing_ms": 1.0,
+          "latency_scale": 1.0,
+          "loss_percent": 0.0,
+          "registration_loss_percent": 30
+        },
+        "detect_delay_ms": 20.0,
+        "duration_s": 10.0,
+        "moves": [
+          {
+            "at_s": 4.0,
+            "interface": "eth-b"
+          },
+          {
+            "at_s": 7.0,
+            "interface": "eth-a"
+          }
+        ]
+      },
+      "requires_home_agent": true,
+      "source": "config/api/scenarios.yaml (one-factor levels of the Stage 7 example campaign)",
+      "title": "30 % of Mobile IP registration messages lost"
+    }
+  ]
+}

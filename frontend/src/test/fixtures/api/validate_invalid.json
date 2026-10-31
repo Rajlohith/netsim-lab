@@ -1,0 +1,12 @@
+{
+  "issues": [
+    {
+      "code": "out_of_range",
+      "field": "duration_s",
+      "message": "duration_s must be in (0, 120.0], got 500"
+    }
+  ],
+  "resolved": null,
+  "valid": false,
+  "warnings": []
+}

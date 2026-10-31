@@ -58,6 +58,7 @@ All responses are JSON unless noted. `{id}` has the form `exp-` + 16 hex digits;
 | `GET /api/health` | liveness (Stage 1) | 200 | |
 | `GET /api/approaches` | approaches, what they are/aren't, where they can run **on this server** | 200 | 401 |
 | `GET /api/scenarios` | network scenarios with every resolved parameter | 200 | 401 |
+| `GET /api/topology` | the lab topology the experiments run on: nodes, links, routes and the *configured* netem values (read from `config/topology_ro.yaml` with the Stage 2 loader; added in Stage 9 for the dashboard) | 200 | 401 |
 | `GET /api/capabilities` | limits, accepted fields, live-update policy | 200 | 401 |
 | `GET /api/status` | job-manager state, counts per status | 200 | 401 |
 | `POST /api/experiments/validate` | check a request without running it | 200 (`valid` true/false) | 401, 422 (malformed body) |

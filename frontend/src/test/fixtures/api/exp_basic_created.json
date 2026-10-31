@@ -1,0 +1,131 @@
+{
+  "approach": "mip-basic",
+  "cancel_requested": false,
+  "configuration": {
+    "approach": "mip-basic",
+    "conditions": {
+      "ha_distance_ms": 0.0,
+      "ha_processing_ms": 1.0,
+      "latency_scale": 1.0,
+      "loss_percent": 0.0,
+      "registration_loss_percent": 0.0
+    },
+    "detect_delay_ms": 20.0,
+    "duration_s": 10.0,
+    "environment": "emulated",
+    "handoff_mode": "bbm",
+    "initial_iface": "eth-a",
+    "label": "fixture: mip-basic baseline",
+    "moves": [
+      {
+        "at_s": 4.0,
+        "interface": "eth-b"
+      },
+      {
+        "at_s": 7.0,
+        "interface": "eth-a"
+      }
+    ],
+    "old_link_hold_ms": 100.0,
+    "payload": 64,
+    "predict": false,
+    "prediction_algorithm": null,
+    "prediction_model": null,
+    "rate_pps": 100.0,
+    "scenario": "baseline",
+    "seed": 1,
+    "tcp_detect": "event"
+  },
+  "created_at": "2026-10-30T11:10:48.357484Z",
+  "data": {
+    "is_live": false,
+    "live_metrics_available": false,
+    "note": "Experiments run in the simulator's virtual time (or on loopback sockets) and their metrics are produced when the run ends. There are no live or partial metrics: everything served is read from files after completion.",
+    "origin": null
+  },
+  "environment": "emulated",
+  "error": null,
+  "finished_at": null,
+  "id": "exp-b598ce85b2251b3d",
+  "label": "fixture: mip-basic baseline",
+  "links": {
+    "cancel": "/api/experiments/exp-b598ce85b2251b3d/cancel",
+    "events": "/api/experiments/exp-b598ce85b2251b3d/events",
+    "export": "/api/experiments/exp-b598ce85b2251b3d/export",
+    "handoffs": "/api/experiments/exp-b598ce85b2251b3d/handoffs",
+    "metrics": "/api/experiments/exp-b598ce85b2251b3d/metrics",
+    "predictions": "/api/experiments/exp-b598ce85b2251b3d/predictions",
+    "self": "/api/experiments/exp-b598ce85b2251b3d",
+    "transitions": "/api/experiments/exp-b598ce85b2251b3d/transitions"
+  },
+  "partial_outputs": false,
+  "prediction": {
+    "algorithm": null,
+    "error": null,
+    "model": null,
+    "requested": false,
+    "status": "not_requested"
+  },
+  "progress": {
+    "fraction": null,
+    "note": "waiting for a free worker slot",
+    "phase": "queued",
+    "queue_position": 1,
+    "step": 0,
+    "steps_total": null
+  },
+  "resolved_spec": {
+    "approach": "mip-basic",
+    "conditions": {
+      "ha_distance_ms": 0.0,
+      "ha_processing_ms": 1.0,
+      "latency_scale": 1.0,
+      "link_delay_ms": {},
+      "loss_links": [
+        "ana-mn",
+        "anb-mn"
+      ],
+      "loss_percent": 0.0,
+      "registration_loss_percent": 0.0,
+      "seed": 1
+    },
+    "detect_delay_ms": 20.0,
+    "duration_s": 10.0,
+    "environment": "emulated",
+    "handoff_mode": "bbm",
+    "initial_iface": "eth-a",
+    "lifetime_s": 30,
+    "link_semantics": "both-ends",
+    "moves": [
+      [
+        4.0,
+        "eth-b"
+      ],
+      [
+        7.0,
+        "eth-a"
+      ]
+    ],
+    "old_link_hold_ms": 100.0,
+    "payload": 64,
+    "probe_start_s": 0.5,
+    "rate_pps": 100.0,
+    "ro_lifetime_s": 40,
+    "run_id": "run-1",
+    "scenario_id": "api-mip-basic-emulated-baseline",
+    "seed": 1,
+    "tcp_detect": "event",
+    "tcp_detect_timeout_s": 0.5,
+    "topology": "config/topology_ro.yaml",
+    "variant": ""
+  },
+  "result": {
+    "available": false,
+    "summary": null
+  },
+  "scenario": "baseline",
+  "started_at": null,
+  "status": "queued",
+  "updated_at": "2026-10-30T11:10:48.357484Z",
+  "warnings": []
+}

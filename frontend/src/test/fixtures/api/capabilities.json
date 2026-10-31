@@ -1,0 +1,78 @@
+{
+  "aioquic_installed": false,
+  "api_version": "0.1.0",
+  "approaches": [
+    "tcp-reconnect",
+    "mip-basic",
+    "mip-mbb",
+    "ro-model",
+    "quic-migration"
+  ],
+  "data_origin": "All results are simulator-generated (virtual time) or real kernel TCP over loopback; none is a measurement of a real network.",
+  "environments": {
+    "never_exposed": [
+      "live"
+    ],
+    "requested_allowed": [
+      "emulated",
+      "loopback"
+    ],
+    "why_live_is_not_exposed": "it needs sudo/CAP_NET_ADMIN to create network namespaces; the API never runs privileged operations"
+  },
+  "limits": {
+    "label_max_chars": 80,
+    "max_concurrent_jobs": 2,
+    "max_duration_s": 120.0,
+    "max_moves": 20,
+    "max_probes": 120000,
+    "max_queue_length": 20,
+    "max_rate_pps": 1000.0,
+    "max_runtime_s": 300.0,
+    "payload_bytes": [
+      36,
+      1472
+    ],
+    "seed": [
+      0,
+      2147483647
+    ]
+  },
+  "live_updates": {
+    "live_metrics_available": false,
+    "polling": true,
+    "reason": "experiments run in the simulator's virtual time and produce their metrics only after the run has finished; there is no metric stream to forward, so a WebSocket would have nothing true to send. Poll GET /api/experiments/{id} and GET /api/experiments/{id}/transitions?after_seq=N.",
+    "websocket": false
+  },
+  "prediction_models": [
+    "stage6"
+  ],
+  "request_fields": [
+    "approach",
+    "scenario",
+    "environment",
+    "handoff_mode",
+    "duration_s",
+    "rate_pps",
+    "payload",
+    "seed",
+    "initial_iface",
+    "moves",
+    "tcp_detect",
+    "old_link_hold_ms",
+    "detect_delay_ms",
+    "conditions",
+    "predict",
+    "prediction_model",
+    "prediction_algorithm",
+    "label"
+  ],
+  "scenarios": [
+    "baseline",
+    "high-latency",
+    "lossy-access",
+    "distant-home-agent",
+    "slow-movement-detection",
+    "rapid-second-handoff",
+    "lossy-registration"
+  ]
+}

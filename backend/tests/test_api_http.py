@@ -44,6 +44,12 @@ class Http(unittest.TestCase):
         self.assertEqual(c.get("/api/models").json()["models"][0]["id"], "stage6")
         self.assertEqual(c.get("/api/health").status_code, 200)
 
+    def test_topology_endpoint(self):                # Stage 9: read-only topology for the dashboard (needs fastapi; not run where it is missing)
+        c, _ = client(self, script_launcher(SLEEP))
+        r = c.get("/api/topology"); self.assertEqual(r.status_code, 200)
+        t = r.json(); self.assertEqual(t["source_file"], "config/topology_ro.yaml")
+        self.assertEqual({n["role"] for n in t["nodes"]}, {"correspondent-node", "home-agent", "mobile-node", "access-network-a", "access-network-b"})
+
     def test_validate_endpoint_reports_issues_with_200(self):
         c, _ = client(self, script_launcher(SLEEP))
         r = c.post("/api/experiments/validate", json={"approach": "mip-basic", "environment": "live"})

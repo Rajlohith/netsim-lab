@@ -1,0 +1,61 @@
+{
+  "approach": "ro-model",
+  "count": 2,
+  "environment": "emulated",
+  "experiment_id": "exp-ec66d16749a27205",
+  "handoffs": [
+    {
+      "detail": "eth-a -> eth-b",
+      "event_id": "handoff-1",
+      "failures": [],
+      "handoff_latency_ms": 399.0,
+      "interruption_ms": 3100.0,
+      "loss_packets": 1,
+      "recovered": true,
+      "retransmits": 0,
+      "rtt_after_ms": 54.0,
+      "rtt_before_ms": 26.0,
+      "service_gap_ms": 414.0,
+      "signalling_bytes": 202,
+      "signalling_messages": 6
+    },
+    {
+      "detail": "eth-b -> eth-a",
+      "event_id": "handoff-2",
+      "failures": [],
+      "handoff_latency_ms": 303.0,
+      "interruption_ms": 316.0,
+      "loss_packets": 32,
+      "recovered": true,
+      "retransmits": 0,
+      "rtt_after_ms": 26.0,
+      "rtt_before_ms": 54.0,
+      "service_gap_ms": 90.0,
+      "signalling_bytes": 202,
+      "signalling_messages": 6
+    }
+  ],
+  "provenance": {
+    "analytic_values": [],
+    "clock": "simulated virtual time (deterministic, no real delays)",
+    "data_origin": "simulated",
+    "is_live": false,
+    "network": "app.mobileip.simnet discrete-event emulator (no queues, bandwidth or kernel stack)",
+    "note": "Produced by the discrete-event simulator in virtual time and read from files AFTER the run finished. Not live, not a real network.",
+    "timing_comparable_with_other_environments": true
+  },
+  "scenario": "distant-home-agent",
+  "source_file": "comparison_metrics.json (handoffs)",
+  "status": "completed",
+  "summary": {
+    "count": 2,
+    "handoff_latency_ms_max": 399.0,
+    "handoff_latency_ms_mean": 351.0,
+    "loss_packets_total": 33,
+    "service_gap_ms_max": 414.0,
+    "service_gap_ms_mean": 252.0,
+    "signalling_bytes_total": 404,
+    "signalling_messages_total": 12
+  },
+  "unavailable_reason": null
+}

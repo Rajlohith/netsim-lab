@@ -1,0 +1,131 @@
+{
+  "approach": "mip-mbb",
+  "cancel_requested": false,
+  "configuration": {
+    "approach": "mip-mbb",
+    "conditions": {
+      "ha_distance_ms": 0.0,
+      "ha_processing_ms": 1.0,
+      "latency_scale": 1.0,
+      "loss_percent": 2,
+      "registration_loss_percent": 0.0
+    },
+    "detect_delay_ms": 20.0,
+    "duration_s": 10.0,
+    "environment": "emulated",
+    "handoff_mode": "mbb",
+    "initial_iface": "eth-a",
+    "label": "fixture: mbb lossy access, predictions",
+    "moves": [
+      {
+        "at_s": 4.0,
+        "interface": "eth-b"
+      },
+      {
+        "at_s": 7.0,
+        "interface": "eth-a"
+      }
+    ],
+    "old_link_hold_ms": 100.0,
+    "payload": 64,
+    "predict": true,
+    "prediction_algorithm": "random_forest",
+    "prediction_model": "stage6",
+    "rate_pps": 100.0,
+    "scenario": "lossy-access",
+    "seed": 7,
+    "tcp_detect": "event"
+  },
+  "created_at": "2026-10-30T11:10:48.374434Z",
+  "data": {
+    "is_live": false,
+    "live_metrics_available": false,
+    "note": "Experiments run in the simulator's virtual time (or on loopback sockets) and their metrics are produced when the run ends. There are no live or partial metrics: everything served is read from files after completion.",
+    "origin": null
+  },
+  "environment": "emulated",
+  "error": null,
+  "finished_at": null,
+  "id": "exp-33735f5023a6bc9f",
+  "label": "fixture: mbb lossy access, predictions",
+  "links": {
+    "cancel": "/api/experiments/exp-33735f5023a6bc9f/cancel",
+    "events": "/api/experiments/exp-33735f5023a6bc9f/events",
+    "export": "/api/experiments/exp-33735f5023a6bc9f/export",
+    "handoffs": "/api/experiments/exp-33735f5023a6bc9f/handoffs",
+    "metrics": "/api/experiments/exp-33735f5023a6bc9f/metrics",
+    "predictions": "/api/experiments/exp-33735f5023a6bc9f/predictions",
+    "self": "/api/experiments/exp-33735f5023a6bc9f",
+    "transitions": "/api/experiments/exp-33735f5023a6bc9f/transitions"
+  },
+  "partial_outputs": false,
+  "prediction": {
+    "algorithm": "random_forest",
+    "error": null,
+    "model": "stage6",
+    "requested": true,
+    "status": "pending"
+  },
+  "progress": {
+    "fraction": null,
+    "note": "waiting for a free worker slot",
+    "phase": "queued",
+    "queue_position": 1,
+    "step": 0,
+    "steps_total": null
+  },
+  "resolved_spec": {
+    "approach": "mip-mbb",
+    "conditions": {
+      "ha_distance_ms": 0.0,
+      "ha_processing_ms": 1.0,
+      "latency_scale": 1.0,
+      "link_delay_ms": {},
+      "loss_links": [
+        "ana-mn",
+        "anb-mn"
+      ],
+      "loss_percent": 2,
+      "registration_loss_percent": 0.0,
+      "seed": 7
+    },
+    "detect_delay_ms": 20.0,
+    "duration_s": 10.0,
+    "environment": "emulated",
+    "handoff_mode": "mbb",
+    "initial_iface": "eth-a",
+    "lifetime_s": 30,
+    "link_semantics": "both-ends",
+    "moves": [
+      [
+        4.0,
+        "eth-b"
+      ],
+      [
+        7.0,
+        "eth-a"
+      ]
+    ],
+    "old_link_hold_ms": 100.0,
+    "payload": 64,
+    "probe_start_s": 0.5,
+    "rate_pps": 100.0,
+    "ro_lifetime_s": 40,
+    "run_id": "run-1",
+    "scenario_id": "api-mip-mbb-emulated-lossy-access",
+    "seed": 7,
+    "tcp_detect": "event",
+    "tcp_detect_timeout_s": 0.5,
+    "topology": "config/topology_ro.yaml",
+    "variant": ""
+  },
+  "result": {
+    "available": false,
+    "summary": null
+  },
+  "scenario": "lossy-access",
+  "started_at": null,
+  "status": "queued",
+  "updated_at": "2026-10-30T11:10:48.374434Z",
+  "warnings": []
+}

@@ -24,6 +24,13 @@ def list_scenarios(svc: ExperimentService = Depends(get_service)):
     return svc.scenarios()
 
 
+@router.get("/topology", tags=["catalog"], response_model=None, responses={200: {"model": S.TopologyOut}, 401: _E[401]},
+            summary="The lab topology the experiments run on (nodes, links, routes, configured link impairments)")
+def topology(svc: ExperimentService = Depends(get_service)):
+    """Read from the same YAML the experiments use (Stage 2 loader); nothing is generated."""
+    return svc.topology()
+
+
 @router.get("/capabilities", tags=["catalog"], response_model=None, responses={200: {"model": S.CapabilitiesOut}, 401: _E[401]},
             summary="Limits, accepted request fields and how live updates work")
 def capabilities(svc: ExperimentService = Depends(get_service)):

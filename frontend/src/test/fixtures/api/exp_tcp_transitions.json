@@ -1,0 +1,30 @@
+{
+  "experiment_id": "exp-12f6423a345e4af4",
+  "items": [
+    {
+      "at": "2026-10-30T11:10:48.411280Z",
+      "from_status": null,
+      "note": "accepted",
+      "seq": 5,
+      "to_status": "queued"
+    },
+    {
+      "at": "2026-10-30T11:10:55.295311Z",
+      "from_status": "queued",
+      "note": "worker starting",
+      "seq": 8,
+      "to_status": "running"
+    },
+    {
+      "at": "2026-10-30T11:10:59.406100Z",
+      "from_status": "running",
+      "note": "finished",
+      "seq": 11,
+      "to_status": "completed"
+    }
+  ],
+  "next_after_seq": 11,
+  "polling_note": "poll with after_seq=<next_after_seq>; stop when terminal is true",
+  "status": "completed",
+  "terminal": true
+}

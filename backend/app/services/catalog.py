@@ -14,6 +14,7 @@ from ..compare.quic_sim import quic_available
 from ..compare.runner import TUNNELLED, check
 from .errors import ConfigurationError
 from .settings import ServiceSettings
+from .topology import topology_view
 
 _PARAM_KEYS = {"duration_s", "detect_delay_ms", "moves", "conditions"}
 _COND_KEYS = {"latency_scale", "loss_percent", "ha_distance_ms", "registration_loss_percent", "ha_processing_ms"}
@@ -81,6 +82,10 @@ class Catalog:
                 "source": "config/api/scenarios.yaml (one-factor levels of the Stage 7 example campaign)",
             })
         return out
+
+    # ---- topology -------------------------------------------------------------------------------------------------------
+    def topology(self) -> dict:
+        return topology_view()
 
     # ---- approaches -----------------------------------------------------------------------------------------------------
     def approaches(self) -> list[dict]:

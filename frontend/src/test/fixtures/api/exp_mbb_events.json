@@ -1,0 +1,164 @@
+{
+  "approach": "mip-mbb",
+  "clock_note": "mono_ns/wall_ns are the run's own clock: virtual time for emulated runs, the real monotonic clock for loopback runs",
+  "environment": "emulated",
+  "events": [
+    {
+      "approach": "mip-mbb",
+      "bytes": 0,
+      "detail": "new care-of address acquired",
+      "kind": "attach",
+      "mono_ns": 10000000000,
+      "node": "mn",
+      "seq": 1,
+      "wall_ns": 1792746000000000000
+    },
+    {
+      "approach": "mip-mbb",
+      "bytes": 62,
+      "detail": "registration request",
+      "kind": "signal_tx",
+      "mono_ns": 10000000000,
+      "node": "mn",
+      "seq": 2,
+      "wall_ns": 1792746000000000000
+    },
+    {
+      "approach": "mip-mbb",
+      "bytes": 58,
+      "detail": "registration reply",
+      "kind": "signal_rx",
+      "mono_ns": 10031000000,
+      "node": "mn",
+      "seq": 3,
+      "wall_ns": 1792746000031000000
+    },
+    {
+      "approach": "mip-mbb",
+      "bytes": 0,
+      "detail": "link eth-b up, eth-a down (emulated movement)",
+      "kind": "link_change",
+      "mono_ns": 14000000000,
+      "node": "mn",
+      "seq": 4,
+      "wall_ns": 1792746004000000000
+    },
+    {
+      "approach": "mip-mbb",
+      "bytes": 0,
+      "detail": "new care-of address acquired",
+      "kind": "attach",
+      "mono_ns": 14020000000,
+      "node": "mn",
+      "seq": 5,
+      "wall_ns": 1792746004020000000
+    },
+    {
+      "approach": "mip-mbb",
+      "bytes": 62,
+      "detail": "registration request",
+      "kind": "signal_tx",
+      "mono_ns": 14020000000,
+      "node": "mn",
+      "seq": 6,
+      "wall_ns": 1792746004020000000
+    },
+    {
+      "approach": "mip-mbb",
+      "bytes": 58,
+      "detail": "registration reply",
+      "kind": "signal_rx",
+      "mono_ns": 14091000000,
+      "node": "mn",
+      "seq": 7,
+      "wall_ns": 1792746004091000000
+    },
+    {
+      "approach": "mip-mbb",
+      "bytes": 0,
+      "detail": "registration accepted; home agent now tunnels to the new care-of address",
+      "kind": "recovered",
+      "mono_ns": 14091000000,
+      "node": "mn",
+      "seq": 8,
+      "wall_ns": 1792746004091000000
+    },
+    {
+      "approach": "mip-mbb",
+      "bytes": 0,
+      "detail": "link eth-a up, eth-b down (emulated movement)",
+      "kind": "link_change",
+      "mono_ns": 17000000000,
+      "node": "mn",
+      "seq": 9,
+      "wall_ns": 1792746007000000000
+    },
+    {
+      "approach": "mip-mbb",
+      "bytes": 0,
+      "detail": "new care-of address acquired",
+      "kind": "attach",
+      "mono_ns": 17020000000,
+      "node": "mn",
+      "seq": 10,
+      "wall_ns": 1792746007020000000
+    },
+    {
+      "approach": "mip-mbb",
+      "bytes": 62,
+      "detail": "registration request",
+      "kind": "signal_tx",
+      "mono_ns": 17020000000,
+      "node": "mn",
+      "seq": 11,
+      "wall_ns": 1792746007020000000
+    },
+    {
+      "approach": "mip-mbb",
+      "bytes": 58,
+      "detail": "registration reply",
+      "kind": "signal_rx",
+      "mono_ns": 17051000000,
+      "node": "mn",
+      "seq": 12,
+      "wall_ns": 1792746007051000000
+    },
+    {
+      "approach": "mip-mbb",
+      "bytes": 0,
+      "detail": "registration accepted; home agent now tunnels to the new care-of address",
+      "kind": "recovered",
+      "mono_ns": 17051000000,
+      "node": "mn",
+      "seq": 13,
+      "wall_ns": 1792746007051000000
+    },
+    {
+      "approach": "mip-mbb",
+      "bytes": 62,
+      "detail": "registration request",
+      "kind": "signal_tx",
+      "mono_ns": 20500000000,
+      "node": "mn",
+      "seq": 14,
+      "wall_ns": 1792746010500000000
+    },
+    {
+      "approach": "mip-mbb",
+      "bytes": 58,
+      "detail": "registration reply",
+      "kind": "signal_rx",
+      "mono_ns": 20531000000,
+      "node": "mn",
+      "seq": 15,
+      "wall_ns": 1792746010531000000
+    }
+  ],
+  "experiment_id": "exp-33735f5023a6bc9f",
+  "next_after_seq": null,
+  "provenance": null,
+  "scenario": "lossy-access",
+  "source_file": "approach_events.csv",
+  "status": "completed",
+  "total": 15
+}
