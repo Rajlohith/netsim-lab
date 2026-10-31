@@ -64,7 +64,7 @@ export function ResultsView({ experiment, metrics, handoffs, events, api }) {
         {events && timeline.points.length ? (
           <>
             <TimelineChart id="event-timeline" title="Approach events" kinds={timeline.kinds} points={timeline.points} markers={markers} tMin={timeline.tMin} tMax={timeline.tMax} />
-            <p className="muted">{events.total} events in the run's own clock ({fmtRunClock(timeline.tMin)} – {fmtRunClock(timeline.tMax)}); times are virtual for emulated runs, not wall-clock time. {pairs ? "Handoff markers pair the i-th handoff with the i-th link change." : "Markers show link-change events; handoff pairing was not possible (different counts)."}</p>
+            <p className="muted">{events.total} events in the run's own clock ({fmtRunClock(timeline.tMin === null ? null : timeline.tMin * 1e9)} – {fmtRunClock(timeline.tMax === null ? null : timeline.tMax * 1e9)}); times are virtual for emulated runs, not wall-clock time. {pairs ? "Handoff markers pair the i-th handoff with the i-th link change." : "Markers show link-change events; handoff pairing was not possible (different counts)."}</p>
           </>) : <EmptyState title="No events available.">This run has no approach event log.</EmptyState>}
       </section>
       <section aria-labelledby="exp-h"><h2 id="exp-h">Export</h2><ExportButtons api={api} id={experiment.id} predictionAvailable={experiment.prediction && experiment.prediction.status === "available"} /></section>

@@ -28,3 +28,7 @@ data/*
 # Stage 9: real captured API responses used as frontend contract fixtures
 !frontend/src/test/fixtures/
 !frontend/src/test/fixtures/**
+
+*.csv
+*.json
+*.png

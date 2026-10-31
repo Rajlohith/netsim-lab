@@ -1,4 +1,0 @@
-# OPTIONAL: needed only for the QUIC connection-migration adapter (app/compare/quic_sim.py).
-# aioquic pulls in cryptography (used to create a throw-away certificate in memory).
-# NOT installed in the development sandbox: the adapter has never been executed against the real library.
-aioquic>=1.0

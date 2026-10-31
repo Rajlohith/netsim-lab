@@ -1,4 +1,4 @@
-# Architecture (through Stage 8)
+# Architecture (through Stage 10)
 
 ```
 netsim-lab/
@@ -49,7 +49,7 @@ netsim-lab/
 │   │   ├── events.py normalize.py matrix.py cli.py   common events -> comparison_metrics.json -> matrix
 │   ├── mobileip/ro.py ro_sim.py     simplified route-optimisation model (+ MBB in mobility_sim.py / demo.py)
 │   ├── ml/                          Stage 6: features, labels, dataset, splits, models, evaluate, bundle, predict (docs/HANDOFF_PREDICTION.md)
-│   ├── analysis/                    [later stage] placeholder
+│   ├── analysis/                    unused empty package (statistics live in compare/: analysis.py stats.py plots.py)
 │   └── tests/                       unit tests (fake host), real-kernel lab (kernel_lab.py netlink executor), gated live tests, stubs/
 ├── config/topology.yaml, scenarios/ lab definition + handoff scenarios (repeatable)
 ├── schemas/  examples/results/      raw-data schemas, real example runs (loopback)
@@ -57,7 +57,7 @@ netsim-lab/
 ├── examples/comparison/             generated comparison matrix + one run directory per scenario
 ├── config/topology_ro.yaml          Stage 2 lab + direct cn-ana / cn-anb links (comparison topology)
 ├── scripts/                         setup.sh, check_env.sh, topology.sh, run_all_tests.py (generates docs/TEST_REPORT.md)
-├── frontend/                        React + Vite scaffold
+├── frontend/                        Stage 9: React dashboard (7 pages, docs/FRONTEND.md); scripts/e2e_browser.py = Stage 10 browser check
 └── docs/                            ARCHITECTURE.md, PRIVILEGED_OPERATIONS.md
 ```
 
@@ -69,3 +69,13 @@ netsim-lab/
 ```
 Namespaces: `nsl-cn nsl-ha nsl-mn nsl-ana nsl-anb`. `mn` has two interfaces (`eth-a`, `eth-b`) and two
 default routes (A metric 100 preferred, B metric 200 standby). Handover logic is not part of Stage 2.
+
+## Data flow (Stage 10 view)
+```
+dashboard (React, hash router, polling) --/api--> FastAPI routes (api/, pydantic) --> ExperimentService (services/, no FastAPI import)
+   ExperimentService --> SQLite store (state machine, idempotency, duplicate guard) --> job manager --> WORKER PROCESS (own process group)
+   worker --> compare.run_experiment --> adapter (emulator | loopback) --> raw CSV/JSON in data/api/<exp-id>/ --> comparison_metrics.json
+   routes/exports read ONLY those files: metrics, handoffs, events, predictions (Stage 6 bundle), JSON/CSV/ZIP.
+CLI campaigns (app.compare campaign) write the same raw-file layout under data/experiments/<name>/runs/ -> analysis/ (statistics, charts, exports).
+```
+The dashboard, the API, the exports and the saved analysis all read the same per-run files; nothing is cached or recomputed in the UI beyond display formatting.

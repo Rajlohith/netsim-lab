@@ -4,7 +4,7 @@ A React 18 + JavaScript (Vite) single-page app in `frontend/`. It talks only to 
 dependency** beyond the ones the project already declared: routing is a 40-line hash router, charts are hand-written responsive SVG.
 
 ```
-make run-api            # terminal 1: FastAPI on 127.0.0.1:8000
+make stack-start          # or: make run-api (API only, with --reload) in terminal 1
 make frontend-install   # once (needs network)
 make frontend-dev       # terminal 2: http://localhost:5173  (Vite proxies /api -> 127.0.0.1:8000)
 make frontend-test      # vitest (unit + SSR views + jsdom interactions)
@@ -60,7 +60,7 @@ Therefore:
 | `npm run build` (vite) | **not run**. Replaced by `scripts/bundle-check.mjs` (esbuild production bundle: 276 kB JS + 7 kB CSS, no unresolved imports) |
 | API integration | `src/integration/live-api.test.js` ran (7 tests) against the real `ExperimentService` through `scripts/service_http_adapter.py`, a stdlib HTTP shim. It validates the dashboard's client against genuine service output and a real experiment run; it does **not** exercise FastAPI routing, pydantic parsing, CORS or auth |
 | `GET /api/topology` HTTP route | route and schema only byte-compiled (syntax), never executed; service function tested (`tests/test_api_topology.py`); the HTTP route itself needs `make api-test` with fastapi installed |
-| Real browser rendering (layout, CSS at 1280/1366/1440 px, dark mode, focus order) | **not verified**; CSS is written for ≥1024 px laptops with a narrow-screen fallback but was never looked at in a browser |
+| Real browser rendering | **Stage 10: partly verified.** `scripts/e2e_browser.py` drives headless Chrome 131 at 1280x900 against the real service layer (31 checks passed, `docs/e2e_browser_results.json`, screenshots in `docs/demo/`). Not checked: other viewport widths, dark mode, focus order, Firefox/Safari. The same run found and fixed two display bugs (1) event-timeline caption showed `0.000 s – 0.000 s` (unit mix-up; regression test added), (2) the top bar stretched to ~300 px on short pages (CSS grid rows; fixed) |
 
 Fixtures in `src/test/fixtures/api/` are real responses captured by `scripts/capture_frontend_fixtures.py` from four real simulator runs
 (`make frontend-fixtures` regenerates them). They are test inputs, not demo data: the app itself ships none.

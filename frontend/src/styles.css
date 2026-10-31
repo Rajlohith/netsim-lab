@@ -3,7 +3,7 @@
 @media (prefers-color-scheme: dark) { :root { --bg:#12161c; --panel:#1a2029; --text:#e6eaf0; --muted:#9aa6b5; --line:#2e3846; --accent:#6ea8ff; --danger:#ff8a80; --warn:#f0c36d; --ok:#7fd49a; --s0:#6ea8ff; --s1:#f0a45d; --s2:#6fd09a; --s3:#c79bea; --s4:#aab4b6; } }
 * { box-sizing: border-box; }
 body { margin:0; background:var(--bg); color:var(--text); line-height:1.45; }
-.app { display:grid; grid-template-columns: 15rem minmax(0,1fr); grid-template-areas: "top top" "nav main"; min-height:100vh; }
+.app { display:grid; grid-template-columns: 15rem minmax(0,1fr); grid-template-areas: "top top" "nav main"; grid-template-rows: auto 1fr; min-height:100vh; }
 .topbar { grid-area: top; display:flex; gap:1rem; align-items:center; flex-wrap:wrap; padding:.6rem 1rem; background:var(--panel); border-bottom:1px solid var(--line); }
 .brand { font-weight:700; font-size:1.15rem; } .tag { color:var(--muted); font-size:.85rem; flex:1; }
 .backend { font-size:.8rem; padding:.1rem .5rem; border-radius:1rem; border:1px solid var(--line); } .backend-ok { color:var(--ok); } .backend-down { color:var(--danger); }
@@ -51,5 +51,5 @@ svg.topology { width:100%; max-width:56rem; height:auto; background:var(--panel)
 .phases { display:flex; gap:.4rem; flex-wrap:wrap; list-style:none; padding:0; } .phases li { padding:.2rem .6rem; border:1px solid var(--line); border-radius:1rem; font-size:.82rem; color:var(--muted); }
 .phases li.current { border-color:var(--accent); color:var(--accent); font-weight:700; } .phases li.past { color:var(--ok); border-color:var(--ok); }
 .live-head { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.5rem; }
-@media (max-width: 900px) { .app { grid-template-columns:1fr; grid-template-areas:"top" "nav" "main"; } .nav { border-right:0; border-bottom:1px solid var(--line); padding:.4rem; } .nav ul { display:flex; flex-wrap:wrap; } main { padding:1rem; } }
+@media (max-width: 900px) { .app { grid-template-columns:1fr; grid-template-rows:auto auto 1fr; grid-template-areas:"top" "nav" "main"; } .nav { border-right:0; border-bottom:1px solid var(--line); padding:.4rem; } .nav ul { display:flex; flex-wrap:wrap; } main { padding:1rem; } }
 @media (prefers-reduced-motion: no-preference) { button { transition: background .15s; } }

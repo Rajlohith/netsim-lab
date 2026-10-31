@@ -1,8 +1,8 @@
-# NetSim Lab — Stages 1–8: Foundation, Network Emulation, Traffic & Metrics, Basic Mobile IP, Mobility Comparison, Handoff Prediction, Experiments & Analysis, Backend API
+# NetSim Lab — Stages 1–10: Foundation, Network Emulation, Traffic & Metrics, Basic Mobile IP, Mobility Comparison, Handoff Prediction, Experiments & Analysis, Backend API, Dashboard, Final Integration
 
 Scaffold for a network-emulation + ML project targeting **Zorin OS** and **Fedora Linux**.
 Stack: Python, FastAPI, React/JavaScript, Linux network namespaces + iproute2 + `tc netem`,
-scikit-learn, Pandas, NumPy, Matplotlib. Stage 2 adds the namespace-based mobility topology; Stage 6 adds handoff-degradation prediction (`python -m app.ml`, simulated data only; see `docs/HANDOFF_PREDICTION.md`); `analysis/` is still a placeholder.
+scikit-learn, Pandas, NumPy, Matplotlib. Stage 2 adds the namespace-based mobility topology; Stage 6 adds handoff-degradation prediction (`python -m app.ml`, simulated data only; see `docs/HANDOFF_PREDICTION.md`); Stage 7 holds the statistical analysis (`app/compare/analysis.py`, `stats.py`, `plots.py`); the empty `backend/app/analysis/` package is an unused placeholder.
 
 ## Prerequisites
 | | Zorin OS (Ubuntu-based) | Fedora |
@@ -136,3 +136,10 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Configuration
 Environment variables prefixed `NETSIM_` (see `.env.example`).
+
+## Stage 10 — integration and final validation
+Start/stop: `make stack-start` / `make stack-status` / `make stack-stop` (`scripts/stack.sh`, unprivileged, pid files in `.run/`).
+One documented end-to-end workflow and a repeatable demo: [docs/DEMO.md](docs/DEMO.md). Acceptance checklist, exact test commands/results,
+security audit and known limitations: [docs/FINAL_VALIDATION_REPORT.md](docs/FINAL_VALIDATION_REPORT.md). What can be re-verified offline: `make stage10-verify`.
+**WSL2:** the emulated/loopback workflow, API and dashboard work; the privileged namespace lab (`make topo-create`, `test-live`) needs a WSL2 kernel with
+network namespaces, `ip`/`tc` with the `sch_netem` module, and `sudo`; kernel IP-in-IP tunnels (`ipip`) are often missing in the stock WSL2 kernel. These were not testable here (see the report).

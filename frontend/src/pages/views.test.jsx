@@ -142,7 +142,7 @@ describe("live metrics page", () => {
     const h = html(<ResultsView experiment={expMbb} metrics={mMbb} handoffs={hMbb} events={eMbb} api={apiStub} />);
     expect(h).toContain(`${mMbb.metrics.rtt_ms.p50} ms`.replace(/\.0 ms/, " ms")); expect(h).toContain("kbit/s"); expect(h).toContain("Jitter"); expect(h).toContain("not reported in the comparison metrics");
     for (const x of hMbb.handoffs) expect(h).toContain(x.event_id);
-    expect(h).toContain('data-chart="event-timeline"'); expect(h).toContain('data-chart="handoff-times"'); expect(h).toContain("own clock");
+    expect(h).toContain('data-chart="event-timeline"'); expect(h).toContain('data-chart="handoff-times"'); expect(h).toContain("own clock"); expect(h).not.toContain("(0.000 s – 0.000 s)"); // regression (Stage 10): the caption once showed seconds as if nanoseconds
   });
   it("results without handoffs or events show empty states", () => {
     const h = html(<ResultsView experiment={expBasic} metrics={mBasic} handoffs={{ handoffs: [], unavailable_reason: "none recorded" }} events={{ events: [], total: 0 }} api={apiStub} />);

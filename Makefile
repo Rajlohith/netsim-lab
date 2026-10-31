@@ -103,3 +103,18 @@ api-smoke:        ## start the job manager without HTTP, run one real experiment
 .PHONY: api-examples
 api-examples:     ## regenerate examples/api/stage8 from real runs (add --check via: $(PY) scripts/generate_api_examples.py --check)
 	PYTHONPATH=backend $(PY) scripts/generate_api_examples.py
+
+.PHONY: stack-start stack-stop stack-status e2e-browser stage10-verify
+stack-start:      ## start API (127.0.0.1:8000) + Vite dev server (5173) in the background, unprivileged (scripts/stack.sh)
+	./scripts/stack.sh start all
+stack-stop:       ## stop both (process-group TERM, then KILL after NETSIM_STOP_GRACE_S)
+	./scripts/stack.sh stop all
+stack-status:
+	./scripts/stack.sh status
+e2e-browser:      ## Stage 10: real headless Chrome vs the real service layer (stdlib HTTP adapter, not FastAPI); needs playwright + Chrome + esbuild
+	python3 scripts/e2e_browser.py --out docs/e2e_browser_results.json --screenshots docs/demo
+stage10-verify:   ## everything that can run WITHOUT network/root: backend suite, frontend shim tests, bundle, regenerate analysis, reproduce sample
+	$(PY) scripts/run_all_tests.py
+	cd frontend && npm run verify:bundle && npm run verify:sandbox
+	PYTHONPATH=backend $(PY) -m app.compare analyze examples/experiments/stage7
+	PYTHONPATH=backend $(PY) -m app.compare reproduce examples/experiments/stage7 --sample 10
