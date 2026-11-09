@@ -20,7 +20,6 @@ data/*
 
 *.csv
 *.json
-*.png
 # shipped example results and schemas ARE tracked (the global ignores above silently dropped the Stage 7 example data from git)
 !examples/**
 !schemas/**
@@ -31,5 +30,10 @@ data/*
 
 *.csv
 *.json
-*.png
 *.log
+
+/examples/experiments/stage7/analysis/plots
+
+TEST_REPORT.md
+
+.run
