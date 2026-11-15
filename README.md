@@ -275,7 +275,8 @@ netsim-lab/
 │                                    test runner, API smoke test, browser end-to-end check,
 │                                    example generators
 ├── examples/
-│   ├── experiments/stage7/          raw runs, ledger and analysis of the 372-run example campaign
+│   ├── experiments/stage7/          plan, ledger and analysis (report, tables, charts) of the 372-run example campaign;
+│   │                                the 104 MB of raw runs are git-ignored (regenerate with `make exp-example`)
 │   ├── ml/stage6/                   prediction dataset, trained model bundle, results
 │   └── comparison/ mobileip/ results/ api/    sample outputs of the individual tools
 │
@@ -619,7 +620,8 @@ Errors carry a machine-readable `code` and a human message; common codes include
 * Raw CSV/JSON, configuration, seeds and software versions are kept for every run.
 * `python -m app.compare reproduce <campaign-dir> --sample N` re-executes saved runs and compares their files **byte for byte** (`--sample 0` re-runs all of them).
 * `python -m app.compare analyze <campaign-dir>` regenerates the statistics, tables, charts and report from the saved raw runs alone.
-* The shipped example campaign (`examples/experiments/stage7/`) has 372 runs, all completed. Regenerating it from `config/experiments/stage7_example.yaml` reproduced the same outcomes and an identical report, and 10 of 10 sampled runs were byte-identical when re-executed.
+* The repository ships the plan, ledger and analysis of a 372-run example campaign (`examples/experiments/stage7/`), so the report and charts can be read without running anything. The 104 MB of raw run files are **not** committed: regenerate them with `make exp-example` (about 15–20 minutes, written to `data/experiments/stage7-example`), then verify with `make exp-reproduce DIR=data/experiments/stage7-example`.
+* When this was done during development, all 372 runs completed, the outcomes matched the shipped ledger with zero differences, the report was identical, and 10 of 10 sampled runs were byte-identical when re-executed.
 * The prediction pipeline re-run from the shipped dataset gives an identical `results.json`.
 * Fixed base seed `20261028` for the example campaign; change it to draw a different, equally valid sample.
 
@@ -668,6 +670,7 @@ The one cryptographic constant in the code (`RO_SECRET` in the route-optimisatio
 | `sudo modprobe sch_netem` fails | `sudo dnf install kernel-modules-extra` and retry |
 | Live kernel tunnel tests skipped | The kernel refuses `ipip` links; the emulated Mobile IP path is unaffected |
 | `ModuleNotFoundError: app` when running a tool | Run from the project root with `PYTHONPATH=backend` |
+| `exp-reproduce` / `exp-analyze` on `examples/experiments/stage7` fails with missing runs | The raw runs are not committed. Run `make exp-example` and use `DIR=data/experiments/stage7-example` |
 | A structure test fails after you deleted files | Some tests check that expected files exist (for example `backend/app/analysis/__init__.py`). Restore the file or update the test |
 
 ## Known Limitations

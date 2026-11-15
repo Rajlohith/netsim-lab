@@ -1,39 +1,78 @@
-# Python
+# =====================================================================================================================
+# NetSim Lab .gitignore
+#
+# Rule of thumb used here: ignore by LOCATION and by KIND OF FILE-THAT-IS-ALWAYS-GENERATED, never by data extension.
+# .csv / .json / .png / .joblib files are real, tracked project content in this repo (example results, JSON schemas,
+# frontend test fixtures, the trained model bundle, README screenshots), so they are NOT ignored globally.
+# =====================================================================================================================
+
+# --- Python ----------------------------------------------------------------------------------------------------------
 .venv/
+venv/
 __pycache__/
-*.pyc
+*.py[cod]
+*.egg-info/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
-*.egg-info/
-# Node
+.coverage
+htmlcov/
+
+# --- Node / frontend --------------------------------------------------------------------------------------------------
 node_modules/
 frontend/dist/
-# Local config / data
+frontend/.vite/
+npm-debug.log*
+yarn-error.log*
+# NOTE: frontend/package-lock.json is deliberately NOT ignored. Commit it after the first `make frontend-install`.
+
+# --- Secrets and local configuration ----------------------------------------------------------------------------------
 .env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# --- Runtime output (everything the app, the CLI tools and the campaigns write while running) ---------------------------
+# API database + one directory per experiment, campaign output, generated ML data, demo runs, ...
 data/*
 !data/.keep_dir
-# Editor / OS
+# scripts/stack.sh: pid files and logs
+.run/
+
+# --- Generated reports (rewritten on every run, machine-specific, produce noisy diffs) -------------------------------
+docs/TEST_REPORT.md
+docs/test_results.json
+docs/e2e_browser_results.json
+
+# --- Release archives and packaging leftovers --------------------------------------------------------------------------
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+
+# --- Logs, captures and scratch ---------------------------------------------------------------------------------------
+*.log
+*.pcap
+*.pcapng
+*.tmp
+*.bak
+
+# --- Editors and operating systems -------------------------------------------------------------------------------------
 .vscode/
 .idea/
+*.swp
+*~
 .DS_Store
+Thumbs.db
+.directory
 
-*.csv
-*.json
-# shipped example results and schemas ARE tracked (the global ignores above silently dropped the Stage 7 example data from git)
-!examples/**
-!schemas/**
-
-# Stage 9: real captured API responses used as frontend contract fixtures
-!frontend/src/test/fixtures/
-!frontend/src/test/fixtures/**
-
-*.csv
-*.json
-*.log
-
-/examples/experiments/stage7/analysis/plots
-
-TEST_REPORT.md
-
-.run
+# =====================================================================================================================
+# OPTIONAL: keep the repository small.
+# examples/experiments/stage7/runs/ holds ~100 MB of raw CSV/JSON (2,500+ files) of the 372-run example campaign. It is
+# tracked by default so that `make exp-analyze` and `make exp-reproduce` work straight after cloning. If you prefer a
+# lightweight repository, uncomment the next line and run:   git rm -r --cached examples/experiments/stage7/runs
+# The runs can always be regenerated with `make exp-example`.
+# =====================================================================================================================
+# examples/experiments/stage7/runs/
+examples/experiments/stage7/runs/

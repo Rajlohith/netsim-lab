@@ -1,0 +1,71 @@
+{
+  "config": {
+    "approaches": "auto",
+    "base_seed": 20261028,
+    "baseline": {},
+    "duration_s": 12.0,
+    "environment": "emulated",
+    "name": "stage7-example",
+    "payload": 64,
+    "rate_pps": 100.0,
+    "replicates": 12,
+    "schedule": {
+      "dwell_jitter_s": 0.25,
+      "dwell_s": 3.0,
+      "first_move_s": [
+        3.5,
+        4.5
+      ]
+    },
+    "schema_version": 1,
+    "sweeps": {
+      "detect_delay_ms": [
+        100
+      ],
+      "dwell_s": [
+        1.5
+      ],
+      "ha_distance_ms": [
+        100
+      ],
+      "latency_scale": [
+        2.0
+      ],
+      "loss_percent": [
+        2
+      ],
+      "registration_loss_percent": [
+        30
+      ]
+    },
+    "topology": null
+  },
+  "config_sha256": "89b97886f1feba38de9bd38a183d2a556284e1f371a73b1a1029f49b95496e9e",
+  "created_wall_iso": "2026-10-31T06:44:34.720397Z",
+  "plan_summary": {
+    "approach_configs": 6,
+    "conditions": 7,
+    "not_executed_by_status": {
+      "not_applicable": 6,
+      "unavailable": 5
+    },
+    "not_executed_cells": 11,
+    "planned_runs": 372
+  },
+  "schema_version": 1,
+  "software": {
+    "aioquic_available": false,
+    "framework": "stage7-experiments",
+    "joblib": "1.5.3",
+    "matplotlib": "3.10.8",
+    "netsim_lab": "0.1.0",
+    "numpy": "2.4.4",
+    "os": "Linux-6.18.44-fc-v185-x86_64-with-glibc2.39",
+    "pandas": "3.0.2",
+    "platform": "linux",
+    "python": "3.12.3",
+    "scipy": "1.17.1",
+    "sklearn": "1.8.0",
+    "yaml": "6.0.3"
+  }
+}

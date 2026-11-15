@@ -1,0 +1,69 @@
+{
+ "campaign": {
+  "approaches": "auto",
+  "base_seed": 20261028,
+  "baseline": {},
+  "duration_s": 12.0,
+  "environment": "emulated",
+  "name": "stage7-example",
+  "payload": 64,
+  "rate_pps": 100.0,
+  "replicates": 12,
+  "schedule": {
+   "dwell_jitter_s": 0.25,
+   "dwell_s": 3.0,
+   "first_move_s": [
+    3.5,
+    4.5
+   ]
+  },
+  "schema_version": 1,
+  "sweeps": {
+   "detect_delay_ms": [
+    100
+   ],
+   "dwell_s": [
+    1.5
+   ],
+   "ha_distance_ms": [
+    100
+   ],
+   "latency_scale": [
+    2.0
+   ],
+   "loss_percent": [
+    2
+   ],
+   "registration_loss_percent": [
+    30
+   ]
+  },
+  "topology": null
+ },
+ "config_sha256": "89b97886f1feba38de9bd38a183d2a556284e1f371a73b1a1029f49b95496e9e",
+ "generated_wall_iso": "2026-10-31T07:07:44.787845Z",
+ "handoff_rows": 744,
+ "inputs": {
+  "campaign.json": "66b61972ae22112deb92bd54fa633c407a2bbafc2f43dc205be3d01476dc6e8b",
+  "ledger.jsonl": "dedb4d0947228cdb8cf07db2a7fbcde22296c41665c3ed332e932cf6e0de649e",
+  "plan.json": "4ec79fbbf0d96cc8d70e27ba97e289e50aae858d42d839b9be1bc83217af61a8"
+ },
+ "methods": {
+  "alpha": 0.05,
+  "bootstrap_resamples": 5000,
+  "bootstrap_seed": 20261028,
+  "confidence_level": 0.95,
+  "effect": "median of paired differences with percentile-bootstrap CI over pairs",
+  "mean_ci": "Student t",
+  "median_ci": "exact distribution-free (order statistics, binomial)",
+  "multiplicity": "Holm-Bonferroni within each (condition, metric) family [approach pairs] or (configuration, metric) family [vs baseline]",
+  "paired_test": "Wilcoxon signed-rank (two-sided), matched by replicate seed",
+  "unit_of_analysis": "one run (own seed); per-handoff values are averaged within a run before inference"
+ },
+ "mode": "campaign",
+ "results_dir": "stage7",
+ "run_status_counts": {
+  "ok": 372
+ },
+ "schema_version": 1
+}

@@ -1,0 +1,12 @@
+approach,condition,config_id,factor,level,reason,status
+quic-migration,baseline,quic-migration,baseline,,the aioquic library is not installed (pip install aioquic); the QUIC adapter cannot run,unavailable
+quic-migration,latency-scale-2,quic-migration,latency_scale,2.0,the aioquic library is not installed (pip install aioquic); the QUIC adapter cannot run,unavailable
+quic-migration,loss-percent-2,quic-migration,loss_percent,2,the aioquic library is not installed (pip install aioquic); the QUIC adapter cannot run,unavailable
+tcp-reconnect,ha-distance-ms-100,tcp-reconnect-notify,ha_distance_ms,100,tcp-reconnect has no Home Agent / Mobile IP registration: ha_distance_ms cannot affect it,not_applicable
+tcp-reconnect,ha-distance-ms-100,tcp-reconnect-stall-timeout,ha_distance_ms,100,tcp-reconnect has no Home Agent / Mobile IP registration: ha_distance_ms cannot affect it,not_applicable
+quic-migration,ha-distance-ms-100,quic-migration,ha_distance_ms,100,quic-migration has no Home Agent / Mobile IP registration: ha_distance_ms cannot affect it,not_applicable
+quic-migration,detect-delay-ms-100,quic-migration,detect_delay_ms,100,the aioquic library is not installed (pip install aioquic); the QUIC adapter cannot run,unavailable
+quic-migration,dwell-s-1.5,quic-migration,dwell_s,1.5,the aioquic library is not installed (pip install aioquic); the QUIC adapter cannot run,unavailable
+tcp-reconnect,registration-loss-percent-30,tcp-reconnect-notify,registration_loss_percent,30,tcp-reconnect has no Home Agent / Mobile IP registration: registration_loss_percent cannot affect it,not_applicable
+tcp-reconnect,registration-loss-percent-30,tcp-reconnect-stall-timeout,registration_loss_percent,30,tcp-reconnect has no Home Agent / Mobile IP registration: registration_loss_percent cannot affect it,not_applicable
+quic-migration,registration-loss-percent-30,quic-migration,registration_loss_percent,30,quic-migration has no Home Agent / Mobile IP registration: registration_loss_percent cannot affect it,not_applicable

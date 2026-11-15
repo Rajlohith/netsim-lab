@@ -44,6 +44,7 @@ Do this **the evening before**, then again 30 minutes before.
 - [ ] Pre-run the experiments below so the comparison page is full (they finish in seconds each)
 - [ ] Browser tabs ready: dashboard, `http://127.0.0.1:8000/docs`, and the project README
 - [ ] A terminal ready in the project root, font enlarged
+- [ ] If you will show the reproducibility check (7.2): run `make exp-example` the day before (about 15–20 minutes), because the raw runs are not in the repository
 - [ ] A second plan: screenshots from `docs/screenshots/` open in a folder, in case the live demo fails
 
 ### Pre-run these four experiments
@@ -189,14 +190,14 @@ ls data/demo/mip-basic-emulated/run-1
 ### 7.2 Reproducibility check (1 minute)
 
 ```bash
-PYTHONPATH=backend .venv/bin/python -m app.compare reproduce examples/experiments/stage7 --sample 3
+PYTHONPATH=backend .venv/bin/python -m app.compare reproduce data/experiments/stage7-example --sample 3
 ```
 
-Expected: `checked 3, identical 3, mismatches []`. **Say:** "It re-ran three saved experiments from their recorded configuration and the output files are byte-for-byte identical."
+(This needs the campaign generated beforehand with `make exp-example`.) Expected: `checked 3, identical 3, mismatches []`. **Say:** "It re-ran three saved experiments from their recorded configuration and the output files are byte-for-byte identical."
 
 ### 7.3 The statistical report
 
-Open `examples/experiments/stage7/analysis/REPORT.md` and one chart from `analysis/plots/`. **Say:** "372 runs. One factor changed at a time around the baseline. Notice that failed or not-executed cells are listed, not hidden."
+Open `examples/experiments/stage7/analysis/REPORT.md` (committed, no need to run anything) and one chart from `analysis/plots/`. **Say:** "372 runs. One factor changed at a time around the baseline. Notice that failed or not-executed cells are listed, not hidden."
 
 ### 7.4 The API directly
 
@@ -301,7 +302,7 @@ http://127.0.0.1:8000/docs       API docs
 PYTHONPATH=backend .venv/bin/python -m app.compare run --approach mip-basic --seed 1 --duration 12 --out-dir data/demo
 
 # reproducibility
-PYTHONPATH=backend .venv/bin/python -m app.compare reproduce examples/experiments/stage7 --sample 3
+PYTHONPATH=backend .venv/bin/python -m app.compare reproduce data/experiments/stage7-example --sample 3   # after make exp-example
 ```
 
 | Page | Route | One-line message |
