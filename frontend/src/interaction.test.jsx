@@ -19,9 +19,9 @@ describe("navigation", () => {
   it("moves between pages with the navigation links", async () => {
     open("#/topology", makeApi());
     expect(await screen.findByRole("heading", { level: 1, name: "Network topology" })).toBeTruthy();
-    fireEvent.click(screen.getByRole("link", { name: "Model evaluation" }));
-    expect(await screen.findByRole("heading", { level: 1, name: "Model evaluation" })).toBeTruthy();
-    expect(screen.getByRole("link", { name: "Model evaluation" }).getAttribute("aria-current")).toBe("page");
+    fireEvent.click(screen.getByRole("link", { name: "Experiment history" }));
+    expect(await screen.findByRole("heading", { level: 1, name: "Experiment history" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Experiment history" }).getAttribute("aria-current")).toBe("page");
   });
   it("shows an error state with retry when the backend is down", async () => {
     const api = makeApi({ topology: vi.fn().mockRejectedValue(Object.assign(new Error("cannot reach the API"), { code: "network_error", issues: [] })) });
@@ -70,7 +70,7 @@ describe("live metrics polling", () => {
     let n = 0;
     const api = makeApi({ getExperiment: vi.fn(async () => (++n < 2 ? { ...fx.expMbb, status: "running", progress: { phase: "running_experiment", fraction: null }, finished_at: null } : fx.expMbb)) });
     render(<ApiProvider api={api}><LivePage id={fx.expMbb.id} /></ApiProvider>);
-    expect(await screen.findByText("running")).toBeTruthy();
+    expect(within(await screen.findByRole("group", { name: "Experiment status" })).getByText("running")).toBeTruthy();
     expect(await screen.findByText(/Measured values/, {}, { timeout: 5000 })).toBeTruthy();
     expect(api.metrics).toHaveBeenCalledTimes(1);
   });
@@ -85,7 +85,7 @@ describe("live metrics polling", () => {
 describe("exports", () => {
   it("downloads a server export and reports its name", async () => {
     const api = makeApi(); const save = vi.fn();
-    render(<ExportButtons api={api} id={fx.expMbb.id} predictionAvailable save={save} />);
+    render(<ExportButtons api={api} id={fx.expMbb.id} save={save} />);
     fireEvent.click(screen.getByRole("button", { name: "CSV · handoffs" }));
     await waitFor(() => expect(save).toHaveBeenCalledTimes(1));
     expect(api.exportExperiment).toHaveBeenCalledWith(fx.expMbb.id, { format: "csv", table: "handoffs" });

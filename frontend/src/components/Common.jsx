@@ -25,7 +25,7 @@ export function ConfirmButton({ label, confirmLabel = "Confirm", cancelLabel = "
 }
 
 // Download buttons for one experiment (server-side exports: JSON, CSV table, ZIP). Failures are shown, never swallowed.
-export function ExportButtons({ api, id, predictionAvailable = false, partial = false, save = saveBlob }) {
+export function ExportButtons({ api, id, partial = false, save = saveBlob }) {
   const [state, setState] = useState({ busy: null, error: null, done: null });
   async function run(key, opts) {
     setState({ busy: key, error: null, done: null });
@@ -45,7 +45,6 @@ export function ExportButtons({ api, id, predictionAvailable = false, partial = 
       {partial ? null : b("json", "JSON", { format: "json" })}
       {partial ? null : b("csv-handoffs", "CSV · handoffs", { format: "csv", table: "handoffs" })}
       {partial ? null : b("csv-events", "CSV · events", { format: "csv", table: "events" })}
-      {partial ? null : b("csv-predictions", "CSV · predictions", { format: "csv", table: "predictions" }, !predictionAvailable)}
       {b("zip", partial ? "ZIP · partial outputs" : "ZIP · raw run files", { format: "zip", includePartial: partial })}
       {state.done ? <span role="status" className="muted">Saved {state.done}</span> : null}
       {state.error ? <ErrorState error={state.error} title="Export failed" /> : null}

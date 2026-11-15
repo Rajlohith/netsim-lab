@@ -37,15 +37,12 @@ def main(argv=None) -> int:
     r.add_argument("--ha-processing-ms", type=float, default=1.0, help="Stage 7: Home Agent registration processing time")
     r.add_argument("--detect-delay-ms", type=float, default=20.0, help="movement-detection delay")
     r.add_argument("--execute", action="store_true", help="live environment: really run privileged commands")
-    r.add_argument("--predict-model", type=Path, default=None, metavar="MODEL_DIR",
-                   help="Stage 6 (opt-in): after the run, write handoff_predictions.csv/json into the run directory using this model bundle")
     sub.choices["list"].add_argument("--json", action="store_true", help="machine-readable approach/configuration/support listing")
     pl = sub.add_parser("plan", help="Stage 7: show the design of a campaign (conditions, approach configurations, run count) without running")
     pl.add_argument("--config", type=Path, required=True)
     c = sub.add_parser("campaign", help="Stage 7: run (or resume) a replicated campaign, then analyse and plot it")
     c.add_argument("--config", type=Path, required=True)
     c.add_argument("--out-dir", type=Path, required=True)
-    c.add_argument("--predict-model", type=Path, default=None, metavar="MODEL_DIR", help="attach Stage 6 predictions to every finished run")
     c.add_argument("--retry-failed", action="store_true", help="also rerun runs recorded as failed")
     c.add_argument("--max-runs", type=int, default=None, help="stop cleanly after this many NEW runs (resume later with the same command)")
     c.add_argument("--no-analyze", action="store_true")
@@ -86,7 +83,7 @@ def main(argv=None) -> int:
         from .campaign import CampaignConfig, execute
         from .plots import make_plots
         cfg = CampaignConfig.load(a.config)
-        res = execute(cfg, a.out_dir, retry_failed=a.retry_failed, predict_model=a.predict_model, max_runs=a.max_runs,
+        res = execute(cfg, a.out_dir, retry_failed=a.retry_failed, max_runs=a.max_runs,
                       progress=lambda i, n, key, st: print(f"[{i}/{n}] {key}: {st}", flush=True) if (i % 25 == 0 or st != "ok") else None)
         print(json.dumps(res, indent=2))
         if res["interrupted"]:
@@ -151,10 +148,6 @@ def main(argv=None) -> int:
         if res.metrics:
             print(json.dumps({k: res.metrics[k] for k in ("handoff_summary", "loss", "mobility_overhead", "continuity")}, indent=2))
             print(f"run directory: {res.run_dir}")
-        if a.predict_model is not None and res.status == "ok" and res.run_dir:
-            from ..ml.integration import annotate_run      # lazy: the ML stack is only needed when asked for
-            summ = annotate_run(res.run_dir, a.predict_model)
-            print(f"predictions: {summ['decision_points']} decision points, {summ['alarms']} alarms -> {res.run_dir}/handoff_predictions.csv")
         return 0 if res.status in ("ok", "unsupported", "unavailable") else 1
     base = ExperimentSpec("tcp-reconnect", duration_s=a.duration)
     results, path = run_matrix(a.out_dir, base)

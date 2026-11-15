@@ -43,9 +43,6 @@
     "reason": "experiments run in the simulator's virtual time and produce their metrics only after the run has finished; there is no metric stream to forward, so a WebSocket would have nothing true to send. Poll GET /api/experiments/{id} and GET /api/experiments/{id}/transitions?after_seq=N.",
     "websocket": false
   },
-  "prediction_models": [
-    "stage6"
-  ],
   "request_fields": [
     "approach",
     "scenario",

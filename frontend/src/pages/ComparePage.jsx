@@ -28,15 +28,15 @@ export function ComparisonView({ rows, save = saveText }) {
     <>
       <DataNotice>Each row is ONE run of one configuration (no replication), so differences are observations, not statistically established effects, and no approach is ranked here. For replicated statistics see <code>docs/EXPERIMENTS.md</code> (Stage 7). Values come from <code>/api/experiments/{"{id}"}/metrics</code>; “—” means not measurable, never zero.</DataNotice>
       {notes.length ? <div role="alert" className="state state-warning"><strong>These runs were not made under identical conditions:</strong><ul>{notes.map((n, i) => <li key={i}>{n}</li>)}</ul></div> : rows.length > 1 ? <p className="ok-note" role="status">Scenario, environment, handoff mode, duration, rate, payload, seed and conditions are identical across the selected runs.</p> : null}
-      <section aria-labelledby="cond-h"><h2 id="cond-h">Experimental conditions</h2>
+      <details className="advanced" open={notes.length > 0}><summary>Experimental conditions</summary>
         <div className="table-scroll"><table><thead><tr><th>Experiment</th><th>Scenario</th><th>Environment</th><th>Origin</th><th>Handoff mode</th><th>Duration</th><th>Rate</th><th>Payload</th><th>Seed</th><th>Conditions</th></tr></thead>
-          <tbody>{rows.map((r) => <tr key={r.id}><th scope="row">{r.label}</th><td>{r.scenario}</td><td>{r.environment}</td><td><OriginBadge origin={r.origin} /></td><td>{r.handoff_mode ?? "—"}</td><td>{r.duration_s} s</td><td>{r.rate_pps} pkt/s</td><td>{r.payload} B</td><td>{r.seed}</td><td>{Object.entries(r.conditions).map(([k, v]) => `${k}=${v}`).join(", ")}</td></tr>)}</tbody></table></div></section>
+          <tbody>{rows.map((r) => <tr key={r.id}><th scope="row">{r.label}</th><td>{r.scenario}</td><td>{r.environment}</td><td><OriginBadge origin={r.origin} /></td><td>{r.handoff_mode ?? "—"}</td><td>{r.duration_s} s</td><td>{r.rate_pps} pkt/s</td><td>{r.payload} B</td><td>{r.seed}</td><td>{Object.entries(r.conditions).map(([k, v]) => `${k}=${v}`).join(", ")}</td></tr>)}</tbody></table></div></details>
       <section aria-labelledby="met-h"><h2 id="met-h">Metrics</h2>
         <div className="table-scroll"><table data-testid="comparison-table"><thead><tr><th>Experiment</th>{METRIC_KEYS.map((k) => <th key={k}>{METRICS[k].label}{METRICS[k].unit ? ` [${METRICS[k].unit}]` : ""}</th>)}</tr></thead>
           <tbody>{rows.map((r) => <tr key={r.id}><th scope="row">{r.label}</th>{METRIC_KEYS.map((k) => <td key={k}>{fmtNumber(r.values[k], METRICS[k].digits)}</td>)}</tr>)}</tbody></table></div>
         {rows.some((r) => r.interruption_unmeasured) ? <p className="muted">Interruption time is averaged over the handoffs for which the approach could measure it; the others are excluded, not counted as 0.</p> : null}</section>
       <section aria-labelledby="ch-h"><h2 id="ch-h">Charts</h2><div className="charts">{COMPARISON_CHARTS.map((def) => { const s = chartSpec(def, rows); return <BarChart key={def.id} id={def.id} title={s.title} unit={s.unit} categories={s.categories} series={s.series} digits={def.id === "loss" ? 2 : 1} categoryHeader="Experiment" />; })}</div></section>
-      <section aria-labelledby="ex-h"><h2 id="ex-h">Export this comparison</h2>
+      <section aria-labelledby="ex-h"><h2 id="ex-h">Export comparison</h2>
         <p className="muted">The files contain exactly the rows shown in the table and charts above.</p>
         <div className="exports"><button type="button" onClick={() => doExport("csv")}>CSV</button><button type="button" onClick={() => doExport("json")}>JSON</button></div>
         {exportError ? <ErrorState error={exportError} title="Export failed" /> : null}</section>
@@ -57,7 +57,7 @@ export default function ComparePage() {
   const toggle = (id) => setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : s.length >= MAX_COMPARE ? s : [...s, id]));
   return (
     <>
-      <PageHeader title="Approach comparison" />
+      <PageHeader title="Compare experiments"><p>Select completed runs to compare their measured values side by side.</p></PageHeader>
       <Async state={list} what="completed experiments" isEmpty={(items) => items.length === 0}
         empty={<EmptyState title="There is nothing to compare yet.">Run at least two experiments on the <a href={hrefFor("configure")}>configuration page</a>; completed ones appear here.</EmptyState>}>
         {(items) => (

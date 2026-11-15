@@ -18,7 +18,6 @@ from . import results as R
 from .catalog import Catalog
 from .errors import NotFound, ResultsNotAvailable, Unauthorized, ValidationFailed
 from .jobs import JobManager
-from .model_registry import ModelRegistry
 from .settings import ServiceSettings
 from .store import STATUSES, TERMINAL, Store
 from .validation import ALLOWED_FIELDS, validate_request
@@ -39,8 +38,8 @@ def check_token(settings: ServiceSettings, authorization: str | None) -> None:
 
 
 class ExperimentService:
-    def __init__(self, settings: ServiceSettings, store: Store, manager: JobManager, catalog: Catalog, models: ModelRegistry):
-        self.settings, self.store, self.manager, self.catalog, self.models = settings, store, manager, catalog, models
+    def __init__(self, settings: ServiceSettings, store: Store, manager: JobManager, catalog: Catalog):
+        self.settings, self.store, self.manager, self.catalog = settings, store, manager, catalog
 
     # ---- lifecycle -------------------------------------------------------------------------------------------------------
     def start(self) -> None:
@@ -60,7 +59,7 @@ class ExperimentService:
         return self.catalog.topology()
 
     def capabilities(self) -> dict:
-        return self.catalog.capabilities(model_ids=self.models.ids()) | {"request_fields": list(ALLOWED_FIELDS), "api_version": __version__}
+        return self.catalog.capabilities() | {"request_fields": list(ALLOWED_FIELDS), "api_version": __version__}
 
     def status(self) -> dict:
         return {"api_version": __version__, "job_manager_running": self.manager.running, "counts": self.store.counts(),
@@ -69,7 +68,7 @@ class ExperimentService:
 
     # ---- validate / create -----------------------------------------------------------------------------------------------
     def validate(self, raw: dict) -> dict:
-        issues, res = validate_request(raw, self.settings, self.catalog, self.models)
+        issues, res = validate_request(raw, self.settings, self.catalog)
         if res is None:
             return {"valid": False, "issues": [i.to_dict() for i in issues], "warnings": [], "resolved": None}
         dup = self.store.find_active(res.fingerprint)
@@ -81,7 +80,7 @@ class ExperimentService:
         if idempotency_key is not None and not _IDEM.match(idempotency_key):
             raise ValidationFailed("invalid Idempotency-Key", details=[{"field": "Idempotency-Key", "code": "invalid_header",
                                                                          "message": "Idempotency-Key must be 1-128 characters of A-Z a-z 0-9 . _ : -"}])
-        issues, res = validate_request(raw, self.settings, self.catalog, self.models)
+        issues, res = validate_request(raw, self.settings, self.catalog)
         if res is None:
             raise ValidationFailed("the experiment request is not valid", details=[i.to_dict() for i in issues])
         row, created = self.manager.submit(res, idempotency_key)
@@ -100,7 +99,7 @@ class ExperimentService:
     def _links(self, exp_id: str) -> dict:
         b = f"{API_PREFIX}/experiments/{exp_id}"
         return {"self": b, "cancel": f"{b}/cancel", "transitions": f"{b}/transitions", "metrics": f"{b}/metrics", "handoffs": f"{b}/handoffs",
-                "events": f"{b}/events", "predictions": f"{b}/predictions", "export": f"{b}/export"}
+                "events": f"{b}/events", "export": f"{b}/export"}
 
     def _progress(self, row: dict) -> dict:
         st = row["status"]
@@ -117,7 +116,6 @@ class ExperimentService:
 
     def view(self, row: dict) -> dict:
         s = row["status"]
-        pred_req = bool(row["predict_model"])
         return {
             "id": row["id"], "status": s, "approach": row["approach"], "scenario": row["scenario"], "environment": row["environment"], "label": row["label"],
             "created_at": row["created_at"], "updated_at": row["updated_at"], "started_at": row["started_at"], "finished_at": row["finished_at"],
@@ -126,8 +124,6 @@ class ExperimentService:
             "error": None if not row["error_code"] else {"code": row["error_code"], "message": row["error_message"]},
             "partial_outputs": row["partial_outputs"],
             "result": {"available": s == "completed", "summary": row["summary"] if s == "completed" else None},
-            "prediction": {"requested": pred_req, "status": row["prediction_status"], "model": row["predict_model"], "algorithm": row["predict_algorithm"],
-                           "error": row["prediction_error"]},
             "data": {"origin": (row["summary"] or {}).get("data_origin") if row["summary"] else None, "is_live": False, "live_metrics_available": False, "note": LIVE_NOTE},
             "links": self._links(row["id"]),
         }
@@ -150,7 +146,7 @@ class ExperimentService:
         items = [{"id": r["id"], "status": r["status"], "approach": r["approach"], "scenario": r["scenario"], "environment": r["environment"], "label": r["label"],
                   "created_at": r["created_at"], "started_at": r["started_at"], "finished_at": r["finished_at"],
                   "error": None if not r["error_code"] else {"code": r["error_code"], "message": r["error_message"]},
-                  "prediction_status": r["prediction_status"], "summary": r["summary"] if r["status"] == "completed" else None,
+                  "summary": r["summary"] if r["status"] == "completed" else None,
                   "links": {"self": f"{API_PREFIX}/experiments/{r['id']}"}} for r in rows]
         return {"items": items, "total": total, "limit": limit, "offset": max(0, int(offset))}
 
@@ -202,28 +198,6 @@ class ExperimentService:
         return {**self._head(row), "events": page, "next_after_seq": nxt, "total": total, "source_file": "approach_events.csv",
                 "clock_note": "mono_ns/wall_ns are the run's own clock: virtual time for emulated runs, the real monotonic clock for loopback runs"}
 
-    def predictions(self, exp_id: str, limit: int = 500, offset: int = 0) -> dict:
-        row, rd = self._completed(exp_id)
-        if row["prediction_status"] != "available":
-            raise NotFound(f"experiment {exp_id} has no handoff predictions (prediction status: {row['prediction_status']})", code="predictions_not_available",
-                           details={"prediction_status": row["prediction_status"], "reason": row["prediction_error"],
-                                    "hint": "predictions are computed by the worker when the experiment is created with \"predict\": true"})
-        summary = R.read_json(rd / "handoff_predictions.json")
-        rows = R.read_prediction_rows(rd)
-        if summary is None or rows is None:
-            raise ResultsNotAvailable("the prediction files are missing from the run directory", code="results_missing")
-        limit, offset = max(1, min(limit, 5000)), max(0, offset)
-        return {**self._head(row), "model": {"id": row["predict_model"], "algorithm": row["predict_algorithm"], "version": summary.get("model_version")},
-                "summary": summary, "decision_points": {"items": rows[offset:offset + limit], "total": len(rows), "limit": limit, "offset": offset},
-                "is_live": False, "caveat": summary.get("provenance"), "source_files": ["handoff_predictions.json", "handoff_predictions.csv"]}
-
-    # ---- models ----------------------------------------------------------------------------------------------------------
-    def models_list(self) -> dict:
-        return {"models": self.models.list()}
-
-    def model_evaluation(self, model_id: str) -> dict:
-        return self.models.evaluation(model_id)
-
     # ---- export ----------------------------------------------------------------------------------------------------------
     def export(self, exp_id: str, fmt: str, table: str = "handoffs", include_partial: bool = False) -> dict:
         """Returns {"content": bytes | None, "path": Path | None, "media_type", "filename", "cleanup": bool}."""
@@ -231,8 +205,8 @@ class ExperimentService:
         jd = self.manager.job_dir(exp_id)
         if fmt not in ("json", "csv", "zip"):
             raise ValidationFailed("unknown export format", details=[{"field": "format", "code": "invalid_choice", "message": "format must be json, csv or zip"}])
-        if fmt == "csv" and table not in ("handoffs", "events", "predictions"):
-            raise ValidationFailed("unknown table", details=[{"field": "table", "code": "invalid_choice", "message": "table must be handoffs, events or predictions"}])
+        if fmt == "csv" and table not in ("handoffs", "events"):
+            raise ValidationFailed("unknown table", details=[{"field": "table", "code": "invalid_choice", "message": "table must be handoffs or events"}])
         if row["status"] != "completed":
             if not (include_partial and fmt == "zip" and row["status"] in TERMINAL):
                 raise ResultsNotAvailable(f"experiment {exp_id} is {row['status']}: only completed experiments can be exported "
@@ -244,11 +218,8 @@ class ExperimentService:
         row, rd = self._completed(exp_id)
         m = R.load_metrics(rd)
         if fmt == "json":
-            preds = None
-            if row["prediction_status"] == "available":
-                preds = {"summary": R.read_json(rd / "handoff_predictions.json"), "decision_points": R.read_prediction_rows(rd)}
             doc = {"export_schema_version": X.EXPORT_SCHEMA_VERSION, "generated_at": X.now_iso(), "is_live": False, "experiment": self.view(row),
-                   "provenance": R.provenance(m), "metrics": m, "predictions": preds}
+                   "provenance": R.provenance(m), "metrics": m}
             return {"content": json.dumps(doc, indent=2, sort_keys=True, default=str).encode(), "path": None, "media_type": "application/json",
                     "filename": f"{exp_id}.json", "cleanup": False}
         if fmt == "csv":
@@ -260,10 +231,7 @@ class ExperimentService:
                     raise ResultsNotAvailable("this run has no approach_events.csv", code="events_not_available")
                 body = X.to_csv(X.EVENT_COLUMNS, got[0])
             else:
-                rows = R.read_prediction_rows(rd)
-                if rows is None:
-                    raise NotFound(f"experiment {exp_id} has no handoff predictions", code="predictions_not_available")
-                body = X.to_csv(R.PREDICTION_COLUMNS, rows)
+                raise ValidationFailed("unknown table", details=[{"field": "table", "code": "invalid_choice", "message": "table must be handoffs or events"}])
             return {"content": body, "path": None, "media_type": "text/csv; charset=utf-8", "filename": f"{exp_id}-{table}.csv", "cleanup": False}
         return self._zip(exp_id, rd, self._record(row), partial=False, origin=(m.get("provenance") or {}).get("data_origin"))
 
@@ -297,10 +265,10 @@ class ExperimentService:
 def create_service(settings: ServiceSettings | None = None, *, launcher=None) -> ExperimentService:
     """Build the service graph (does not start the job manager). Fails fast if the shipped scenario presets are invalid."""
     s = (settings or ServiceSettings.from_env()).validate()
-    catalog, models, store = Catalog(s), ModelRegistry(s), Store(s.db_path)
+    catalog, store = Catalog(s), Store(s.db_path)
     for sc in catalog.scenario_ids():                      # every preset must be a valid request for at least one approach
-        issues, _ = validate_request({"approach": "mip-basic", "scenario": sc}, s, catalog, models)
+        issues, _ = validate_request({"approach": "mip-basic", "scenario": sc}, s, catalog)
         if issues:
             from .errors import ConfigurationError
             raise ConfigurationError(f"scenario {sc!r} in {s.scenarios_file} is not a valid experiment: {issues[0].message}")
-    return ExperimentService(s, store, JobManager(s, store, launcher=launcher), catalog, models)
+    return ExperimentService(s, store, JobManager(s, store, launcher=launcher), catalog)

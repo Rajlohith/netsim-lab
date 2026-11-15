@@ -270,44 +270,6 @@ Rows marked *deterministic* have no variability in either series (exact for this
 | `tcp-reconnect-stall-timeout` | latency-scale-2 | handoff_latency_ms | condition higher than baseline | 80.000 | [80.000, 80.000] | 0.00195 |
 | `tcp-reconnect-stall-timeout` | loss-percent-2 | handoff_latency_ms | condition lower than baseline | -125.000 | [-156.250, -62.500] | 0.00586 |
 
-## Handoff-degradation predictions (Stage 6 model) next to the measurements
-
-| condition | configuration | runs | episodes | warned | warned fraction [95% CI over runs] | false-alarm decisions per 100 |
-|---|---|---|---|---|---|---|
-| baseline | `mip-basic` | 12 | 21 | 11 | 0.52 [0.45, 0.62] | 11.35 |
-| baseline | `mip-mbb` | 12 | 0 | 0 | n/a n/a | 5.50 |
-| baseline | `ro-model` | 12 | 24 | 24 | 1.00 [1.00, 1.00] | 29.08 |
-| baseline | `tcp-reconnect-notify` | 12 | 24 | 19 | 0.79 [0.67, 0.92] | 24.47 |
-| baseline | `tcp-reconnect-stall-timeout` | 12 | 24 | 21 | 0.88 [0.75, 1.00] | 19.68 |
-| detect-delay-ms-100 | `mip-basic` | 12 | 24 | 11 | 0.46 [0.38, 0.50] | 20.74 |
-| detect-delay-ms-100 | `mip-mbb` | 12 | 0 | 0 | n/a n/a | 5.50 |
-| detect-delay-ms-100 | `ro-model` | 12 | 24 | 24 | 1.00 [1.00, 1.00] | 25.00 |
-| detect-delay-ms-100 | `tcp-reconnect-notify` | 12 | 24 | 17 | 0.71 [0.58, 0.83] | 30.50 |
-| detect-delay-ms-100 | `tcp-reconnect-stall-timeout` | 12 | 24 | 21 | 0.88 [0.75, 1.00] | 19.68 |
-| dwell-s-1.5 | `mip-basic` | 12 | 21 | 11 | 0.52 [0.45, 0.62] | 23.76 |
-| dwell-s-1.5 | `mip-mbb` | 12 | 0 | 0 | n/a n/a | 13.12 |
-| dwell-s-1.5 | `ro-model` | 12 | 24 | 12 | 0.50 [0.50, 0.50] | 48.94 |
-| dwell-s-1.5 | `tcp-reconnect-notify` | 12 | 24 | 15 | 0.62 [0.50, 0.75] | 45.57 |
-| dwell-s-1.5 | `tcp-reconnect-stall-timeout` | 12 | 24 | 12 | 0.50 [0.50, 0.50] | 35.64 |
-| ha-distance-ms-100 | `mip-basic` | 12 | 12 | 0 | 0.00 [0.00, 0.00] | 20.57 |
-| ha-distance-ms-100 | `mip-mbb` | 12 | 0 | 0 | n/a n/a | 0.53 |
-| ha-distance-ms-100 | `ro-model` | 12 | 24 | 24 | 1.00 [1.00, 1.00] | 39.72 |
-| latency-scale-2 | `mip-basic` | 12 | 24 | 0 | 0.00 [0.00, 0.00] | 7.45 |
-| latency-scale-2 | `mip-mbb` | 12 | 0 | 0 | n/a n/a | 0.00 |
-| latency-scale-2 | `ro-model` | 12 | 24 | 12 | 0.50 [0.50, 0.50] | 29.08 |
-| latency-scale-2 | `tcp-reconnect-notify` | 12 | 24 | 12 | 0.50 [0.50, 0.50] | 9.57 |
-| latency-scale-2 | `tcp-reconnect-stall-timeout` | 12 | 24 | 24 | 1.00 [1.00, 1.00] | 34.22 |
-| loss-percent-2 | `mip-basic` | 12 | 21 | 1 | 0.05 [0.00, 0.15] | 12.41 |
-| loss-percent-2 | `mip-mbb` | 12 | 0 | 0 | n/a n/a | 11.70 |
-| loss-percent-2 | `ro-model` | 12 | 24 | 21 | 0.88 [0.75, 1.00] | 23.58 |
-| loss-percent-2 | `tcp-reconnect-notify` | 12 | 24 | 1 | 0.04 [0.00, 0.12] | 0.18 |
-| loss-percent-2 | `tcp-reconnect-stall-timeout` | 12 | 24 | 2 | 0.08 [0.00, 0.21] | 0.18 |
-| registration-loss-percent-30 | `mip-basic` | 12 | 20 | 10 | 0.50 [0.36, 0.65] | 11.88 |
-| registration-loss-percent-30 | `mip-mbb` | 12 | 1 | 0 | 0.00 [0.00, 0.00] | 5.14 |
-| registration-loss-percent-30 | `ro-model` | 12 | 21 | 16 | 0.76 [0.55, 0.95] | 23.76 |
-
-Predictions are replayed from observations up to each decision time only; episodes are labelled afterwards from the same run. The Stage 6 model was trained on generator regularities of simulated data; nothing here shows skill on real networks.
-
 ## Cells that were not executed (reported, not skipped)
 
 | condition | configuration | status | reason |

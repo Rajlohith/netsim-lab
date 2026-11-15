@@ -30,7 +30,7 @@ class ConditionsIn(_In):
 
 class ExperimentRequest(_In):
     model_config = ConfigDict(extra="forbid", json_schema_extra={"examples": [
-        {"approach": "mip-mbb", "scenario": "lossy-access", "seed": 7, "label": "mbb under 2% loss", "predict": True},
+        {"approach": "mip-mbb", "scenario": "lossy-access", "seed": 7, "label": "mbb under 2% loss"},
         {"approach": "tcp-reconnect", "duration_s": 12, "moves": [{"at_s": 4.0, "interface": "eth-b"}, {"at_s": 8.0, "interface": "eth-a"}],
          "conditions": {"latency_scale": 2.0}}]})
     approach: StrictStr = Field(description="one of GET /api/approaches")
@@ -47,9 +47,6 @@ class ExperimentRequest(_In):
     old_link_hold_ms: Optional[Num] = None
     detect_delay_ms: Optional[Num] = None
     conditions: Optional[ConditionsIn] = None
-    predict: Optional[StrictBool] = Field(None, description="also compute Stage 6 handoff predictions for the finished run (in the worker)")
-    prediction_model: Optional[StrictStr] = Field(None, description="one of GET /api/models (default: the first)")
-    prediction_algorithm: Optional[StrictStr] = Field(None, description="threshold_baseline | logreg | random_forest (default random_forest)")
     label: Optional[StrictStr] = Field(None, description="free text, at most 80 characters")
 
 
@@ -103,7 +100,6 @@ class ExperimentOut(_Out):
     error: Optional[Dict[str, Any]] = None
     partial_outputs: bool
     result: Dict[str, Any]
-    prediction: Dict[str, Any]
     data: Dict[str, Any]
     links: Dict[str, str]
     warnings: Optional[List[Dict[str, Any]]] = None
@@ -158,28 +154,6 @@ class EventsOut(ResultOut):
     next_after_seq: Optional[int] = None
     total: int
     clock_note: str
-
-
-class PredictionsOut(ResultOut):
-    model: Dict[str, Any]
-    summary: Dict[str, Any]
-    decision_points: Dict[str, Any]
-    is_live: bool
-    caveat: Optional[str] = None
-
-
-class ModelsOut(_Out):
-    models: List[Dict[str, Any]]
-
-
-class ModelEvaluationOut(_Out):
-    model: Dict[str, Any]
-    data_origin: Optional[Any] = None
-    is_live: bool
-    held_out_test_metrics: Dict[str, Any]
-    reference: Optional[Dict[str, Any]] = None
-    full_results: Optional[Dict[str, Any]] = None
-    interpretation_note: str
 
 
 class ApproachesOut(_Out):

@@ -54,18 +54,10 @@
     "export": "/api/experiments/exp-33735f5023a6bc9f/export",
     "handoffs": "/api/experiments/exp-33735f5023a6bc9f/handoffs",
     "metrics": "/api/experiments/exp-33735f5023a6bc9f/metrics",
-    "predictions": "/api/experiments/exp-33735f5023a6bc9f/predictions",
     "self": "/api/experiments/exp-33735f5023a6bc9f",
     "transitions": "/api/experiments/exp-33735f5023a6bc9f/transitions"
   },
   "partial_outputs": false,
-  "prediction": {
-    "algorithm": "random_forest",
-    "error": null,
-    "model": "stage6",
-    "requested": true,
-    "status": "pending"
-  },
   "progress": {
     "fraction": null,
     "note": "waiting for a free worker slot",

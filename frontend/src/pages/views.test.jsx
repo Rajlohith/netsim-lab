@@ -10,9 +10,7 @@ import TimelineChart from "../components/charts/TimelineChart.jsx";
 import { TopologyView } from "./TopologyPage.jsx";
 import { ConfigureView } from "./ConfigurePage.jsx";
 import { ProgressView, ResultsView, LiveHeader } from "./LivePage.jsx";
-import { PredictionsView } from "./PredictionsPage.jsx";
 import { ComparisonView } from "./ComparePage.jsx";
-import { ModelEvaluationView } from "./ModelsPage.jsx";
 import { HistoryTable, ExperimentDetailView } from "./HistoryPage.jsx";
 import { comparisonRows, COMPARISON_CHARTS, chartSpec } from "../lib/metrics.js";
 import { initialForm } from "../lib/validation.js";
@@ -20,8 +18,6 @@ import topology from "../test/fixtures/api/topology.json";
 import approaches from "../test/fixtures/api/approaches.json";
 import scenarios from "../test/fixtures/api/scenarios.json";
 import capabilities from "../test/fixtures/api/capabilities.json";
-import models from "../test/fixtures/api/models.json";
-import modelEval from "../test/fixtures/api/model_evaluation.json";
 import list from "../test/fixtures/api/experiments_list.json";
 import expBasic from "../test/fixtures/api/exp_basic.json";
 import expMbb from "../test/fixtures/api/exp_mbb.json";
@@ -31,16 +27,18 @@ import mMbb from "../test/fixtures/api/exp_mbb_metrics.json";
 import mTcp from "../test/fixtures/api/exp_tcp_metrics.json";
 import hMbb from "../test/fixtures/api/exp_mbb_handoffs.json";
 import eMbb from "../test/fixtures/api/exp_mbb_events.json";
-import pMbb from "../test/fixtures/api/exp_mbb_predictions.json";
 import trMbb from "../test/fixtures/api/exp_mbb_transitions.json";
 
 const html = (el) => renderToStaticMarkup(el);
 const apiStub = { exportExperiment: vi.fn() };
 
 describe("navigation", () => {
-  it("lists all seven pages and marks the current one", () => {
+  it("lists every page in two groups and marks the current one", () => {
     const h = html(<Nav current="compare" />);
-    for (const t of ["Network topology", "Experiment configuration", "Live metrics", "Handoff prediction", "Approach comparison", "Model evaluation", "Experiment history"]) expect(h).toContain(t);
+    for (const t of ["Overview", "Network topology", "Configure experiment", "Experiment results", "Compare experiments", "Experiment history"]) expect(h).toContain(t);
+    for (const g of ["Workspace", "Experiments"]) expect(h).toContain(g);
+    for (const gone of ["Research", "Model evaluation", "Handoff prediction", "Campaign analysis"]) expect(h).not.toContain(gone);
+    expect(h).not.toContain("Live metrics");
     expect(h).toContain('href="#/compare" aria-current="page"'); expect((h.match(/aria-current/g) || []).length).toBe(1);
   });
   it("routes ids and shows a not-found page for unknown routes", () => {
@@ -101,7 +99,7 @@ describe("topology page", () => {
 
 describe("configuration page", () => {
   const A = approaches.approaches, S = scenarios.scenarios;
-  const baseProps = () => ({ approaches: A, scenarios: S, capabilities, models: models.models, form: initialForm(S[0], A.find((a) => a.id === "mip-basic")), setForm() {}, errors: {}, general: [], warnings: [], submitting: false, checking: false, checkResult: null, onSubmit() {}, onCheck() {}, active: [], onStop() {}, stopping: null, stopMessage: null });
+  const baseProps = () => ({ approaches: A, scenarios: S, capabilities, form: initialForm(S[0], A.find((a) => a.id === "mip-basic")), setForm() {}, errors: {}, general: [], warnings: [], submitting: false, checking: false, checkResult: null, onSubmit() {}, onCheck() {}, active: [], onStop() {}, stopping: null, stopMessage: null });
   it("offers each approach, scenario and the limits from /capabilities", () => {
     const h = html(<ConfigureView {...baseProps()} />);
     for (const a of A) expect(h).toContain(`value="${a.id}"`);
@@ -155,24 +153,6 @@ describe("live metrics page", () => {
   it("lifecycle transitions come from the API", () => { expect(trMbb.items.length > 0).toBe(true); });
 });
 
-describe("handoff prediction page", () => {
-  it("shows model id, version, threshold, scores and the training-split warning field", () => {
-    const h = html(<PredictionsView data={pMbb} />);
-    expect(h).toContain(pMbb.model.id); expect(h).toContain(pMbb.model.version); expect(h).toContain("Alarm threshold"); expect(h).toContain("Model version"); expect(h).toContain("Run in the model");
-    expect(h).toContain('data-chart="prediction-scores"'); expect(h).toContain("run clock"); expect(h).toContain("calibrated probability");
-    const firstScore = pMbb.decision_points.items[0].score.toFixed(4); expect(h).toContain(firstScore);
-  });
-  it("marks alarm rows", () => {
-    const n = pMbb.decision_points.items.filter((r) => r.alarm).length; const h = html(<PredictionsView data={pMbb} />);
-    if (n > 0) expect(h).toContain("ALARM");
-  });
-  it("pages the decision points (25 per page)", () => {
-    const h = html(<PredictionsView data={pMbb} />);
-    expect((h.match(/<tr class="(alarm-row)?"/g) || []).length).toBe(Math.min(25, pMbb.decision_points.items.length));
-    expect(h).toContain(`Page 1 of ${Math.ceil(pMbb.decision_points.items.length / 25)}`);
-  });
-});
-
 describe("approach comparison page", () => {
   const rows = comparisonRows([{ experiment: expBasic, metrics: mBasic.metrics }, { experiment: expMbb, metrics: mMbb.metrics }, { experiment: expTcp, metrics: mTcp.metrics }]);
   it("states the conditions and warns when they differ", () => {
@@ -194,20 +174,6 @@ describe("approach comparison page", () => {
   it("export writes CSV and JSON built from the displayed rows", () => {
     // ComparisonView's export handlers are exercised in interaction.test.jsx; the data they serialise is checked in logic.test.js
     expect(rows).toHaveLength(3);
-  });
-});
-
-describe("model evaluation page", () => {
-  it("shows baseline, logistic regression and Random Forest results from the bundle", () => {
-    const h = html(<ModelEvaluationView evaluation={modelEval} />);
-    for (const t of ["Threshold baseline", "Logistic regression", "Random Forest", "Always-alarm reference"]) expect(h).toContain(t);
-    expect(h).toContain(modelEval.model.model_version); expect(h).toContain("Read this first");
-    const rf = modelEval.held_out_test_metrics.random_forest.test; expect(h).toContain(rf.f1.toFixed(3)); expect(h).toContain(rf.precision.toFixed(3));
-    expect(h).toContain('data-chart="model-test-scores"');
-  });
-  it("states class balance and the findings table", () => {
-    const h = html(<ModelEvaluationView evaluation={modelEval} />);
-    expect(h).toContain("Class balance per split"); expect(h).toContain("Comparison with the always-alarm reference");
   });
 });
 

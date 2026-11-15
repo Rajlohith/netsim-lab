@@ -41,7 +41,6 @@ class Http(unittest.TestCase):
         self.assertIn("baseline", {s["id"] for s in c.get("/api/scenarios").json()["scenarios"]})
         cap = c.get("/api/capabilities").json()
         self.assertFalse(cap["live_updates"]["websocket"]); self.assertEqual(c.get("/api/status").json()["job_manager_running"], True)
-        self.assertEqual(c.get("/api/models").json()["models"][0]["id"], "stage6")
         self.assertEqual(c.get("/api/health").status_code, 200)
 
     def test_topology_endpoint(self):                # Stage 9: read-only topology for the dashboard (needs fastapi; not run where it is missing)
@@ -110,12 +109,12 @@ class Http(unittest.TestCase):
         err(c.get("/api/experiments/not-an-id"), 404, "not_found")
         err(c.get("/api/nothing"), 404, "not_found")
         err(c.put("/api/experiments"), 405, "method_not_allowed")
-        err(c.get("/api/models/zzz/evaluation"), 404, "not_found")
+        err(c.get("/api/models"), 404, "not_found")                 # the prediction-model endpoints no longer exist
 
     def test_results_409_until_completed_and_failure_is_visible(self):
         c, svc = client(self, script_launcher(CRASH))
         i = c.post("/api/experiments", json=FAST).json()["id"]; wait_done(svc, i)
-        for path in ("metrics", "handoffs", "events", "predictions", "export"):
+        for path in ("metrics", "handoffs", "events", "export"):
             e = err(c.get(f"/api/experiments/{i}/{path}"), 409, "results_not_available"); self.assertEqual(e["context"]["status"], "incomplete")
         g = c.get(f"/api/experiments/{i}").json(); self.assertEqual((g["status"], g["error"]["code"]), ("incomplete", "worker_died"))
         r = c.get(f"/api/experiments/{i}/export", params={"format": "zip", "include_partial": "true"}); self.assertEqual(r.status_code, 200); self.assertEqual(r.headers["content-type"], "application/zip")
@@ -147,17 +146,16 @@ class Http(unittest.TestCase):
 
     def test_real_run_end_to_end_over_http(self):
         c, svc = client(self)
-        r = c.post("/api/experiments", json={**FAST, "predict": True, "label": "http e2e"}); self.assertEqual(r.status_code, 202)
+        r = c.post("/api/experiments", json={**FAST, "label": "http e2e"}); self.assertEqual(r.status_code, 202)
         i = r.json()["id"]; wait_done(svc, i)
         self.assertEqual(c.get(f"/api/experiments/{i}").json()["status"], "completed")
         m = c.get(f"/api/experiments/{i}/metrics").json(); self.assertFalse(m["provenance"]["is_live"])
         self.assertGreaterEqual(c.get(f"/api/experiments/{i}/handoffs").json()["count"], 1)
         self.assertGreater(c.get(f"/api/experiments/{i}/events", params={"limit": 5}).json()["total"], 0)
-        self.assertEqual(c.get(f"/api/experiments/{i}/predictions").json()["model"]["id"], "stage6")
+        err(c.get(f"/api/experiments/{i}/predictions"), 404, "not_found")
         self.assertEqual(json.loads(c.get(f"/api/experiments/{i}/export", params={"format": "json"}).content)["experiment"]["id"], i)
         self.assertIn("handoff_latency_ms", c.get(f"/api/experiments/{i}/export", params={"format": "csv"}).text.splitlines()[0])
         z = c.get(f"/api/experiments/{i}/export", params={"format": "zip"}); self.assertEqual(z.content[:2], b"PK")
-        self.assertIn("Stage 6", json.dumps(c.get("/api/models/stage6/evaluation").json()) + "Stage 6")
 
 
 if __name__ == "__main__":

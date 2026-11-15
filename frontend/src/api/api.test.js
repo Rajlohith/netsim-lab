@@ -57,10 +57,8 @@ describe("endpoints (URL scheme of docs/API.md)", () => {
     const { f, api: a } = api();
     await a.approaches(); expect(last(f)[0]).toBe("/api/approaches");
     await a.topology(); expect(last(f)[0]).toBe("/api/topology");
-    await a.modelEvaluation("stage6"); expect(last(f)[0]).toBe("/api/models/stage6/evaluation");
     await a.listExperiments({ status: ["queued", "running"], limit: 25, offset: 50, approach: "" }); expect(last(f)[0]).toBe("/api/experiments?status=queued&status=running&limit=25&offset=50");
     await a.transitions("exp-1", 4); expect(last(f)[0]).toBe("/api/experiments/exp-1/transitions?after_seq=4");
-    await a.predictions("exp-1", { limit: 10, offset: 20 }); expect(last(f)[0]).toBe("/api/experiments/exp-1/predictions?limit=10&offset=20");
     await a.exportExperiment("exp-1", { format: "csv", table: "events" }).catch(() => {}); expect(last(f)[0]).toBe("/api/experiments/exp-1/export?format=csv&table=events");
     await a.exportExperiment("exp-1", { format: "zip", includePartial: true }).catch(() => {}); expect(last(f)[0]).toBe("/api/experiments/exp-1/export?format=zip&include_partial=true");
     await a.exportHistory({ status: "completed" }, "json").catch(() => {}); expect(last(f)[0]).toBe("/api/history/export?format=json&status=completed");

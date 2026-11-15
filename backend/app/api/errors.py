@@ -27,10 +27,16 @@ def _rid(request: Request):
     return getattr(request.state, "request_id", None)
 
 
+_UNION_BRANCH_TAGS = frozenset({"int", "float", "str", "bool", "list", "dict", "none"})
+
+
 def _pydantic_issue(err: dict) -> dict:
     loc = [str(x) for x in err.get("loc", ())]
     if loc and loc[0] in ("body", "query", "path", "header"):
         loc = loc[1:]
+    # pydantic >= 2.12 appends the failing union branch ("int", "float", ...) to the location; the field is what clients need.
+    if len(loc) > 1 and loc[-1] in _UNION_BRANCH_TAGS:
+        loc = loc[:-1]
     t = err.get("type", "")
     code = ("required" if t == "missing" else "unknown_field" if t == "extra_forbidden" else "invalid_json" if t == "json_invalid"
             else "out_of_range" if t.startswith(("greater_than", "less_than", "string_too", "too_short", "too_long")) else "invalid_type")

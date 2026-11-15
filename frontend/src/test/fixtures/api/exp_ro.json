@@ -54,18 +54,10 @@
     "export": "/api/experiments/exp-ec66d16749a27205/export",
     "handoffs": "/api/experiments/exp-ec66d16749a27205/handoffs",
     "metrics": "/api/experiments/exp-ec66d16749a27205/metrics",
-    "predictions": "/api/experiments/exp-ec66d16749a27205/predictions",
     "self": "/api/experiments/exp-ec66d16749a27205",
     "transitions": "/api/experiments/exp-ec66d16749a27205/transitions"
   },
   "partial_outputs": false,
-  "prediction": {
-    "algorithm": null,
-    "error": null,
-    "model": null,
-    "requested": false,
-    "status": "not_requested"
-  },
   "progress": {
     "fraction": 1.0,
     "note": null,

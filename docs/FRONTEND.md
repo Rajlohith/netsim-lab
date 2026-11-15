@@ -26,19 +26,18 @@ make frontend-build     # production build
 
 | Page (`#/…`) | Endpoints | Notes |
 |---|---|---|
+| Overview (`overview`, the default page) | `GET /experiments` (recent, totals), `approaches`, `scenarios`, `GET /api/topology` | Introduction, three counts read from the API, topology preview and recent experiments. Nothing is computed in the browser |
 | Network topology (`topology`) | `GET /api/topology` *(new, read-only)* | SVG diagram + tables of nodes, interfaces, links, configured netem values, routes. The endpoint parses `config/topology_ro.yaml` (the file the experiments use) with the Stage 2 loader |
-| Experiment configuration (`configure`) | `approaches`, `scenarios`, `capabilities`, `models`, `POST /experiments/validate`, `POST /experiments`, `POST …/cancel`, `GET /experiments?status=queued&status=running` | approach (unrunnable ones disabled with the server's reason), scenario, environment, handoff mode, traffic profile (duration, rate, payload, seed), condition overrides, optional predictions, label. Client validation uses the server's limits; the server's field errors are shown on the fields. Start uses an `Idempotency-Key` (double click = one experiment). Stop needs a second confirming click |
-| Live metrics (`live`, `live/<id>`) | `GET /experiments/{id}`, `…/transitions`, then `…/metrics`, `…/handoffs`, `…/events` | **Polling every second** (`capabilities.live_updates.websocket` is false). Shows phase, lifecycle log, errors, stop control; after completion KPIs (RTT, loss, goodput, overhead, handoffs, interruption), per-handoff bar charts, an event timeline and exports |
-| Handoff prediction (`predictions`, `predictions/<id>`) | `GET /experiments?status=completed`, `GET …/predictions` | model id/algorithm/**version**, threshold, score-over-run-time chart with alarms and handoff onsets, paged decision-point table (decision time, horizon, score, alarm, last observation), "run in the model's training split" flag |
+| Configure experiment (`configure`) | `approaches`, `scenarios`, `capabilities`, `POST /experiments/validate`, `POST /experiments`, `POST …/cancel`, `GET /experiments?status=queued&status=running` | approach (unrunnable ones disabled with the server's reason), scenario, environment, handoff mode, traffic profile (duration, rate, payload, seed), condition overrides, optional predictions, label. Client validation uses the server's limits; the server's field errors are shown on the fields. Start uses an `Idempotency-Key` (double click = one experiment). Stop needs a second confirming click |
+| Experiment results (`live`, `live/<id>`) | `GET /experiments/{id}`, `…/transitions`, then `…/metrics`, `…/handoffs`, `…/events` | **Polling every second** (`capabilities.live_updates.websocket` is false). Shows phase, lifecycle log, errors, stop control; after completion KPIs (RTT, loss, goodput, overhead, handoffs, interruption), per-handoff bar charts, an event timeline and exports |
 | Approach comparison (`compare`) | `GET /experiments`, `GET /experiments/{id}`, `…/metrics` | 1–6 completed experiments; conditions table; a warning listing every condition that differs; metric table; six charts (interruption/service gap, loss, latency, overhead, signalling, goodput); CSV/JSON export of the displayed rows |
-| Model evaluation (`models`) | `GET /models`, `GET /models/{id}/evaluation` | baseline / logistic regression / Random Forest on validation and test, always-alarm reference, bootstrap intervals, class balance per split, caveats |
-| Experiment history (`history`, `history/<id>`) | `GET /experiments` (filter/page), `GET /experiments/{id}`, `…/transitions`, exports | configuration, status, error, lifecycle; export JSON / CSV (handoffs, events, predictions) / ZIP, partial-output ZIP for failed runs; list export (CSV/JSON) honouring filters |
+| Experiment history (`history`, `history/<id>`) | `GET /experiments` (filter/page), `GET /experiments/{id}`, `…/transitions`, exports | configuration, status, error, lifecycle; export JSON / CSV (handoffs, events) / ZIP, partial-output ZIP for failed runs; list export (CSV/JSON) honouring filters |
 
 ## What is real, simulated and "live"
 
 * **Nothing is live.** The backend runs experiments in the simulator's virtual time (or on loopback sockets) and writes metrics when a run ends.
   The Live page therefore polls the *lifecycle* and loads measurements after completion; it says so on the page and never animates data.
-* Every result carries an origin badge ("Simulated · historical · not live"). Times from events and predictions are on the **run's own clock**
+* Every result carries an origin badge ("Simulated · historical · not live"). Times from events are on the **run's own clock**
   (labelled "run clock"); wall-clock timestamps are UTC.
 * `null` (not measurable) is displayed as "—" / "n/a", never as 0 — e.g. interruption time for approaches that cannot measure it.
 * **Jitter is not shown as a value:** the comparison metric set has no jitter series. The KPI says "not reported".
@@ -70,7 +69,12 @@ Fixtures in `src/test/fixtures/api/` are real responses captured by `scripts/cap
 * No WebSocket / no live metrics (backend limitation, stated above); no jitter series in comparison metrics.
 * Comparison compares single runs; no confidence intervals (replicated statistics live in Stage 7 outputs, not exposed through the API).
 * Scenario handoff schedules (moves) are shown but not editable. QUIC runs only if `aioquic` is installed on the server (the form follows `/api/approaches`).
-* Event timeline loads at most 5000 events; predictions at most 5000 decision points per view (the API's own limits apply).
+* Event timeline loads at most 5000 events (the API's own limits apply).
 * No bearer-token entry UI; no experiment deletion UI (the API has none).
 * No `package-lock.json`: it cannot be generated without network. Run `npm install` once and commit it.
 * Colour is never the only carrier (values are printed, every chart has a data table) but a full accessibility audit was not done.
+
+
+## Theme and layout
+
+Two navigation groups (Workspace, Experiments) in a dark sidebar; on screens under 860 px it becomes a menu. Every colour is a CSS token in `src/styles.css`; the theme is `data-theme` on `<html>`, set before the first paint by a small script in `index.html`, toggled from the header and stored in `localStorage` (key `netsim-theme`; blocked storage falls back to the operating-system preference). Charts and the topology diagram use the same tokens.

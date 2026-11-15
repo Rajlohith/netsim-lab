@@ -30,10 +30,15 @@ class Design(unittest.TestCase):
         self.assertEqual(seen, set(APPROACHES))                            # nothing hard-coded, nothing silently dropped
 
     def test_unavailable_approach_is_reported_not_dropped(self):
+        from app.compare.quic_sim import quic_available
         plan = build_plan(CampaignConfig.from_json({"name": "d", "replicates": 1}))
         quic = [c for c in plan.cells if c.approach == "quic-migration"]
-        self.assertTrue(quic)
-        self.assertTrue(all(c.status in ("unavailable", "unsupported") and c.reason for c in quic))
+        if quic_available():     # aioquic installed: QUIC is scheduled to run, not reported as skipped
+            self.assertFalse(quic)
+            self.assertTrue([r for r in plan.runs if r.approach == "quic-migration"])
+        else:                    # aioquic missing: the cells stay in the plan, with the reason
+            self.assertTrue(quic)
+            self.assertTrue(all(c.status in ("unavailable", "unsupported") and c.reason for c in quic))
 
     def test_home_agent_factors_skip_approaches_without_a_home_agent(self):
         plan = build_plan(CampaignConfig.from_json({"name": "d", "replicates": 1, "sweeps": {"ha_distance_ms": [50], "registration_loss_percent": [10]}}))

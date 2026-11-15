@@ -4,18 +4,17 @@ import unittest
 
 from app.services import errors as E
 from app.services.catalog import Catalog
-from app.services.model_registry import ModelRegistry
 from app.services.settings import ServiceSettings
 from app.services.store import Store
 from app.services.validation import validate_request
 from tests.api_helpers import FAST, tmpdir
 
 S = ServiceSettings().validate()
-C, M = Catalog(S), ModelRegistry(S)
+C = Catalog(S)
 
 
 def res(**kw):
-    iss, r = validate_request({**FAST, **kw}, S, C, M)
+    iss, r = validate_request({**FAST, **kw}, S, C)
     assert not iss, iss
     return r
 
@@ -30,7 +29,7 @@ class StoreTests(unittest.TestCase):
 
     def test_insert_persists_and_logs_transition(self):
         row, created = self.ins(1, label="hello")
-        self.assertTrue(created); self.assertEqual((row["status"], row["label"], row["prediction_status"]), ("queued", "hello", "not_requested"))
+        self.assertTrue(created); self.assertEqual((row["status"], row["label"]), ("queued", "hello"))
         self.assertEqual(row["request"]["approach"], "mip-basic")
         again = Store(self.st.path).get("exp-0000000000000001")                    # a fresh object = a restart
         self.assertEqual(again["spec"]["scenario_id"], "api-mip-basic-emulated-baseline")

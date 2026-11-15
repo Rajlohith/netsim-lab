@@ -118,10 +118,7 @@ class JobManager:
         jd = self.job_dir(exp_id)
         jd.mkdir(parents=True)
         try:
-            pred = None
-            if resolved.predict:
-                pred = {"model_dir": str(self.settings.model_dirs[resolved.predict["model"]]), "algorithm": resolved.predict["algorithm"]}
-            R.write_json_atomic(jd / R.JOB_NAME, {"schema_version": 1, "experiment_id": exp_id, "spec": resolved.spec.to_json(), "predict": pred,
+            R.write_json_atomic(jd / R.JOB_NAME, {"schema_version": 1, "experiment_id": exp_id, "spec": resolved.spec.to_json(),
                                                   "limits": {"max_output_mb": self.settings.max_output_mb, "max_cpu_s": int(self.settings.max_runtime_s) + 30},
                                                   "allow_root": self.settings.allow_root})
             row, created = self.store.insert(exp_id=exp_id, resolved=resolved, idempotency_key=idempotency_key, max_queue=self.settings.max_queue_length)
@@ -250,14 +247,6 @@ class JobManager:
         else:
             how = f"was killed by signal {-rc}" if rc < 0 else f"exited with code {rc}"
             to, note, fields = "incomplete", "worker ended without a result", {"error_code": "worker_died", "error_message": f"the worker process {how} without writing a result"}
-        pred = (result or {}).get("prediction") or {}
-        row = self.store.get(exp_id)
-        requested = bool(row and row["predict_model"])
-        if requested:
-            fields["prediction_status"] = (pred.get("status") or "failed") if to == "completed" else "not_run"
-            fields["prediction_error"] = pred.get("reason") if to == "completed" else f"the experiment ended as {to}, so no predictions were computed"
-            if to == "completed" and pred.get("summary") is not None:
-                fields["prediction_summary_json"] = json.dumps(pred["summary"], sort_keys=True)
         fields.update(extra)
         fields["phase"] = None
         if to in ("cancelled", "failed", "incomplete"):
@@ -279,11 +268,8 @@ class JobManager:
                 # the worker had finished before the restart: keep its result
                 try:
                     metrics = R.load_metrics(R.run_dir_of(jd, result))
-                    pred = result.get("prediction") or {}
                     self.store.transition(row["id"], "completed", expect=["running"], note="finished before the server restarted (recovered at start-up)",
-                                          summary_json=json.dumps(R.summarize(metrics), sort_keys=True), run_dir=result["run_dir"], phase=None,
-                                          prediction_status=pred.get("status", "not_requested"), prediction_error=pred.get("reason"),
-                                          prediction_summary_json=None if pred.get("summary") is None else json.dumps(pred["summary"], sort_keys=True))
+                                          summary_json=json.dumps(R.summarize(metrics), sort_keys=True), run_dir=result["run_dir"], phase=None)
                     fixed.append(row["id"])
                     continue
                 except Exception:

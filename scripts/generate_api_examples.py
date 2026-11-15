@@ -21,7 +21,7 @@ from app.services.settings import ServiceSettings  # noqa: E402
 OUT = ROOT / "examples" / "api" / "stage8"
 REQUESTS = [
     ("01-mip-basic-baseline", {"approach": "mip-basic", "scenario": "baseline", "seed": 1, "label": "example: Mobile IP baseline"}),
-    ("02-mip-mbb-lossy-access-predict", {"approach": "mip-mbb", "handoff_mode": "mbb", "scenario": "lossy-access", "seed": 7, "predict": True, "label": "example: make-before-break under 2% loss, with predictions"}),
+    ("02-mip-mbb-lossy-access", {"approach": "mip-mbb", "handoff_mode": "mbb", "scenario": "lossy-access", "seed": 7, "label": "example: make-before-break under 2% loss"}),
     ("03-tcp-reconnect-high-latency", {"approach": "tcp-reconnect", "scenario": "high-latency", "seed": 3, "label": "example: TCP reconnection, doubled delays"}),
     ("04-ro-model-distant-home-agent", {"approach": "ro-model", "scenario": "distant-home-agent", "seed": 5, "label": "example: route-optimisation model, distant Home Agent"}),
 ]
@@ -51,9 +51,6 @@ def run(out: Path) -> dict:
                 m = svc.metrics(created["id"])
                 (d / "metrics.json").write_text(json.dumps(m["metrics"], indent=2, sort_keys=True) + "\n")
                 (d / "handoffs.csv").write_bytes(without_id(svc.export(created["id"], "csv", "handoffs")["content"]))
-                if final["prediction"]["status"] == "available":
-                    p = svc.predictions(created["id"], limit=10_000)
-                    (d / "predictions_summary.json").write_text(json.dumps(p["summary"], indent=2, sort_keys=True) + "\n")
                 entry["transitions"] = svc.transitions(created["id"])["items"]
             session["runs"].append(entry)
         (out / "history.csv").write_bytes(svc.export_history("csv")["content"])

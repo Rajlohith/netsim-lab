@@ -270,7 +270,7 @@ def main() -> int:
                 check("no worker process remains for the cancelled experiment", not left_, str(left_))
 
             # remaining pages must render real data (not error / empty) for this experiment
-            for hashp, needle, nm in ((f"#/predictions/{exp_id}", None, "4-predictions"), ("#/compare", None, "5-compare"), ("#/models", None, "6-models"), (f"#/history/{exp_id}", exp_id[:8], "7-history")):
+            for hashp, needle, nm in (("#/compare", None, "5-compare"), (f"#/history/{exp_id}", exp_id[:8], "7-history")):
                 page.goto(base + hashp)
                 time.sleep(1.8)
                 body = page.inner_text("body")

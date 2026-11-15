@@ -54,18 +54,10 @@
     "export": "/api/experiments/exp-b598ce85b2251b3d/export",
     "handoffs": "/api/experiments/exp-b598ce85b2251b3d/handoffs",
     "metrics": "/api/experiments/exp-b598ce85b2251b3d/metrics",
-    "predictions": "/api/experiments/exp-b598ce85b2251b3d/predictions",
     "self": "/api/experiments/exp-b598ce85b2251b3d",
     "transitions": "/api/experiments/exp-b598ce85b2251b3d/transitions"
   },
   "partial_outputs": false,
-  "prediction": {
-    "algorithm": null,
-    "error": null,
-    "model": null,
-    "requested": false,
-    "status": "not_requested"
-  },
   "progress": {
     "fraction": null,
     "note": "waiting for a free worker slot",

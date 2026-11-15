@@ -1,15 +1,15 @@
 // Tiny hash router (no extra dependency). URLs look like  #/live/exp-0123456789abcdef
 export const ROUTES = [
-  { name: "topology", path: "/topology", title: "Network topology" },
-  { name: "configure", path: "/configure", title: "Experiment configuration" },
-  { name: "live", path: "/live", title: "Live metrics" },
-  { name: "predictions", path: "/predictions", title: "Handoff prediction" },
-  { name: "compare", path: "/compare", title: "Approach comparison" },
-  { name: "models", path: "/models", title: "Model evaluation" },
-  { name: "history", path: "/history", title: "Experiment history" },
+  { name: "overview", path: "/overview", title: "Overview", group: "Workspace" },
+  { name: "topology", path: "/topology", title: "Network topology", group: "Workspace" },
+  { name: "configure", path: "/configure", title: "Configure experiment", group: "Experiments" },
+  { name: "live", path: "/live", title: "Experiment results", group: "Experiments" },
+  { name: "compare", path: "/compare", title: "Compare experiments", group: "Experiments" },
+  { name: "history", path: "/history", title: "Experiment history", group: "Experiments" },
 ];
-export const DEFAULT_ROUTE = "/topology";
-const ID_ROUTES = new Set(["live", "predictions", "history"]);
+export const NAV_GROUPS = ["Workspace", "Experiments"].map((g) => ({ group: g, items: ROUTES.filter((r) => r.group === g) }));
+export const DEFAULT_ROUTE = "/overview";
+const ID_ROUTES = new Set(["live", "history"]);
 
 export function parseHash(hash) {
   const raw = (hash || "").replace(/^#/, "") || DEFAULT_ROUTE;

@@ -20,7 +20,7 @@ All results are **simulator-generated** (or real loopback TCP) and are available
 (see `GET /api/capabilities`, `live_updates`). Errors always use one envelope: `{"error": {"code", "message", "request_id", "issues", "context"}}`.
 """
 TAGS = [{"name": "catalog", "description": "approaches, scenarios, limits"}, {"name": "experiments", "description": "start, inspect, cancel"},
-        {"name": "results", "description": "metrics, handoffs, events of completed experiments"}, {"name": "predictions", "description": "Stage 6 handoff prediction"},
+        {"name": "results", "description": "metrics, handoffs, events of completed experiments"},
         {"name": "history", "description": "list/delete past experiments"}, {"name": "export", "description": "JSON / CSV / ZIP"}, {"name": "health"}]
 
 

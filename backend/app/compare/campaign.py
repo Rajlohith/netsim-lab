@@ -316,8 +316,7 @@ class Ledger:
             if r["event"] == "start":
                 state[k] = {"status": "incomplete", "reason": "started but no end record (crash, kill or power loss)", "seconds": None}
             elif r["event"] == "end":
-                state[k] = {"status": r["status"], "reason": r.get("reason", ""), "seconds": r.get("seconds"),
-                            "prediction": r.get("prediction")}
+                state[k] = {"status": r["status"], "reason": r.get("reason", ""), "seconds": r.get("seconds")}
         return state
 
 
@@ -379,7 +378,7 @@ class _Sigterm:
             signal.signal(signal.SIGTERM, self.prev)
 
 
-def execute(cfg: CampaignConfig, campaign_dir, *, retry_failed: bool = False, predict_model=None, progress=None,
+def execute(cfg: CampaignConfig, campaign_dir, *, retry_failed: bool = False, progress=None,
             runner=run_experiment, max_runs: int | None = None) -> dict:
     """Run every planned run that has no finished 'ok' record. Returns {'ran','skipped_ok','status_counts','interrupted'}.
     `runner` is injectable for tests (fault injection); `max_runs` stops cleanly after that many NEW runs (for partial campaigns)."""
@@ -405,12 +404,9 @@ def execute(cfg: CampaignConfig, campaign_dir, *, retry_failed: bool = False, pr
             _archive_attempt(campaign_dir, r, ledger)         # incomplete/interrupted/failed earlier attempt: moved aside, never deleted
             ledger.append({"event": "start", "key": r.key})
             t0 = time.time()
-            pred_info = None
             try:
                 res = runner(r.spec, runs_dir)
                 status, reason = res.status, res.reason
-                if status == "ok" and predict_model is not None:
-                    pred_info = _predict(res.run_dir, predict_model)
             except BaseException as e:                         # KeyboardInterrupt, SystemExit, SIGTERM: recorded, then re-raised
                 status = "interrupted" if isinstance(e, (KeyboardInterrupt, SystemExit)) else "failed"
                 reason = f"{type(e).__name__}: {e}"
@@ -422,8 +418,7 @@ def execute(cfg: CampaignConfig, campaign_dir, *, retry_failed: bool = False, pr
                 ran += 1
                 continue
             _write_meta(run_dir, r, cfg)
-            ledger.append({"event": "end", "key": r.key, "status": status, "reason": reason, "seconds": round(time.time() - t0, 3),
-                           "prediction": pred_info})
+            ledger.append({"event": "end", "key": r.key, "status": status, "reason": reason, "seconds": round(time.time() - t0, 3)})
             ran += 1
             if progress:
                 progress(i, len(plan.runs), r.key, status)
@@ -440,15 +435,3 @@ def _record_abnormal(run_dir: Path, r: PlannedRun, cfg, status, reason, tb):
         "software": software_versions(), "partial_raw_files": sorted(p.name for p in run_dir.iterdir() if p.is_file())}, indent=2, sort_keys=True))
     (run_dir / "traceback.txt").write_text(tb)
     _write_meta(run_dir, r, cfg)
-
-
-def _predict(run_dir: Path, model_dir) -> dict:
-    """Stage 6 predictions for a finished run (replay: each decision only sees observations <= its decision time). A failure of
-    the predictor is recorded, never raised: it must not invalidate the measurement."""
-    try:
-        from ..ml.integration import annotate_run
-        s = annotate_run(run_dir, model_dir)
-        return {"ok": True, "decision_points": s["decision_points"], "alarms": s["alarms"], "model_version": s["model_version"],
-                "run_in_training_split": s["run_in_training_split"]}
-    except Exception as e:
-        return {"ok": False, "error": f"{type(e).__name__}: {e}"}

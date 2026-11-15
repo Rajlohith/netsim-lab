@@ -35,12 +35,13 @@ describe("router", () => {
   it("parses every page and ids", () => {
     for (const r of ROUTES) expect(parseHash(`#/${r.name}`).name).toBe(r.name);
     expect(parseHash("#/live/exp-0123456789abcdef")).toMatchObject({ name: "live", params: { id: "exp-0123456789abcdef" } });
-    expect(parseHash("")).toMatchObject({ name: "topology" });
+    expect(parseHash("")).toMatchObject({ name: "overview" });
+    expect(parseHash("#/topology")).toMatchObject({ name: "topology" });
   });
   it("rejects unknown routes and ids on pages that take none", () => {
     expect(parseHash("#/nope").name).toBe("not-found"); expect(parseHash("#/topology/x").name).toBe("not-found"); expect(parseHash("#/live/a/b").name).toBe("not-found");
   });
-  it("builds hrefs", () => { expect(hrefFor("history", "exp-1")).toBe("#/history/exp-1"); expect(hrefFor("models")).toBe("#/models"); });
+  it("builds hrefs", () => { expect(hrefFor("history", "exp-1")).toBe("#/history/exp-1"); expect(hrefFor("compare")).toBe("#/compare"); });
 });
 
 describe("scale + numbers", () => {

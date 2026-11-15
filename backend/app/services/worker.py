@@ -2,9 +2,9 @@
 handlers and can be cancelled by killing the process.
 
 Protocol (files in <job_dir>, written by the server before launch / by this process):
-  job.json       IN   resolved ExperimentSpec + optional prediction request + limits (server-written; clients cannot reach it)
+  job.json       IN   resolved ExperimentSpec + limits (server-written; clients cannot reach it)
   progress.json  OUT  {"phase", "step", "steps_total", "at"}  (atomic replace)
-  result.json    OUT  {"outcome", "reason", "run_dir", "prediction", ...} written LAST and atomically; its absence means the process died
+  result.json    OUT  {"outcome", "reason", "run_dir", ...} written LAST and atomically; its absence means the process died
   runs/          OUT  the run directory written by app.compare.runner.run_experiment
   worker.log     OUT  stdout/stderr (tracebacks)
 The worker only calls existing code: run_experiment (Stage 5/7) and annotate_run (Stage 6). It never accepts a command or a path from
@@ -60,27 +60,14 @@ def main(argv=None) -> int:
         spec = ExperimentSpec.from_json(job["spec"])
         if spec.environment not in ALLOWED_ENVIRONMENTS:
             return _finish(jd, "failed", f"environment {spec.environment!r} is not allowed in the API worker")
-        pred = job.get("predict")
-        total = 3 if pred else 2
+        total = 2
         _progress(jd, "running_experiment", 1, total)
         res = run_experiment(spec, jd / "runs")
         run_dir = None
         if res.run_dir and Path(res.run_dir).exists():
             run_dir = str(Path(res.run_dir).resolve().relative_to(jd))
-        prediction = {"status": "not_requested", "reason": None, "summary": None}
-        if res.status == "ok" and pred:
-            _progress(jd, "predicting", 2, total)
-            try:
-                from ..ml.integration import annotate_run
-                prediction = {"status": "available", "reason": None,
-                              "summary": annotate_run(res.run_dir, pred["model_dir"], pred["algorithm"])}
-            except Exception as e:                                           # the measurements stay valid; only the prediction is reported as failed
-                prediction = {"status": "failed", "reason": f"{type(e).__name__}: {e}", "summary": None}
-                traceback.print_exc()
-        elif pred:
-            prediction = {"status": "not_run", "reason": f"the experiment did not complete (status {res.status}), so no predictions were computed", "summary": None}
         _progress(jd, "finalizing", total, total)
-        return _finish(jd, "ok" if res.status == "ok" else res.status, res.reason or "", run_dir=run_dir, prediction=prediction)
+        return _finish(jd, "ok" if res.status == "ok" else res.status, res.reason or "", run_dir=run_dir)
     except BaseException as e:                                               # last resort: always leave a result so the server can tell 'failed' from 'died'
         traceback.print_exc()
         try:

@@ -11,7 +11,6 @@
       "links": {
         "self": "/api/experiments/exp-ec66d16749a27205"
       },
-      "prediction_status": "not_requested",
       "scenario": "distant-home-agent",
       "started_at": "2026-10-30T11:10:57.346781Z",
       "status": "completed",
@@ -46,7 +45,6 @@
       "links": {
         "self": "/api/experiments/exp-12f6423a345e4af4"
       },
-      "prediction_status": "not_requested",
       "scenario": "high-latency",
       "started_at": "2026-10-30T11:10:55.295311Z",
       "status": "completed",
@@ -81,7 +79,6 @@
       "links": {
         "self": "/api/experiments/exp-33735f5023a6bc9f"
       },
-      "prediction_status": "available",
       "scenario": "lossy-access",
       "started_at": "2026-10-30T11:10:48.391510Z",
       "status": "completed",
@@ -116,7 +113,6 @@
       "links": {
         "self": "/api/experiments/exp-b598ce85b2251b3d"
       },
-      "prediction_status": "not_requested",
       "scenario": "baseline",
       "started_at": "2026-10-30T11:10:48.359915Z",
       "status": "completed",

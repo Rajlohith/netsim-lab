@@ -8,7 +8,6 @@ Input: the plain dict a client sent. Output: (issues, resolved). `resolved` is N
   3. the scenario preset and explicit fields are merged into an ExperimentSpec (explicit fields win);
   4. the EXISTING runner `check()` decides whether the approach/environment/handoff-mode combination is supported and available
      here and whether the parameters make sense for the topology (unsupported / unavailable / invalid);
-  5. prediction requests need a usable model bundle.
 Issues are {field, code, message}; warnings (non-fatal, e.g. a Home-Agent-only setting on an approach without a Home Agent) likewise."""
 from __future__ import annotations
 
@@ -22,15 +21,13 @@ from ..compare.experiment import ENVIRONMENTS, HANDOFF_MODES, ExperimentSpec
 from ..compare.runner import check, condition_applicability
 from ..netem.conditions import NetworkConditions
 from .catalog import Catalog
-from .model_registry import ModelRegistry
 from .settings import ServiceSettings
 
 ALLOWED_FIELDS = ("approach", "scenario", "environment", "handoff_mode", "duration_s", "rate_pps", "payload", "seed", "initial_iface", "moves",
-                  "tcp_detect", "old_link_hold_ms", "detect_delay_ms", "conditions", "predict", "prediction_model", "prediction_algorithm", "label")
+                  "tcp_detect", "old_link_hold_ms", "detect_delay_ms", "conditions", "label")
 CONDITION_FIELDS = ("latency_scale", "loss_percent", "ha_distance_ms", "registration_loss_percent", "ha_processing_ms")
 _IFACE = re.compile(r"^[A-Za-z0-9_.-]{1,32}$")
 DEFAULT_SCENARIO = "baseline"
-DEFAULT_ALGORITHM = "random_forest"
 SPEC_FIELD_NAMES = {"duration_s", "rate_pps", "payload", "detect_delay_ms", "probe_start_s", "old_link_hold_ms", "tcp_detect",
                     "initial_iface", "link_semantics", "latency_scale", "loss_percent", "ha_distance_ms", "registration_loss_percent", "ha_processing_ms"}
 
@@ -53,7 +50,6 @@ class Resolved:
     scenario: str
     environment: str
     label: str | None
-    predict: dict | None          # {"model": id, "algorithm": name} or None
     fingerprint: str              # identical configuration => identical fingerprint (duplicate-run prevention)
     request_hash: str             # idempotency-key replay check
     warnings: list = field(default_factory=list)
@@ -83,7 +79,7 @@ def _canon(obj) -> str:
     return json.dumps(obj, sort_keys=True, separators=(",", ":"))
 
 
-def validate_request(raw, settings: ServiceSettings, catalog: Catalog, models: ModelRegistry):
+def validate_request(raw, settings: ServiceSettings, catalog: Catalog):
     issues: list[Issue] = []
     add = lambda f, c, m: issues.append(Issue(f, c, m))
     if not isinstance(raw, dict):
@@ -180,29 +176,7 @@ def validate_request(raw, settings: ServiceSettings, catalog: Catalog, models: M
                     else:
                         cond[k] = c[k]
 
-    # ---- prediction / label ------------------------------------------------------------------------------------------------
-    predict_on = raw.get("predict", False)
-    if not isinstance(predict_on, bool):
-        add("predict", "invalid_type", f"predict must be true or false, got {predict_on!r}")
-        predict_on = False
-    model_id, algorithm = raw.get("prediction_model"), raw.get("prediction_algorithm")
-    if not predict_on and (model_id is not None or algorithm is not None):
-        add("predict", "inconsistent", "prediction_model/prediction_algorithm were given but predict is not true")
-    predict = None
-    if predict_on:
-        ids = models.ids()
-        model_id = model_id if model_id is not None else (ids[0] if ids else None)
-        algorithm = algorithm if algorithm is not None else DEFAULT_ALGORITHM
-        if model_id is None:
-            add("prediction_model", "model_unavailable", "no prediction model is configured on this server (NETSIM_API_MODEL_DIRS)")
-        elif not isinstance(model_id, str) or not isinstance(algorithm, str):
-            add("prediction_model", "invalid_type", "prediction_model and prediction_algorithm must be strings")
-        else:
-            ok, why = models.require_usable(model_id, algorithm)
-            if not ok:
-                add("prediction_model", "model_unavailable", why)
-            else:
-                predict = {"model": model_id, "algorithm": algorithm}
+    # ---- label ----------------------------------------------------------------------------------------------------------------
     label = raw.get("label")
     if label is not None:
         if not isinstance(label, str) or len(label.strip()) > 80 or not label.strip().isprintable():
@@ -230,15 +204,12 @@ def validate_request(raw, settings: ServiceSettings, catalog: Catalog, models: M
 
     warnings = [{"field": f"conditions.{k}" if k in CONDITION_FIELDS else k, "code": "condition_has_no_effect", "message": v}
                 for k, v in condition_applicability(spec).items() if v != "applies"]
-    if predict and environment != "emulated":
-        warnings.append({"field": "predict", "code": "prediction_out_of_distribution",
-                         "message": f"the model was trained on emulator data; this run's environment is {environment!r}, so its predictions are outside the training distribution"})
     eff = {"approach": approach, "scenario": scenario, "environment": environment, "handoff_mode": handoff_mode, "duration_s": float(duration),
            "rate_pps": float(rate), "payload": int(payload), "seed": int(seed), "initial_iface": iface,
            "moves": [{"at_s": t, "interface": i} for t, i in moves], "tcp_detect": tcp_detect, "old_link_hold_ms": float(hold),
            "detect_delay_ms": float(detect), "conditions": {k: getattr(conditions, k) for k in CONDITION_FIELDS},
-           "predict": bool(predict), "prediction_model": predict["model"] if predict else None,
-           "prediction_algorithm": predict["algorithm"] if predict else None, "label": label}
-    fp = hashlib.sha256(_canon({"spec": spec.to_json(), "predict": predict}).encode()).hexdigest()
+           "label": label}
+    # "predict": None keeps the fingerprint identical to those of runs recorded before prediction was removed
+    fp = hashlib.sha256(_canon({"spec": spec.to_json(), "predict": None}).encode()).hexdigest()
     rh = hashlib.sha256(_canon(eff).encode()).hexdigest()
-    return [], Resolved(spec, eff, approach, scenario, environment, label, predict, fp, rh, warnings, {"status": status, "reason": reason or None})
+    return [], Resolved(spec, eff, approach, scenario, environment, label, fp, rh, warnings, {"status": status, "reason": reason or None})

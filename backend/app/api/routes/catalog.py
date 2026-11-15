@@ -1,4 +1,4 @@
-"""Read-only catalogue routes: approaches, scenarios, capabilities, status, prediction models."""
+"""Read-only catalogue routes: approaches, scenarios, capabilities, status."""
 from fastapi import APIRouter, Depends
 
 from ...services.experiments import ExperimentService
@@ -41,16 +41,3 @@ def capabilities(svc: ExperimentService = Depends(get_service)):
             summary="Job manager state and experiment counts per status")
 def service_status(svc: ExperimentService = Depends(get_service)):
     return svc.status()
-
-
-@router.get("/models", tags=["predictions"], response_model=None, responses={200: {"model": S.ModelsOut}, 401: _E[401]},
-            summary="List the trained handoff-prediction model bundles")
-def list_models(svc: ExperimentService = Depends(get_service)):
-    return svc.models_list()
-
-
-@router.get("/models/{model_id}/evaluation", tags=["predictions"], response_model=None, responses={200: {"model": S.ModelEvaluationOut}, 401: _E[401], 404: _E[404]},
-            summary="Held-out evaluation recorded when the model was trained")
-def model_evaluation(model_id: str, svc: ExperimentService = Depends(get_service)):
-    """Metrics on the held-out test scenarios, the always-alarm reference and the caveats. Simulated data only."""
-    return svc.model_evaluation(model_id)

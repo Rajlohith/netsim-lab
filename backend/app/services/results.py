@@ -14,8 +14,6 @@ from .errors import NotFound, ResultsNotAvailable
 ID_RE = re.compile(r"^exp-[0-9a-f]{16}$")
 MAX_JSON_BYTES = 64 * 1024 * 1024
 RESULT_NAME, PROGRESS_NAME, JOB_NAME, LOG_NAME = "result.json", "progress.json", "job.json", "worker.log"
-PREDICTION_COLUMNS = ("experiment_id", "model_name", "model_version", "decision_time_ns", "horizon_end_ns", "horizon_s", "score", "alarm",
-                      "threshold", "last_observation_ns")
 
 
 def check_id(exp_id) -> str:
@@ -134,20 +132,3 @@ def read_approach_events(run_dir: Path, after_seq: int, limit: int):
     page = [r for r in rows if r["seq"] > after_seq][:limit]
     more = any(r["seq"] > (page[-1]["seq"] if page else after_seq) for r in rows) if page else False
     return page, (page[-1]["seq"] if more else None), len(rows)
-
-
-def read_prediction_rows(run_dir: Path):
-    p = Path(run_dir) / "handoff_predictions.csv"
-    if not p.is_file():
-        return None
-    out = []
-    with open(p, newline="") as f:
-        for r in csv.DictReader(f):
-            def num(k, conv):
-                v = r.get(k)
-                return None if v in (None, "") else conv(v)
-            out.append({"experiment_id": r["experiment_id"], "model_name": r["model_name"], "model_version": r["model_version"],
-                        "decision_time_ns": num("decision_time_ns", int), "horizon_end_ns": num("horizon_end_ns", int), "horizon_s": num("horizon_s", float),
-                        "score": num("score", float), "alarm": bool(int(r["alarm"])), "threshold": num("threshold", float),
-                        "last_observation_ns": num("last_observation_ns", int)})
-    return out

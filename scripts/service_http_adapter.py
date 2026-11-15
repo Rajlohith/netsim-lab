@@ -107,8 +107,6 @@ def make_handler(svc):
                         return self._send(200, svc.handoffs(eid))
                     if sub == "events":
                         return self._send(200, svc.events(eid, int(one("after_seq", 0)), int(one("limit", 500))))
-                    if sub == "predictions":
-                        return self._send(200, svc.predictions(eid, int(one("limit", 500)), int(one("offset", 0))))
                     if sub == "export":
                         return self._download(svc.export(eid, one("format", "json"), one("table", "handoffs"), one("include_partial", "false") == "true"))
             if method == "POST":

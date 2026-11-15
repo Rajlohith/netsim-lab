@@ -1,4 +1,4 @@
-"""Stage 7 charts, drawn from the saved analysis outputs (runs.csv / summary.json / predictions_summary.json), never from a live
+"""Stage 7 charts, drawn from the saved analysis outputs (runs.csv / summary.json), never from a live
 simulation: `python -m app.compare plots <results_dir>` can be rerun at any time. matplotlib with the Agg backend (no display)."""
 from __future__ import annotations
 
@@ -25,8 +25,7 @@ def _load(analysis_dir: Path):
     with open(analysis_dir / "runs.csv", newline="") as f:
         runs = list(csv.DictReader(f))
     summary = json.loads((analysis_dir / "summary.json").read_text())
-    preds = json.loads((analysis_dir / "predictions_summary.json").read_text())
-    return runs, summary, preds
+    return runs, summary
 
 
 def _f(x):
@@ -118,25 +117,6 @@ def overhead_chart(summary, out: Path):
     return p
 
 
-def prediction_chart(preds, out: Path):
-    rows = [p for p in preds if p["warned_fraction"] is not None and p["condition"] in ("baseline", "unspecified")]
-    if not rows:
-        return None
-    fig, ax = plt.subplots(figsize=(7, 3.8))
-    names = [r["config_id"] for r in rows]
-    vals = [r["warned_fraction"] for r in rows]
-    err = [[v - (r["warned_fraction_ci_lo"] if r["warned_fraction_ci_lo"] is not None else v) for v, r in zip(vals, rows)],
-           [(r["warned_fraction_ci_hi"] if r["warned_fraction_ci_hi"] is not None else v) - v for v, r in zip(vals, rows)]]
-    ax.bar(names, vals, yerr=err, capsize=3, color="#9467bd")
-    ax.set_ylim(0, 1.05)
-    ax.set_ylabel("fraction of measured degradation episodes warned in advance")
-    ax.set_title("Stage 6 predictions vs measured episodes (baseline, 95% CI over runs)")
-    ax.tick_params(axis="x", rotation=25, labelsize=7)
-    p = out / "baseline_prediction_warned_fraction.png"
-    _fig(p, fig)
-    return p
-
-
 def make_plots(results_dir, out_dir=None) -> list:
     root = Path(results_dir)
     adir = root / "analysis"
@@ -144,7 +124,7 @@ def make_plots(results_dir, out_dir=None) -> list:
         raise FileNotFoundError(f"{adir}/runs.csv not found: run `python -m app.compare analyze {root}` first")
     out = Path(out_dir) if out_dir else adir / "plots"
     out.mkdir(parents=True, exist_ok=True)
-    runs, summary, preds = _load(adir)
+    runs, summary = _load(adir)
     made = []
     for m in ("app_stall_ms", "loss_percent", "handoff_latency_ms", "path_stretch"):
         made.append(baseline_distribution(runs, m, out))
@@ -152,5 +132,4 @@ def make_plots(results_dir, out_dir=None) -> list:
     for f in FACTORS:
         for m in ("app_stall_ms", "loss_percent", "path_stretch"):
             made.append(sweep_plot(runs, summary, f, m, out))
-    made.append(prediction_chart(preds, out))
     return [str(p.relative_to(root)) if p.is_relative_to(root) else str(p) for p in made if p]

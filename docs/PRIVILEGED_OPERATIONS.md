@@ -1,6 +1,6 @@
 # Privileged network operations (Stage 2)
 
-The Python process (CLI, API, ML) **always runs as a normal user** and refuses to start as root
+The Python process (CLI, API) **always runs as a normal user** and refuses to start as root
 (`--allow-root` overrides, not recommended). Only individual `ip` commands are elevated, one at a
 time, as `sudo -n ip ...` (non-interactive). `scripts/topology.sh` runs `sudo -v` first to cache
 your credentials. Nothing runs privileged unless `--execute` is given (the wrapper script passes it

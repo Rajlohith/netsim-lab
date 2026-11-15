@@ -59,13 +59,13 @@ class RealWorker(unittest.TestCase):
         with self.assertRaises(E.ResultsNotAvailable) as cm:
             self.svc.metrics(v["id"])
         self.assertFalse(cm.exception.details["live_metrics_available"])
-        for fn in (self.svc.handoffs, self.svc.events, self.svc.predictions):
+        for fn in (self.svc.handoffs, self.svc.events):
             with self.assertRaises(E.ResultsNotAvailable):
                 fn(v["id"])
         wait_done(self.svc, v["id"])
 
     def test_progress_is_phase_level_and_never_a_made_up_percentage(self):
-        v, _ = self.svc.create({**FAST, "seed": 42, "predict": True})
+        v, _ = self.svc.create({**FAST, "seed": 42})
         seen = set()
         end = time.time() + 60
         while time.time() < end:
@@ -75,24 +75,7 @@ class RealWorker(unittest.TestCase):
             if g["status"] not in ("queued", "running"):
                 break
             time.sleep(0.01)
-        self.assertEqual(g["status"], "completed"); self.assertLessEqual(seen, {"queued", "starting", "running_experiment", "predicting", "finalizing", "done"})
-
-    def test_prediction_pipeline_runs_in_worker_and_is_served_from_files(self):
-        v, _ = self.svc.create({**FAST, "seed": 43, "predict": True})
-        g = wait_done(self.svc, v["id"])
-        self.assertEqual((g["status"], g["prediction"]["status"]), ("completed", "available"))
-        p = self.svc.predictions(v["id"], limit=3)
-        self.assertEqual(p["model"]["id"], "stage6"); self.assertEqual(len(p["decision_points"]["items"]), 3)
-        self.assertGreater(p["decision_points"]["total"], 3); self.assertFalse(p["is_live"])
-        rd = next((self.svc.manager.job_dir(v["id"]) / "runs").rglob("handoff_predictions.json"))
-        self.assertEqual(p["summary"], json.loads(rd.read_text()))
-
-    def test_predictions_not_requested_is_404(self):
-        v, _ = self.svc.create({**FAST, "seed": 44})
-        wait_done(self.svc, v["id"])
-        with self.assertRaises(E.NotFound) as cm:
-            self.svc.predictions(v["id"])
-        self.assertEqual(cm.exception.code, "predictions_not_available")
+        self.assertEqual(g["status"], "completed"); self.assertLessEqual(seen, {"queued", "starting", "running_experiment", "finalizing", "done"})
 
     def test_duplicate_active_run_is_refused_and_names_the_original(self):
         v, _ = self.svc.create({**FAST, "seed": 45})

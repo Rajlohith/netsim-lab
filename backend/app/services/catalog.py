@@ -118,7 +118,7 @@ class Catalog:
         return list(APPROACHES)
 
     # ---- everything a client needs to build a valid request -------------------------------------------------------------
-    def capabilities(self, *, model_ids: list[str]) -> dict:
+    def capabilities(self) -> dict:
         s = self.settings
         return {
             "environments": {"requested_allowed": list(s.allowed_environments), "never_exposed": ["live"],
@@ -127,7 +127,7 @@ class Catalog:
                        "payload_bytes": [36, 1472], "seed": [0, 2**31 - 1], "label_max_chars": 80,
                        "max_concurrent_jobs": s.max_concurrent_jobs, "max_queue_length": s.max_queue_length, "max_runtime_s": s.max_runtime_s},
             "aioquic_installed": quic_available(),
-            "scenarios": self.scenario_ids(), "approaches": self.approach_ids(), "prediction_models": model_ids,
+            "scenarios": self.scenario_ids(), "approaches": self.approach_ids(),
             "live_updates": {"websocket": False, "polling": True,
                              "reason": ("experiments run in the simulator's virtual time and produce their metrics only after the run has finished; there is no "
                                         "metric stream to forward, so a WebSocket would have nothing true to send. Poll GET /api/experiments/{id} and "

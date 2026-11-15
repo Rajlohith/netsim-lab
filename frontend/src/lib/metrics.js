@@ -157,7 +157,3 @@ export function pairHandoffsWithEvents(handoffs, events) {
   return handoffs.map((h, i) => ({ event_id: h.event_id, detail: h.detail, t: lc[i].t }));
 }
 
-// ---- predictions ------------------------------------------------------------------------------------------------------------
-export function predictionSeries(items) {
-  return (Array.isArray(items) ? items : []).map((r) => ({ t: nsToSeconds(r.decision_time_ns), score: num(r.score), alarm: !!r.alarm, thr: num(r.threshold) }));
-}

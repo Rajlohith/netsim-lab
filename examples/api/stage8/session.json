@@ -33,15 +33,12 @@
           ],
           "old_link_hold_ms": 100.0,
           "payload": 64,
-          "predict": false,
-          "prediction_algorithm": null,
-          "prediction_model": null,
           "rate_pps": 100.0,
           "scenario": "baseline",
           "seed": 1,
           "tcp_detect": "event"
         },
-        "created_at": "2026-10-29T20:57:36.817004Z",
+        "created_at": "2026-11-15T12:58:59.043429Z",
         "data": {
           "is_live": false,
           "live_metrics_available": false,
@@ -50,27 +47,19 @@
         },
         "environment": "emulated",
         "error": null,
-        "finished_at": "2026-10-29T20:57:40.655354Z",
-        "id": "exp-a6ed3ef85e1cc47e",
+        "finished_at": "2026-11-15T12:59:00.386109Z",
+        "id": "exp-aba1aaa9a1ea2d43",
         "label": "example: Mobile IP baseline",
         "links": {
-          "cancel": "/api/experiments/exp-a6ed3ef85e1cc47e/cancel",
-          "events": "/api/experiments/exp-a6ed3ef85e1cc47e/events",
-          "export": "/api/experiments/exp-a6ed3ef85e1cc47e/export",
-          "handoffs": "/api/experiments/exp-a6ed3ef85e1cc47e/handoffs",
-          "metrics": "/api/experiments/exp-a6ed3ef85e1cc47e/metrics",
-          "predictions": "/api/experiments/exp-a6ed3ef85e1cc47e/predictions",
-          "self": "/api/experiments/exp-a6ed3ef85e1cc47e",
-          "transitions": "/api/experiments/exp-a6ed3ef85e1cc47e/transitions"
+          "cancel": "/api/experiments/exp-aba1aaa9a1ea2d43/cancel",
+          "events": "/api/experiments/exp-aba1aaa9a1ea2d43/events",
+          "export": "/api/experiments/exp-aba1aaa9a1ea2d43/export",
+          "handoffs": "/api/experiments/exp-aba1aaa9a1ea2d43/handoffs",
+          "metrics": "/api/experiments/exp-aba1aaa9a1ea2d43/metrics",
+          "self": "/api/experiments/exp-aba1aaa9a1ea2d43",
+          "transitions": "/api/experiments/exp-aba1aaa9a1ea2d43/transitions"
         },
         "partial_outputs": false,
-        "prediction": {
-          "algorithm": null,
-          "error": null,
-          "model": null,
-          "requested": false,
-          "status": "not_requested"
-        },
         "progress": {
           "fraction": 1.0,
           "note": null,
@@ -147,9 +136,9 @@
           }
         },
         "scenario": "baseline",
-        "started_at": "2026-10-29T20:57:36.846932Z",
+        "started_at": "2026-11-15T12:58:59.045856Z",
         "status": "completed",
-        "updated_at": "2026-10-29T20:57:40.655354Z"
+        "updated_at": "2026-11-15T12:59:00.386109Z"
       },
       "name": "01-mip-basic-baseline",
       "request": {
@@ -188,15 +177,12 @@
           ],
           "old_link_hold_ms": 100.0,
           "payload": 64,
-          "predict": false,
-          "prediction_algorithm": null,
-          "prediction_model": null,
           "rate_pps": 100.0,
           "scenario": "baseline",
           "seed": 1,
           "tcp_detect": "event"
         },
-        "created_at": "2026-10-29T20:57:36.817004Z",
+        "created_at": "2026-11-15T12:58:59.043429Z",
         "data": {
           "is_live": false,
           "live_metrics_available": false,
@@ -206,26 +192,18 @@
         "environment": "emulated",
         "error": null,
         "finished_at": null,
-        "id": "exp-a6ed3ef85e1cc47e",
+        "id": "exp-aba1aaa9a1ea2d43",
         "label": "example: Mobile IP baseline",
         "links": {
-          "cancel": "/api/experiments/exp-a6ed3ef85e1cc47e/cancel",
-          "events": "/api/experiments/exp-a6ed3ef85e1cc47e/events",
-          "export": "/api/experiments/exp-a6ed3ef85e1cc47e/export",
-          "handoffs": "/api/experiments/exp-a6ed3ef85e1cc47e/handoffs",
-          "metrics": "/api/experiments/exp-a6ed3ef85e1cc47e/metrics",
-          "predictions": "/api/experiments/exp-a6ed3ef85e1cc47e/predictions",
-          "self": "/api/experiments/exp-a6ed3ef85e1cc47e",
-          "transitions": "/api/experiments/exp-a6ed3ef85e1cc47e/transitions"
+          "cancel": "/api/experiments/exp-aba1aaa9a1ea2d43/cancel",
+          "events": "/api/experiments/exp-aba1aaa9a1ea2d43/events",
+          "export": "/api/experiments/exp-aba1aaa9a1ea2d43/export",
+          "handoffs": "/api/experiments/exp-aba1aaa9a1ea2d43/handoffs",
+          "metrics": "/api/experiments/exp-aba1aaa9a1ea2d43/metrics",
+          "self": "/api/experiments/exp-aba1aaa9a1ea2d43",
+          "transitions": "/api/experiments/exp-aba1aaa9a1ea2d43/transitions"
         },
         "partial_outputs": false,
-        "prediction": {
-          "algorithm": null,
-          "error": null,
-          "model": null,
-          "requested": false,
-          "status": "not_requested"
-        },
         "progress": {
           "fraction": null,
           "note": "waiting for a free worker slot",
@@ -286,27 +264,27 @@
         "scenario": "baseline",
         "started_at": null,
         "status": "queued",
-        "updated_at": "2026-10-29T20:57:36.817004Z",
+        "updated_at": "2026-11-15T12:58:59.043429Z",
         "warnings": []
       },
       "status": "completed",
       "transitions": [
         {
-          "at": "2026-10-29T20:57:36.817004Z",
+          "at": "2026-11-15T12:58:59.043429Z",
           "from_status": null,
           "note": "accepted",
           "seq": 1,
           "to_status": "queued"
         },
         {
-          "at": "2026-10-29T20:57:36.846932Z",
+          "at": "2026-11-15T12:58:59.045856Z",
           "from_status": "queued",
           "note": "worker starting",
           "seq": 2,
           "to_status": "running"
         },
         {
-          "at": "2026-10-29T20:57:40.655354Z",
+          "at": "2026-11-15T12:59:00.386109Z",
           "from_status": "running",
           "note": "finished",
           "seq": 3,
@@ -333,7 +311,7 @@
           "environment": "emulated",
           "handoff_mode": "mbb",
           "initial_iface": "eth-a",
-          "label": "example: make-before-break under 2% loss, with predictions",
+          "label": "example: make-before-break under 2% loss",
           "moves": [
             {
               "at_s": 4.0,
@@ -346,15 +324,12 @@
           ],
           "old_link_hold_ms": 100.0,
           "payload": 64,
-          "predict": true,
-          "prediction_algorithm": "random_forest",
-          "prediction_model": "stage6",
           "rate_pps": 100.0,
           "scenario": "lossy-access",
           "seed": 7,
           "tcp_detect": "event"
         },
-        "created_at": "2026-10-29T20:57:40.772184Z",
+        "created_at": "2026-11-15T12:59:00.473927Z",
         "data": {
           "is_live": false,
           "live_metrics_available": false,
@@ -363,27 +338,19 @@
         },
         "environment": "emulated",
         "error": null,
-        "finished_at": "2026-10-29T20:57:46.596786Z",
-        "id": "exp-ae3b881ff4629260",
-        "label": "example: make-before-break under 2% loss, with predictions",
+        "finished_at": "2026-11-15T12:59:01.921525Z",
+        "id": "exp-3e24f51a6a6048a7",
+        "label": "example: make-before-break under 2% loss",
         "links": {
-          "cancel": "/api/experiments/exp-ae3b881ff4629260/cancel",
-          "events": "/api/experiments/exp-ae3b881ff4629260/events",
-          "export": "/api/experiments/exp-ae3b881ff4629260/export",
-          "handoffs": "/api/experiments/exp-ae3b881ff4629260/handoffs",
-          "metrics": "/api/experiments/exp-ae3b881ff4629260/metrics",
-          "predictions": "/api/experiments/exp-ae3b881ff4629260/predictions",
-          "self": "/api/experiments/exp-ae3b881ff4629260",
-          "transitions": "/api/experiments/exp-ae3b881ff4629260/transitions"
+          "cancel": "/api/experiments/exp-3e24f51a6a6048a7/cancel",
+          "events": "/api/experiments/exp-3e24f51a6a6048a7/events",
+          "export": "/api/experiments/exp-3e24f51a6a6048a7/export",
+          "handoffs": "/api/experiments/exp-3e24f51a6a6048a7/handoffs",
+          "metrics": "/api/experiments/exp-3e24f51a6a6048a7/metrics",
+          "self": "/api/experiments/exp-3e24f51a6a6048a7",
+          "transitions": "/api/experiments/exp-3e24f51a6a6048a7/transitions"
         },
         "partial_outputs": false,
-        "prediction": {
-          "algorithm": "random_forest",
-          "error": null,
-          "model": "stage6",
-          "requested": true,
-          "status": "available"
-        },
         "progress": {
           "fraction": 1.0,
           "note": null,
@@ -460,16 +427,15 @@
           }
         },
         "scenario": "lossy-access",
-        "started_at": "2026-10-29T20:57:40.785157Z",
+        "started_at": "2026-11-15T12:59:00.477025Z",
         "status": "completed",
-        "updated_at": "2026-10-29T20:57:46.596786Z"
+        "updated_at": "2026-11-15T12:59:01.921525Z"
       },
-      "name": "02-mip-mbb-lossy-access-predict",
+      "name": "02-mip-mbb-lossy-access",
       "request": {
         "approach": "mip-mbb",
         "handoff_mode": "mbb",
-        "label": "example: make-before-break under 2% loss, with predictions",
-        "predict": true,
+        "label": "example: make-before-break under 2% loss",
         "scenario": "lossy-access",
         "seed": 7
       },
@@ -490,7 +456,7 @@
           "environment": "emulated",
           "handoff_mode": "mbb",
           "initial_iface": "eth-a",
-          "label": "example: make-before-break under 2% loss, with predictions",
+          "label": "example: make-before-break under 2% loss",
           "moves": [
             {
               "at_s": 4.0,
@@ -503,15 +469,12 @@
           ],
           "old_link_hold_ms": 100.0,
           "payload": 64,
-          "predict": true,
-          "prediction_algorithm": "random_forest",
-          "prediction_model": "stage6",
           "rate_pps": 100.0,
           "scenario": "lossy-access",
           "seed": 7,
           "tcp_detect": "event"
         },
-        "created_at": "2026-10-29T20:57:40.772184Z",
+        "created_at": "2026-11-15T12:59:00.473927Z",
         "data": {
           "is_live": false,
           "live_metrics_available": false,
@@ -521,26 +484,18 @@
         "environment": "emulated",
         "error": null,
         "finished_at": null,
-        "id": "exp-ae3b881ff4629260",
-        "label": "example: make-before-break under 2% loss, with predictions",
+        "id": "exp-3e24f51a6a6048a7",
+        "label": "example: make-before-break under 2% loss",
         "links": {
-          "cancel": "/api/experiments/exp-ae3b881ff4629260/cancel",
-          "events": "/api/experiments/exp-ae3b881ff4629260/events",
-          "export": "/api/experiments/exp-ae3b881ff4629260/export",
-          "handoffs": "/api/experiments/exp-ae3b881ff4629260/handoffs",
-          "metrics": "/api/experiments/exp-ae3b881ff4629260/metrics",
-          "predictions": "/api/experiments/exp-ae3b881ff4629260/predictions",
-          "self": "/api/experiments/exp-ae3b881ff4629260",
-          "transitions": "/api/experiments/exp-ae3b881ff4629260/transitions"
+          "cancel": "/api/experiments/exp-3e24f51a6a6048a7/cancel",
+          "events": "/api/experiments/exp-3e24f51a6a6048a7/events",
+          "export": "/api/experiments/exp-3e24f51a6a6048a7/export",
+          "handoffs": "/api/experiments/exp-3e24f51a6a6048a7/handoffs",
+          "metrics": "/api/experiments/exp-3e24f51a6a6048a7/metrics",
+          "self": "/api/experiments/exp-3e24f51a6a6048a7",
+          "transitions": "/api/experiments/exp-3e24f51a6a6048a7/transitions"
         },
         "partial_outputs": false,
-        "prediction": {
-          "algorithm": "random_forest",
-          "error": null,
-          "model": "stage6",
-          "requested": true,
-          "status": "pending"
-        },
         "progress": {
           "fraction": null,
           "note": "waiting for a free worker slot",
@@ -601,27 +556,27 @@
         "scenario": "lossy-access",
         "started_at": null,
         "status": "queued",
-        "updated_at": "2026-10-29T20:57:40.772184Z",
+        "updated_at": "2026-11-15T12:59:00.473927Z",
         "warnings": []
       },
       "status": "completed",
       "transitions": [
         {
-          "at": "2026-10-29T20:57:40.772184Z",
+          "at": "2026-11-15T12:59:00.473927Z",
           "from_status": null,
           "note": "accepted",
           "seq": 4,
           "to_status": "queued"
         },
         {
-          "at": "2026-10-29T20:57:40.785157Z",
+          "at": "2026-11-15T12:59:00.477025Z",
           "from_status": "queued",
           "note": "worker starting",
           "seq": 5,
           "to_status": "running"
         },
         {
-          "at": "2026-10-29T20:57:46.596786Z",
+          "at": "2026-11-15T12:59:01.921525Z",
           "from_status": "running",
           "note": "finished",
           "seq": 6,
@@ -661,15 +616,12 @@
           ],
           "old_link_hold_ms": 100.0,
           "payload": 64,
-          "predict": false,
-          "prediction_algorithm": null,
-          "prediction_model": null,
           "rate_pps": 100.0,
           "scenario": "high-latency",
           "seed": 3,
           "tcp_detect": "event"
         },
-        "created_at": "2026-10-29T20:57:46.788226Z",
+        "created_at": "2026-11-15T12:59:02.109027Z",
         "data": {
           "is_live": false,
           "live_metrics_available": false,
@@ -678,27 +630,19 @@
         },
         "environment": "emulated",
         "error": null,
-        "finished_at": "2026-10-29T20:57:50.935930Z",
-        "id": "exp-bbb8869ab0a3124d",
+        "finished_at": "2026-11-15T12:59:03.570117Z",
+        "id": "exp-6fa9abc155302689",
         "label": "example: TCP reconnection, doubled delays",
         "links": {
-          "cancel": "/api/experiments/exp-bbb8869ab0a3124d/cancel",
-          "events": "/api/experiments/exp-bbb8869ab0a3124d/events",
-          "export": "/api/experiments/exp-bbb8869ab0a3124d/export",
-          "handoffs": "/api/experiments/exp-bbb8869ab0a3124d/handoffs",
-          "metrics": "/api/experiments/exp-bbb8869ab0a3124d/metrics",
-          "predictions": "/api/experiments/exp-bbb8869ab0a3124d/predictions",
-          "self": "/api/experiments/exp-bbb8869ab0a3124d",
-          "transitions": "/api/experiments/exp-bbb8869ab0a3124d/transitions"
+          "cancel": "/api/experiments/exp-6fa9abc155302689/cancel",
+          "events": "/api/experiments/exp-6fa9abc155302689/events",
+          "export": "/api/experiments/exp-6fa9abc155302689/export",
+          "handoffs": "/api/experiments/exp-6fa9abc155302689/handoffs",
+          "metrics": "/api/experiments/exp-6fa9abc155302689/metrics",
+          "self": "/api/experiments/exp-6fa9abc155302689",
+          "transitions": "/api/experiments/exp-6fa9abc155302689/transitions"
         },
         "partial_outputs": false,
-        "prediction": {
-          "algorithm": null,
-          "error": null,
-          "model": null,
-          "requested": false,
-          "status": "not_requested"
-        },
         "progress": {
           "fraction": 1.0,
           "note": null,
@@ -775,9 +719,9 @@
           }
         },
         "scenario": "high-latency",
-        "started_at": "2026-10-29T20:57:46.818426Z",
+        "started_at": "2026-11-15T12:59:02.113044Z",
         "status": "completed",
-        "updated_at": "2026-10-29T20:57:50.935930Z"
+        "updated_at": "2026-11-15T12:59:03.570117Z"
       },
       "name": "03-tcp-reconnect-high-latency",
       "request": {
@@ -816,15 +760,12 @@
           ],
           "old_link_hold_ms": 100.0,
           "payload": 64,
-          "predict": false,
-          "prediction_algorithm": null,
-          "prediction_model": null,
           "rate_pps": 100.0,
           "scenario": "high-latency",
           "seed": 3,
           "tcp_detect": "event"
         },
-        "created_at": "2026-10-29T20:57:46.788226Z",
+        "created_at": "2026-11-15T12:59:02.109027Z",
         "data": {
           "is_live": false,
           "live_metrics_available": false,
@@ -834,26 +775,18 @@
         "environment": "emulated",
         "error": null,
         "finished_at": null,
-        "id": "exp-bbb8869ab0a3124d",
+        "id": "exp-6fa9abc155302689",
         "label": "example: TCP reconnection, doubled delays",
         "links": {
-          "cancel": "/api/experiments/exp-bbb8869ab0a3124d/cancel",
-          "events": "/api/experiments/exp-bbb8869ab0a3124d/events",
-          "export": "/api/experiments/exp-bbb8869ab0a3124d/export",
-          "handoffs": "/api/experiments/exp-bbb8869ab0a3124d/handoffs",
-          "metrics": "/api/experiments/exp-bbb8869ab0a3124d/metrics",
-          "predictions": "/api/experiments/exp-bbb8869ab0a3124d/predictions",
-          "self": "/api/experiments/exp-bbb8869ab0a3124d",
-          "transitions": "/api/experiments/exp-bbb8869ab0a3124d/transitions"
+          "cancel": "/api/experiments/exp-6fa9abc155302689/cancel",
+          "events": "/api/experiments/exp-6fa9abc155302689/events",
+          "export": "/api/experiments/exp-6fa9abc155302689/export",
+          "handoffs": "/api/experiments/exp-6fa9abc155302689/handoffs",
+          "metrics": "/api/experiments/exp-6fa9abc155302689/metrics",
+          "self": "/api/experiments/exp-6fa9abc155302689",
+          "transitions": "/api/experiments/exp-6fa9abc155302689/transitions"
         },
         "partial_outputs": false,
-        "prediction": {
-          "algorithm": null,
-          "error": null,
-          "model": null,
-          "requested": false,
-          "status": "not_requested"
-        },
         "progress": {
           "fraction": null,
           "note": "waiting for a free worker slot",
@@ -914,27 +847,27 @@
         "scenario": "high-latency",
         "started_at": null,
         "status": "queued",
-        "updated_at": "2026-10-29T20:57:46.788226Z",
+        "updated_at": "2026-11-15T12:59:02.109027Z",
         "warnings": []
       },
       "status": "completed",
       "transitions": [
         {
-          "at": "2026-10-29T20:57:46.788226Z",
+          "at": "2026-11-15T12:59:02.109027Z",
           "from_status": null,
           "note": "accepted",
           "seq": 7,
           "to_status": "queued"
         },
         {
-          "at": "2026-10-29T20:57:46.818426Z",
+          "at": "2026-11-15T12:59:02.113044Z",
           "from_status": "queued",
           "note": "worker starting",
           "seq": 8,
           "to_status": "running"
         },
         {
-          "at": "2026-10-29T20:57:50.935930Z",
+          "at": "2026-11-15T12:59:03.570117Z",
           "from_status": "running",
           "note": "finished",
           "seq": 9,
@@ -974,15 +907,12 @@
           ],
           "old_link_hold_ms": 100.0,
           "payload": 64,
-          "predict": false,
-          "prediction_algorithm": null,
-          "prediction_model": null,
           "rate_pps": 100.0,
           "scenario": "distant-home-agent",
           "seed": 5,
           "tcp_detect": "event"
         },
-        "created_at": "2026-10-29T20:57:51.136201Z",
+        "created_at": "2026-11-15T12:59:03.740100Z",
         "data": {
           "is_live": false,
           "live_metrics_available": false,
@@ -991,27 +921,19 @@
         },
         "environment": "emulated",
         "error": null,
-        "finished_at": "2026-10-29T20:57:54.973490Z",
-        "id": "exp-a0225ce96c089950",
+        "finished_at": "2026-11-15T12:59:05.083082Z",
+        "id": "exp-fa63b0f692ff1deb",
         "label": "example: route-optimisation model, distant Home Agent",
         "links": {
-          "cancel": "/api/experiments/exp-a0225ce96c089950/cancel",
-          "events": "/api/experiments/exp-a0225ce96c089950/events",
-          "export": "/api/experiments/exp-a0225ce96c089950/export",
-          "handoffs": "/api/experiments/exp-a0225ce96c089950/handoffs",
-          "metrics": "/api/experiments/exp-a0225ce96c089950/metrics",
-          "predictions": "/api/experiments/exp-a0225ce96c089950/predictions",
-          "self": "/api/experiments/exp-a0225ce96c089950",
-          "transitions": "/api/experiments/exp-a0225ce96c089950/transitions"
+          "cancel": "/api/experiments/exp-fa63b0f692ff1deb/cancel",
+          "events": "/api/experiments/exp-fa63b0f692ff1deb/events",
+          "export": "/api/experiments/exp-fa63b0f692ff1deb/export",
+          "handoffs": "/api/experiments/exp-fa63b0f692ff1deb/handoffs",
+          "metrics": "/api/experiments/exp-fa63b0f692ff1deb/metrics",
+          "self": "/api/experiments/exp-fa63b0f692ff1deb",
+          "transitions": "/api/experiments/exp-fa63b0f692ff1deb/transitions"
         },
         "partial_outputs": false,
-        "prediction": {
-          "algorithm": null,
-          "error": null,
-          "model": null,
-          "requested": false,
-          "status": "not_requested"
-        },
         "progress": {
           "fraction": 1.0,
           "note": null,
@@ -1088,9 +1010,9 @@
           }
         },
         "scenario": "distant-home-agent",
-        "started_at": "2026-10-29T20:57:51.162510Z",
+        "started_at": "2026-11-15T12:59:03.742674Z",
         "status": "completed",
-        "updated_at": "2026-10-29T20:57:54.973490Z"
+        "updated_at": "2026-11-15T12:59:05.083082Z"
       },
       "name": "04-ro-model-distant-home-agent",
       "request": {
@@ -1129,15 +1051,12 @@
           ],
           "old_link_hold_ms": 100.0,
           "payload": 64,
-          "predict": false,
-          "prediction_algorithm": null,
-          "prediction_model": null,
           "rate_pps": 100.0,
           "scenario": "distant-home-agent",
           "seed": 5,
           "tcp_detect": "event"
         },
-        "created_at": "2026-10-29T20:57:51.136201Z",
+        "created_at": "2026-11-15T12:59:03.740100Z",
         "data": {
           "is_live": false,
           "live_metrics_available": false,
@@ -1147,26 +1066,18 @@
         "environment": "emulated",
         "error": null,
         "finished_at": null,
-        "id": "exp-a0225ce96c089950",
+        "id": "exp-fa63b0f692ff1deb",
         "label": "example: route-optimisation model, distant Home Agent",
         "links": {
-          "cancel": "/api/experiments/exp-a0225ce96c089950/cancel",
-          "events": "/api/experiments/exp-a0225ce96c089950/events",
-          "export": "/api/experiments/exp-a0225ce96c089950/export",
-          "handoffs": "/api/experiments/exp-a0225ce96c089950/handoffs",
-          "metrics": "/api/experiments/exp-a0225ce96c089950/metrics",
-          "predictions": "/api/experiments/exp-a0225ce96c089950/predictions",
-          "self": "/api/experiments/exp-a0225ce96c089950",
-          "transitions": "/api/experiments/exp-a0225ce96c089950/transitions"
+          "cancel": "/api/experiments/exp-fa63b0f692ff1deb/cancel",
+          "events": "/api/experiments/exp-fa63b0f692ff1deb/events",
+          "export": "/api/experiments/exp-fa63b0f692ff1deb/export",
+          "handoffs": "/api/experiments/exp-fa63b0f692ff1deb/handoffs",
+          "metrics": "/api/experiments/exp-fa63b0f692ff1deb/metrics",
+          "self": "/api/experiments/exp-fa63b0f692ff1deb",
+          "transitions": "/api/experiments/exp-fa63b0f692ff1deb/transitions"
         },
         "partial_outputs": false,
-        "prediction": {
-          "algorithm": null,
-          "error": null,
-          "model": null,
-          "requested": false,
-          "status": "not_requested"
-        },
         "progress": {
           "fraction": null,
           "note": "waiting for a free worker slot",
@@ -1227,27 +1138,27 @@
         "scenario": "distant-home-agent",
         "started_at": null,
         "status": "queued",
-        "updated_at": "2026-10-29T20:57:51.136201Z",
+        "updated_at": "2026-11-15T12:59:03.740100Z",
         "warnings": []
       },
       "status": "completed",
       "transitions": [
         {
-          "at": "2026-10-29T20:57:51.136201Z",
+          "at": "2026-11-15T12:59:03.740100Z",
           "from_status": null,
           "note": "accepted",
           "seq": 10,
           "to_status": "queued"
         },
         {
-          "at": "2026-10-29T20:57:51.162510Z",
+          "at": "2026-11-15T12:59:03.742674Z",
           "from_status": "queued",
           "note": "worker starting",
           "seq": 11,
           "to_status": "running"
         },
         {
-          "at": "2026-10-29T20:57:54.973490Z",
+          "at": "2026-11-15T12:59:05.083082Z",
           "from_status": "running",
           "note": "finished",
           "seq": 12,

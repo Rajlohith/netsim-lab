@@ -41,7 +41,7 @@ class FromSavedResults(unittest.TestCase):
 
     def test_all_expected_exports_exist(self):
         for n in ("runs.csv", "runs.json", "handoffs.csv", "summary.csv", "summary.json", "comparisons.csv", "comparisons.json",
-                  "vs_baseline.csv", "vs_baseline.json", "predictions_summary.csv", "not_executed_cells.csv", "metric_definitions.json",
+                  "vs_baseline.csv", "vs_baseline.json", "not_executed_cells.csv", "metric_definitions.json",
                   "analysis_meta.json", "REPORT.md"):
             self.assertTrue((self.out / n).exists(), n)
 

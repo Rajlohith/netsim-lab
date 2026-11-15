@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { initialForm, validateForm, formToRequest, runnableEnvironments, issuesToFieldErrors } from "./validation.js";
 import { submitExperiment, checkWithServer, stopExperiment, newIdempotencyKey } from "./experimentActions.js";
 import { ApiError } from "../api/client.js";
-import { extractRunMetrics, comparisonRows, comparabilityNotes, chartSpec, COMPARISON_CHARTS, COMPARISON_COLUMNS, comparisonExportRows, handoffSeries, eventTimeline, pairHandoffsWithEvents, predictionSeries, METRIC_KEYS } from "./metrics.js";
+import { extractRunMetrics, comparisonRows, comparabilityNotes, chartSpec, COMPARISON_CHARTS, COMPARISON_COLUMNS, comparisonExportRows, handoffSeries, eventTimeline, pairHandoffsWithEvents, METRIC_KEYS } from "./metrics.js";
 import { toCsv } from "./csv.js";
 import approaches from "../test/fixtures/api/approaches.json";
 import scenarios from "../test/fixtures/api/scenarios.json";
@@ -15,7 +15,6 @@ import mMbb from "../test/fixtures/api/exp_mbb_metrics.json";
 import mTcp from "../test/fixtures/api/exp_tcp_metrics.json";
 import hMbb from "../test/fixtures/api/exp_mbb_handoffs.json";
 import eMbb from "../test/fixtures/api/exp_mbb_events.json";
-import pMbb from "../test/fixtures/api/exp_mbb_predictions.json";
 
 const A = approaches.approaches, S = scenarios.scenarios;
 const approach = (id) => A.find((a) => a.id === id);
@@ -51,8 +50,8 @@ describe("validation (limits from /api/capabilities)", () => {
   it("builds a minimal request: unset conditions are not sent; mbb only where supported", () => {
     const r = formToRequest(form("mip-basic"), ctx());
     expect(r.conditions).toBeUndefined(); expect(r.handoff_mode).toBeUndefined(); expect(r.approach).toBe("mip-basic"); expect(typeof r.duration_s).toBe("number");
-    const m = formToRequest(form("mip-mbb", S[0].id, { handoff_mode: "mbb", predict: true, conditions: { ...form().conditions, loss_percent: "2" } }), ctx("mip-mbb"));
-    expect(m.handoff_mode).toBe("mbb"); expect(m.predict).toBe(true); expect(m.conditions).toEqual({ loss_percent: 2 });
+    const m = formToRequest(form("mip-mbb", S[0].id, { handoff_mode: "mbb", conditions: { ...form().conditions, loss_percent: "2" } }), ctx("mip-mbb"));
+    expect(m.handoff_mode).toBe("mbb"); expect(m.predict).toBeUndefined(); expect(m.conditions).toEqual({ loss_percent: 2 });
   });
   it("maps server issues onto fields", () => {
     expect(issuesToFieldErrors([{ field: "duration_s", message: "m" }, { field: null, message: "g" }])).toEqual({ fields: { duration_s: "m" }, general: ["g"] });
@@ -147,10 +146,5 @@ describe("metrics from real backend output", () => {
     const pairs = pairHandoffsWithEvents(hMbb.handoffs, eMbb.events);
     if (pairs) expect(pairs).toHaveLength(hMbb.handoffs.length);
     expect(pairHandoffsWithEvents(hMbb.handoffs.slice(1), eMbb.events)).toBeNull();
-  });
-  it("prediction series convert ns to seconds and keep the model's alarm flags", () => {
-    const s = predictionSeries(pMbb.decision_points.items);
-    expect(s).toHaveLength(pMbb.decision_points.items.length); expect(s[0].t).toBeCloseTo(pMbb.decision_points.items[0].decision_time_ns / 1e9, 9);
-    expect(s.filter((p) => p.alarm).length).toBe(pMbb.decision_points.items.filter((r) => r.alarm).length);
   });
 });

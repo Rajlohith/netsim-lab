@@ -23,8 +23,8 @@ function waitFor(id, ms = 120000) {
 
 describe("dashboard API layer against a running backend", () => {
   live("reads the catalogue and the topology", async () => {
-    const [a, s, c, t, m] = await Promise.all([api.approaches(), api.scenarios(), api.capabilities(), api.topology(), api.models()]);
-    expect(a.approaches.length > 0).toBe(true); expect(s.scenarios.length > 0).toBe(true); expect(c.limits.max_duration_s > 0).toBe(true); expect(t.nodes.length > 0).toBe(true); expect(Array.isArray(m.models)).toBe(true);
+    const [a, s, c, t] = await Promise.all([api.approaches(), api.scenarios(), api.capabilities(), api.topology()]);
+    expect(a.approaches.length > 0).toBe(true); expect(s.scenarios.length > 0).toBe(true); expect(c.limits.max_duration_s > 0).toBe(true); expect(t.nodes.length > 0).toBe(true);
     expect(c.live_updates.websocket).toBe(false);   // the dashboard polls because the backend has no WebSocket
   });
   live("a form built from the catalogue is accepted by /experiments/validate", async () => {

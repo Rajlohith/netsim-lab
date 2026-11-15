@@ -88,7 +88,7 @@ SUPPORT = {
         "live": ("unsupported", "the RO model has no kernel data plane / daemons (emulator only)"),
     },
     "quic-migration": {
-        "emulated": ("unverified", "aioquic driven in virtual time; needs `pip install aioquic`; written but never executed in the development sandbox"),
+        "emulated": ("supported", "real aioquic engine driven in virtual time; runnable only when aioquic is installed (pip install aioquic); verified end to end with aioquic 1.8.0"),
         "loopback": ("unsupported", "no loopback QUIC harness implemented (the emulator drives aioquic in virtual time instead)"),
         "live": ("unsupported", "not implemented in Stage 5"),
     },

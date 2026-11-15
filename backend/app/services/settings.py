@@ -55,7 +55,6 @@ class ServiceSettings:
     max_moves: int = 20
     max_output_mb: int = 512              # RLIMIT_FSIZE of the worker
     allowed_environments: tuple = EXPOSED_ENVIRONMENTS
-    model_dirs: dict = field(default_factory=lambda: {"stage6": ROOT / "examples" / "ml" / "stage6" / "model"})
     scenarios_file: Path = ROOT / "config" / "api" / "scenarios.yaml"
     api_token: str | None = None
     allow_root: bool = False
@@ -128,15 +127,6 @@ class ServiceSettings:
             num(name, key, conv)
         if env.get("NETSIM_API_ENVIRONMENTS"):
             kw["allowed_environments"] = tuple(x.strip() for x in env["NETSIM_API_ENVIRONMENTS"].split(",") if x.strip())
-        if env.get("NETSIM_API_MODEL_DIRS"):        # "id=path,id2=path2"
-            dirs = {}
-            for part in env["NETSIM_API_MODEL_DIRS"].split(","):
-                if part.strip():
-                    k, sep, v = part.partition("=")
-                    if not sep or not k.strip() or not v.strip():
-                        raise ConfigurationError(f"NETSIM_API_MODEL_DIRS entry {part!r} must look like id=path")
-                    dirs[k.strip()] = _path(v.strip(), root)
-            kw["model_dirs"] = dirs
         if env.get("NETSIM_API_SCENARIOS_FILE"):
             kw["scenarios_file"] = _path(env["NETSIM_API_SCENARIOS_FILE"], root)
         if env.get("NETSIM_API_TOKEN"):

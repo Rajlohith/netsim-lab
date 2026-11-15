@@ -10,7 +10,6 @@ from pathlib import Path
 from app.services import errors as E
 from app.services import exports as X
 from app.services.experiments import check_token
-from app.services.model_registry import ModelRegistry
 from app.services.settings import ServiceSettings
 from tests.api_helpers import CRASH, FAST, make_service, script_launcher, tmpdir, wait_done
 
@@ -20,7 +19,7 @@ class Results(unittest.TestCase):
     def setUpClass(cls):
         cls.tmp = Path(tempfile.mkdtemp(prefix="netsim-api-"))
         cls.svc = make_service(cls.tmp); cls.svc.start()
-        v, _ = cls.svc.create({**FAST, "approach": "mip-mbb", "handoff_mode": "mbb", "scenario": "lossy-access", "predict": True, "label": "=HYPERLINK(\"x\")", "seed": 3})
+        v, _ = cls.svc.create({**FAST, "approach": "mip-mbb", "handoff_mode": "mbb", "scenario": "lossy-access", "label": "=HYPERLINK(\"x\")", "seed": 3})
         cls.id = v["id"]
         wait_done(cls.svc, cls.id)
         cls.rd = next((cls.svc.manager.job_dir(cls.id) / "runs").rglob("comparison_metrics.json")).parent
@@ -41,7 +40,6 @@ class Results(unittest.TestCase):
     def test_every_response_says_it_is_not_live(self):
         m = self.svc.metrics(self.id)
         self.assertFalse(m["provenance"]["is_live"]); self.assertIn("Not live", m["provenance"]["note"])
-        self.assertFalse(self.svc.predictions(self.id)["is_live"])
         self.assertFalse(self.svc.get(self.id)["data"]["is_live"])
 
     def test_events_paginate_by_seq_without_gaps_or_repeats(self):
@@ -55,18 +53,11 @@ class Results(unittest.TestCase):
         self.assertEqual(len(got), total); seqs = [x["seq"] for x in got]; self.assertEqual(seqs, sorted(set(seqs)))
         self.assertEqual(total, len((self.rd / "approach_events.csv").read_text().splitlines()) - 1)
 
-    def test_predictions_have_decision_points_and_caveat(self):
-        p = self.svc.predictions(self.id, limit=5, offset=2)
-        self.assertEqual(len(p["decision_points"]["items"]), 5); self.assertEqual(p["decision_points"]["offset"], 2)
-        self.assertIn("simulat", (p["caveat"] or "").lower()); self.assertFalse(p["summary"]["run_in_training_split"] is None)
-        row = p["decision_points"]["items"][0]
-        self.assertEqual(set(row), set(__import__("app.services.results", fromlist=["x"]).PREDICTION_COLUMNS)); self.assertIsInstance(row["alarm"], bool)
-
-    def test_json_export_contains_metrics_and_predictions_unmodified(self):
+    def test_json_export_contains_metrics_unmodified(self):
         out = self.svc.export(self.id, "json")
         doc = json.loads(out["content"])
         self.assertEqual(doc["metrics"], self.disk); self.assertFalse(doc["is_live"]); self.assertEqual(doc["experiment"]["id"], self.id)
-        self.assertEqual(doc["predictions"]["summary"], json.loads((self.rd / "handoff_predictions.json").read_text()))
+        self.assertNotIn("predictions", doc)
         self.assertTrue(out["filename"].endswith(".json"))
 
     def test_csv_exports(self):
@@ -75,8 +66,8 @@ class Results(unittest.TestCase):
         self.assertEqual(float(rows[0]["handoff_latency_ms"]), self.disk["handoffs"][0]["handoff_latency_ms"])
         ev = list(csv.DictReader(io.StringIO(self.svc.export(self.id, "csv", "events")["content"].decode())))
         self.assertEqual(len(ev), self.svc.events(self.id)["total"])
-        pr = list(csv.DictReader(io.StringIO(self.svc.export(self.id, "csv", "predictions")["content"].decode())))
-        self.assertEqual(len(pr), self.svc.predictions(self.id)["decision_points"]["total"])
+        with self.assertRaises(E.ValidationFailed):          # the predictions table no longer exists
+            self.svc.export(self.id, "csv", "predictions")
 
     def test_null_stays_empty_not_zero(self):
         self.assertEqual(X.to_csv(["a", "b"], [{"a": None, "b": 0}]).decode().splitlines()[1], ",0")
@@ -94,7 +85,7 @@ class Results(unittest.TestCase):
         with zipfile.ZipFile(out["path"]) as z:
             self.assertIsNone(z.testzip()); names = z.namelist()
             man = json.loads(z.read("EXPORT_MANIFEST.json"))
-            self.assertIn("run/comparison_metrics.json", names); self.assertIn("run/handoff_predictions.json", names); self.assertIn("experiment_record.json", names)
+            self.assertIn("run/comparison_metrics.json", names); self.assertIn("experiment_record.json", names)
             self.assertFalse(man["partial"]); self.assertFalse(man["is_live"]); self.assertEqual(man["data_origin"], "simulated")
             import hashlib
             for f in man["files"]:
@@ -141,36 +132,6 @@ class Results(unittest.TestCase):
         out = s.export(v["id"], "zip", include_partial=True); self.addCleanup(out["path"].unlink)
         man = json.loads(zipfile.ZipFile(out["path"]).read("EXPORT_MANIFEST.json"))
         self.assertTrue(man["partial"]); self.assertIn("not results", man["note"]); self.assertTrue(out["filename"].endswith("-partial.zip"))
-
-
-class Models(unittest.TestCase):
-    def test_listing_and_evaluation_are_read_from_the_bundle(self):
-        m = ModelRegistry(ServiceSettings())
-        d = m.describe("stage6")
-        self.assertTrue(d["available"] and d["manifest_verified"]); self.assertEqual(sorted(d["algorithms"]), ["logreg", "random_forest", "threshold_baseline"])
-        ev = m.evaluation("stage6")
-        disk = json.loads((Path(m.path("stage6")) / "metrics.json").read_text())
-        self.assertEqual(ev["held_out_test_metrics"], disk["models"]); self.assertFalse(ev["is_live"])
-        self.assertIsNotNone(ev["full_results"]); self.assertIn("no skill", ev["interpretation_note"])
-
-    def test_tampered_bundle_is_not_usable(self):
-        d = tmpdir(self); dst = d / "model"; shutil.copytree(ModelRegistry(ServiceSettings()).path("stage6"), dst)
-        m = ModelRegistry(ServiceSettings(model_dirs={"t": dst}))
-        self.assertTrue(m.describe("t")["available"])
-        mf = json.loads((dst / "MANIFEST.json").read_text()); victim = next(iter(mf["files"]))
-        with open(dst / victim, "ab") as f:
-            f.write(b"x")
-        m2 = ModelRegistry(ServiceSettings(model_dirs={"t": dst}))
-        self.assertFalse(m2.describe("t")["available"]); self.assertIn("sha256 mismatch", m2.describe("t")["reason"])
-        ok, why = m2.require_usable("t", None); self.assertFalse(ok)
-        with self.assertRaises(E.NotFound):
-            m2.evaluation("t")
-
-    def test_unknown_model_and_missing_bundle(self):
-        m = ModelRegistry(ServiceSettings(model_dirs={"gone": Path("/nonexistent/model")}))
-        self.assertFalse(m.describe("gone")["available"])
-        with self.assertRaises(E.NotFound):
-            m.path("other")
 
 
 class Auth(unittest.TestCase):

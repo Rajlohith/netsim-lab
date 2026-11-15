@@ -2,13 +2,12 @@ import React from "react";
 import { useApi } from "../hooks/api.jsx";
 import { useAsync } from "../hooks/useAsync.js";
 import { Async } from "../components/StateViews.jsx";
-import { DataNotice } from "../components/Badges.jsx";
 import { PageHeader } from "../components/Common.jsx";
 import { fmtNumber } from "../lib/format.js";
 
 // Role -> position is presentation only; everything shown (nodes, links, delays, addresses) comes from the API.
 const POS = { "correspondent-node": [70, 170], "home-agent": [250, 70], "access-network-a": [450, 70], "access-network-b": [450, 270], "mobile-node": [630, 170] };
-const ROLE_TEXT = { "correspondent-node": "Correspondent Node", "home-agent": "Home Agent", "access-network-a": "Access Network A", "access-network-b": "Access Network B", "mobile-node": "Mobile Node" };
+const ROLE_TEXT = { "correspondent-node": "Correspondent node", "home-agent": "Home agent", "access-network-a": "Access network A", "access-network-b": "Access network B", "mobile-node": "Mobile node" };
 
 export const netemText = (n) => {
   if (!n) return "—";
@@ -36,7 +35,7 @@ export function TopologyDiagram({ data }) {
         const [x, y] = pos[n.key];
         return (
           <g key={n.key} data-node={n.key} transform={`translate(${x} ${y})`}>
-            <rect x="-48" y="-22" width="96" height="44" rx="8" className={`node role-${n.role}`} />
+            <rect x="-58" y="-22" width="116" height="44" rx="8" className={`node role-${n.role}${n.role === "mobile-node" ? " mobile" : ""}`} />
             <text y="-3" textAnchor="middle" className="node-title">{ROLE_TEXT[n.role] || n.role}</text>
             <text y="12" textAnchor="middle" className="node-sub">{n.key}{n.forwarding ? " · forwards" : ""}</text>
           </g>
@@ -50,20 +49,21 @@ export function TopologyView({ data }) {
   const byKey = Object.fromEntries(data.nodes.map((n) => [n.key, n]));
   return (
     <>
-      <DataNotice>Configuration read from <code>{data.source_file}</code> (topology “{data.name}”) through <code>GET /api/topology</code>. {data.notes.join(" ")}</DataNotice>
-      <section aria-labelledby="diagram-h"><h2 id="diagram-h">Diagram</h2><TopologyDiagram data={data} /></section>
-      <section aria-labelledby="nodes-h"><h2 id="nodes-h">Network components</h2>
+      <section aria-labelledby="diagram-h"><h2 id="diagram-h">Diagram</h2><TopologyDiagram data={data} />
+        <p className="muted">The mobile node starts on access network A and moves to access network B. The home agent keeps it reachable by tunnelling in the Mobile IP approaches; TCP reconnection and QUIC rely on the endpoints instead. Link labels show the configured delay, rate and loss.</p></section>
+      <details className="advanced" open><summary>Network components</summary>
         <div className="table-scroll"><table><thead><tr><th>Node</th><th>Role</th><th>IP forwarding</th><th>Interfaces (address · link)</th></tr></thead>
-          <tbody>{data.nodes.map((n) => <tr key={n.key}><th scope="row">{n.key}</th><td>{n.role}</td><td>{n.forwarding ? "on" : "off"}</td><td>{n.interfaces.map((i) => `${i.ifname} ${i.address} · ${i.link}`).join("; ")}</td></tr>)}</tbody></table></div></section>
-      <section aria-labelledby="links-h"><h2 id="links-h">Links and configured impairments</h2>
+          <tbody>{data.nodes.map((n) => <tr key={n.key}><th scope="row">{n.key}</th><td>{n.role}</td><td>{n.forwarding ? "on" : "off"}</td><td>{n.interfaces.map((i) => `${i.ifname} ${i.address} · ${i.link}`).join("; ")}</td></tr>)}</tbody></table></div></details>
+      <details className="advanced" open><summary>Links and configured impairments</summary>
         <div className="table-scroll"><table><thead><tr><th>Link</th><th>End A</th><th>End B</th><th>Delay (ms)</th><th>Jitter (ms)</th><th>Rate (Mbit/s)</th><th>Loss (%)</th></tr></thead>
           <tbody>{data.links.map((l) => (
             <tr key={l.name}><th scope="row">{l.name}</th><td>{l.a.node}:{l.a.ifname} {l.a.address}</td><td>{l.b.node}:{l.b.ifname} {l.b.address}</td>
               <td>{fmtNumber(l.a.netem.delay_ms, 2)}</td><td>{fmtNumber(l.a.netem.jitter_ms, 2)}</td><td>{l.a.netem.rate_mbit == null ? "unlimited" : fmtNumber(l.a.netem.rate_mbit, 2)}</td><td>{fmtNumber(l.a.netem.loss_percent, 2)}</td></tr>))}</tbody></table></div>
-        <p className="muted">Values are the configured netem settings of end A; end B is {data.links.every((l) => JSON.stringify(l.a.netem) === JSON.stringify(l.b.netem)) ? "identical on every link" : "listed in the API response and differs on at least one link"}.</p></section>
-      <section aria-labelledby="routes-h"><h2 id="routes-h">Static routes</h2>
+        <p className="muted">Values are the configured netem settings of end A; end B is {data.links.every((l) => JSON.stringify(l.a.netem) === JSON.stringify(l.b.netem)) ? "identical on every link" : "listed in the API response and differs on at least one link"}.</p></details>
+      <details className="advanced"><summary>Static routes and source</summary>
         <div className="table-scroll"><table><thead><tr><th>Node</th><th>Destination</th><th>Via</th><th>Metric</th></tr></thead>
-          <tbody>{data.routes.map((r, i) => <tr key={i}><td>{r.node} ({byKey[r.node]?.role})</td><td>{r.to}</td><td>{r.via}</td><td>{r.metric ?? "—"}</td></tr>)}</tbody></table></div></section>
+          <tbody>{data.routes.map((r, i) => <tr key={i}><td>{r.node} ({byKey[r.node]?.role})</td><td>{r.to}</td><td>{r.via}</td><td>{r.metric ?? "—"}</td></tr>)}</tbody></table></div>
+        <p className="muted">Read from <code>{data.source_file}</code> (topology “{data.name}”) through <code>GET /api/topology</code>. {data.notes.join(" ")}</p></details>
     </>
   );
 }

@@ -56,8 +56,6 @@ METRICS = {
                      "rtt_after_ms divided by the DIRECT-path RTT to the new access network. Numerator observed; denominator DERIVED from the run's effective link delays (2 x (cn-AN + AN-mn)). 1.0 = as short as the direct path; >1 = detour via the Home Agent or retransmission delay."),
 }
 TEST_METRICS = tuple(k for k, v in METRICS.items() if v[3])
-PRED_COLUMNS = ("pred_status", "pred_decision_points", "pred_alarms", "pred_episodes", "pred_episodes_warned",
-                "pred_false_alarm_decisions", "pred_warning_s_median", "pred_in_training_split")
 
 
 def provenance_label(kind: str, data_origin: str | None) -> str:
@@ -116,7 +114,6 @@ def _collect_campaign(root: Path, camp: dict, plan: dict) -> dict:
             m = _read_json(run_dir / "comparison_metrics.json")
             spec = ExperimentSpec.from_json(pr["spec"])
             hrows = _run_metrics(row, m, spec, pr)
-            _attach_predictions(row, hrows, run_dir, ledger.get(pr["key"]))
             handoffs.extend(hrows)
         runs.append(row)
     return {"mode": "campaign", "campaign": camp, "runs": runs, "handoffs": handoffs,
@@ -139,7 +136,6 @@ def _collect_discovered(root: Path) -> dict:
         m = _read_json(run_dir / "comparison_metrics.json")
         if row["status"] == "ok" and m:
             hrows = _run_metrics(row, m, spec, pr)
-            _attach_predictions(row, hrows, run_dir, None)
             handoffs.extend(hrows)
         runs.append(row)
     return {"mode": "discovered", "campaign": None, "runs": runs, "handoffs": handoffs, "cells": [], "root": root}
@@ -206,39 +202,6 @@ def _run_metrics(row: dict, m: dict, spec: ExperimentSpec, pr: dict) -> list:
         "model_limit_note": model_limit_note(row["approach"], {"loss_percent": spec.conditions.loss_percent}),
     })
     return hrows
-
-
-def _attach_predictions(row: dict, hrows: list, run_dir: Path, led) -> None:
-    """Join the Stage 6 prediction outputs (handoff_predictions.csv/json written next to the raw data) with the run's
-    measured outcomes. The predictions were made by replay with only observations <= each decision time; the outcomes (episodes)
-    are the run's own measured degradation, labelled AFTER the fact with the Stage 6 label rule, so they are 'derived'."""
-    for c in PRED_COLUMNS:
-        row[c] = None
-    pj = _read_json(run_dir / "handoff_predictions.json")
-    pc = run_dir / "handoff_predictions.csv"
-    if pj is None or not pc.exists():
-        row["pred_status"] = "failed" if (led and (led.get("prediction") or {}).get("ok") is False) else "none"
-        for h in hrows:
-            h.update(pred_warned=None, pred_warning_s=None, pred_points_in_horizon=None)
-        return
-    with open(pc, newline="") as f:
-        preds = list(csv.DictReader(f))
-    horizon_ns = int(round(float(preds[0]["horizon_s"]) * 1e9)) if preds else 0
-    eps = pj.get("ground_truth_episodes", [])
-    onsets = [e["onset_ns"] for e in eps]
-    false_alarms = 0
-    for p in preds:
-        if int(p["alarm"]) and not any(0 < o - int(p["decision_time_ns"]) <= horizon_ns for o in onsets):
-            false_alarms += 1
-    by_event = {e["event_id"]: e for e in eps}
-    for h in hrows:
-        e = by_event.get(h["event_id"])
-        h.update(pred_warned=(e["warned"] if e else None), pred_warning_s=(e["warning_s"] if e else None),
-                 pred_points_in_horizon=(e["decision_points_in_horizon"] if e else None))
-    warn = [e["warning_s"] for e in eps if e["warned"] and e["warning_s"] is not None]
-    row.update(pred_status="ok", pred_decision_points=pj["decision_points"], pred_alarms=pj["alarms"], pred_episodes=len(eps),
-               pred_episodes_warned=sum(1 for e in eps if e["warned"]), pred_false_alarm_decisions=false_alarms,
-               pred_warning_s_median=float(np.median(warn)) if warn else None, pred_in_training_split=pj.get("run_in_training_split"))
 
 
 # ---- aggregation ------------------------------------------------------------------------------------------------------------
@@ -365,31 +328,6 @@ def compare_to_baseline(data: dict) -> list:
     return out
 
 
-def prediction_summary(data: dict) -> list:
-    """Per (condition, configuration): how often the Stage 6 model warned before measured degradation episodes. Pooled counts are
-    descriptive; the CI resamples RUNS (episodes inside a run are not independent)."""
-    runs = [r for r in data["runs"] if r["status"] == "ok" and r.get("pred_status") == "ok"]
-    by = defaultdict(list)
-    for r in runs:
-        by[_cell_key(r)].append(r)
-    out = []
-    for (cond, cfg_id), rs in sorted(by.items()):
-        ep = np.array([r["pred_episodes"] for r in rs], dtype=float)
-        wn = np.array([r["pred_episodes_warned"] for r in rs], dtype=float)
-        fa = np.array([r["pred_false_alarm_decisions"] for r in rs], dtype=float)
-        dp = np.array([r["pred_decision_points"] for r in rs], dtype=float)
-        ci = st.cluster_bootstrap_ratio(wn, ep, CONF, N_BOOT, ANALYSIS_SEED) if ep.sum() > 0 and len(rs) >= 2 else None
-        out.append({"condition": cond, "config_id": cfg_id, "runs_with_predictions": len(rs),
-                    "episodes_total": int(ep.sum()), "episodes_warned": int(wn.sum()),
-                    "warned_fraction": float(wn.sum() / ep.sum()) if ep.sum() else None,
-                    "warned_fraction_ci_lo": ci[0] if ci else None, "warned_fraction_ci_hi": ci[1] if ci else None,
-                    "false_alarm_decisions_per_100_decisions": float(100 * fa.sum() / dp.sum()) if dp.sum() else None,
-                    "runs_in_model_training_split": int(sum(1 for r in rs if r.get("pred_in_training_split"))),
-                    "note": "predictions are replayed from observations <= each decision time; episodes are labelled after the fact from the same run (derived); "
-                            "simulated data only, not evidence of skill on real networks"})
-    return out
-
-
 # ---- export ---------------------------------------------------------------------------------------------------------------
 def _fmt(v):
     if isinstance(v, float):
@@ -442,7 +380,6 @@ def analyze(results_dir, out_dir=None) -> dict:
     summary = summarise(data)
     comps = compare_approaches(data)
     vsb = compare_to_baseline(data)
-    preds = prediction_summary(data)
     write_csv(out / "runs.csv", runs)
     write_json(out / "runs.json", runs)
     write_csv(out / "handoffs.csv", handoffs)
@@ -452,8 +389,6 @@ def analyze(results_dir, out_dir=None) -> dict:
     write_json(out / "comparisons.json", comps)
     write_csv(out / "vs_baseline.csv", vsb)
     write_json(out / "vs_baseline.json", vsb)
-    write_csv(out / "predictions_summary.csv", preds)
-    write_json(out / "predictions_summary.json", preds)
     write_csv(out / "not_executed_cells.csv", data["cells"])
     write_json(out / "metric_definitions.json", {k: {"unit": v[0], "kind": v[1], "lower_is_better": v[2],
                                                     "tested_across_approaches": v[3], "definition": v[4]} for k, v in METRICS.items()})
@@ -471,9 +406,9 @@ def analyze(results_dir, out_dir=None) -> dict:
                         "unit_of_analysis": "one run (own seed); per-handoff values are averaged within a run before inference"},
             "inputs": {n: _sha(root / n) for n in ("campaign.json", "plan.json", "ledger.jsonl") if (root / n).exists()}}
     write_json(out / "analysis_meta.json", meta)
-    (out / "REPORT.md").write_text(render_report(data, summary, comps, vsb, preds, meta))
+    (out / "REPORT.md").write_text(render_report(data, summary, comps, vsb, meta))
     return {"out_dir": str(out), "runs": len(runs), "status_counts": dict(status_counts), "summary_rows": len(summary),
-            "comparisons": len(comps), "vs_baseline": len(vsb), "prediction_cells": len(preds)}
+            "comparisons": len(comps), "vs_baseline": len(vsb)}
 
 
 # ---- report ---------------------------------------------------------------------------------------------------------------
@@ -481,7 +416,7 @@ def _n(v, nd=1):
     return "n/a" if v is None else f"{v:.{nd}f}"
 
 
-def render_report(data, summary, comps, vsb, preds, meta) -> str:
+def render_report(data, summary, comps, vsb, meta) -> str:
     cfg = (data["campaign"] or {}).get("config") or {}
     L = ["# Experiment report (generated by `python -m app.compare analyze`)", ""]
     L += [f"* campaign: `{cfg.get('name', 'n/a')}` ({data['mode']} mode); replicates per cell: {cfg.get('replicates', 'n/a')}; "
@@ -556,16 +491,6 @@ def render_report(data, summary, comps, vsb, preds, meta) -> str:
             p = "n/a" if v["p_holm"] is None else f"{v['p_holm']:.3g}"
             L.append(f"| `{v['config_id']}` | {v['condition']} | {v['metric']} | {v['verdict']} | {_n(v['median_diff'], 3)} | {ci} | {p} |")
         L.append("")
-    if preds:
-        L += ["## Handoff-degradation predictions (Stage 6 model) next to the measurements", "",
-              "| condition | configuration | runs | episodes | warned | warned fraction [95% CI over runs] | false-alarm decisions per 100 |",
-              "|---|---|---|---|---|---|---|"]
-        for p in preds:
-            ci = "n/a" if p["warned_fraction_ci_lo"] is None else f"[{p['warned_fraction_ci_lo']:.2f}, {p['warned_fraction_ci_hi']:.2f}]"
-            L.append(f"| {p['condition']} | `{p['config_id']}` | {p['runs_with_predictions']} | {p['episodes_total']} | {p['episodes_warned']} | "
-                     f"{_n(p['warned_fraction'], 2)} {ci} | {_n(p['false_alarm_decisions_per_100_decisions'], 2)} |")
-        L += ["", "Predictions are replayed from observations up to each decision time only; episodes are labelled afterwards from the same run. "
-              "The Stage 6 model was trained on generator regularities of simulated data; nothing here shows skill on real networks.", ""]
     if data["cells"]:
         L += ["## Cells that were not executed (reported, not skipped)", "", "| condition | configuration | status | reason |", "|---|---|---|---|"]
         for c in data["cells"]:

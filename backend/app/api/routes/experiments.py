@@ -1,4 +1,4 @@
-"""Experiment routes: validate, create (background job), inspect, cancel, delete, results, predictions, exports, history."""
+"""Experiment routes: validate, create (background job), inspect, cancel, delete, results, exports, history."""
 import os
 from typing import List, Optional
 
@@ -123,19 +123,12 @@ def experiment_events(experiment_id: str, after_seq: int = Query(default=0, ge=0
     return svc.events(experiment_id, after_seq, limit)
 
 
-@router.get("/experiments/{experiment_id}/predictions", tags=["predictions"], response_model=None, responses={200: {"model": S.PredictionsOut}, 401: R401, 404: R404, 409: R409},
-            summary="Handoff predictions computed for a completed experiment")
-def experiment_predictions(experiment_id: str, limit: int = Query(default=500, ge=1, le=5000), offset: int = Query(default=0, ge=0), svc: ExperimentService = Depends(get_service)):
-    """Available only when the experiment was created with `predict: true` and the prediction step succeeded (otherwise 404 `predictions_not_available`)."""
-    return svc.predictions(experiment_id, limit, offset)
-
-
 # ---- export ----------------------------------------------------------------------------------------------------------------
 @router.get("/experiments/{experiment_id}/export", tags=["export"], response_model=None,
             responses={200: {"description": "the export", "content": {"application/json": {}, "text/csv": {}, "application/zip": {}}}, 401: R401, 404: R404, 409: R409, 422: R422},
             summary="Export one experiment as JSON, CSV or ZIP")
 def export_experiment(experiment_id: str, fmt: str = Query(default="json", alias="format", description="json | csv | zip"),
-                      table: str = Query(default="handoffs", description="csv only: handoffs | events | predictions"),
+                      table: str = Query(default="handoffs", description="csv only: handoffs | events"),
                       include_partial: bool = Query(default=False, description="zip only: allow the partial outputs of a failed/incomplete/cancelled experiment"),
                       svc: ExperimentService = Depends(get_service)):
     return _download(svc.export(experiment_id, fmt, table, include_partial))

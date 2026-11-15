@@ -11,8 +11,6 @@ export function createApi(client = createClient()) {
     capabilities: () => client.get("/capabilities"),
     status: () => client.get("/status"),
     topology: () => client.get("/topology"),
-    models: () => client.get("/models"),
-    modelEvaluation: (id) => client.get(`/models/${encodeURIComponent(id)}/evaluation`),
 
     validateExperiment: (body) => client.post("/experiments/validate", body),
     // resolves { data, status, replayed }; a repeated idempotencyKey returns the original experiment instead of a second one
@@ -29,7 +27,6 @@ export function createApi(client = createClient()) {
     metrics: (id) => client.get(`${exp(id)}/metrics`),
     handoffs: (id) => client.get(`${exp(id)}/handoffs`),
     events: (id, { afterSeq = 0, limit = 5000 } = {}) => client.get(`${exp(id)}/events`, { after_seq: afterSeq, limit }),
-    predictions: (id, { limit = 5000, offset = 0 } = {}) => client.get(`${exp(id)}/predictions`, { limit, offset }),
 
     // file downloads (resolve { blob, filename, contentType })
     exportExperiment: (id, { format = "json", table, includePartial } = {}) =>

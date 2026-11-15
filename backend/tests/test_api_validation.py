@@ -3,16 +3,15 @@ import unittest
 
 from app.services.catalog import Catalog, load_scenarios
 from app.services.errors import ConfigurationError
-from app.services.model_registry import ModelRegistry
 from app.services.settings import ServiceSettings
 from app.services.validation import ALLOWED_FIELDS, validate_request
 
 S = ServiceSettings().validate()
-C, M = Catalog(S), ModelRegistry(S)
+C = Catalog(S)
 
 
 def v(raw, s=S):
-    return validate_request(raw, s, C, M)
+    return validate_request(raw, s, C)
 
 
 def codes(raw, s=S):
@@ -53,7 +52,7 @@ class Catalogue(unittest.TestCase):
             load_scenarios(p)
 
     def test_capabilities_say_polling_not_websocket(self):
-        c = C.capabilities(model_ids=M.ids())
+        c = C.capabilities()
         self.assertFalse(c["live_updates"]["websocket"]); self.assertTrue(c["live_updates"]["polling"])
         self.assertFalse(c["live_updates"]["live_metrics_available"]); self.assertIn("live", c["environments"]["never_exposed"])
 
@@ -126,33 +125,27 @@ class Validation(unittest.TestCase):
         self.assertEqual(issues, []); self.assertEqual(r.warnings[0]["code"], "condition_has_no_effect")
         self.assertEqual(v({"approach": "mip-basic", "scenario": "distant-home-agent"})[1].warnings, [])
 
-    def test_prediction_requests(self):
-        self.assertEqual(v({"approach": "mip-basic", "predict": True})[1].predict, {"model": "stage6", "algorithm": "random_forest"})
-        self.assertIn(("prediction_model", "model_unavailable"), codes({"approach": "mip-basic", "predict": True, "prediction_model": "x"}))
-        self.assertIn(("prediction_model", "model_unavailable"), codes({"approach": "mip-basic", "predict": True, "prediction_algorithm": "x"}))
-        self.assertIn(("predict", "inconsistent"), codes({"approach": "mip-basic", "prediction_model": "stage6"}))
-        s0 = S.with_(model_dirs={})
-        iss, _ = validate_request({"approach": "mip-basic", "predict": True}, s0, Catalog(s0), ModelRegistry(s0))
-        self.assertEqual([(i.field, i.code) for i in iss], [("prediction_model", "model_unavailable")])
+    def test_removed_prediction_fields_are_rejected_as_unknown(self):
+        for field in ("predict", "prediction_model", "prediction_algorithm"):
+            iss, r = v({"approach": "mip-basic", field: True})
+            self.assertIsNone(r); self.assertTrue(any(i.field == field for i in iss), field)
 
     def test_fingerprint_ignores_label_but_not_parameters(self):
         a, b = v({"approach": "mip-basic", "label": "a"})[1], v({"approach": "mip-basic", "label": "b"})[1]
         self.assertEqual(a.fingerprint, b.fingerprint); self.assertNotEqual(a.request_hash, b.request_hash)
         self.assertNotEqual(a.fingerprint, v({"approach": "mip-basic", "seed": 1})[1].fingerprint)
-        self.assertNotEqual(a.fingerprint, v({"approach": "mip-basic", "predict": True})[1].fingerprint)
 
     def test_whitelist_is_exactly_the_documented_fields(self):
-        self.assertEqual(len(ALLOWED_FIELDS), 18)
+        self.assertEqual(len(ALLOWED_FIELDS), 15)
 
 
 class Settings(unittest.TestCase):
     def test_from_env(self):
-        s = ServiceSettings.from_env({"NETSIM_API_MAX_CONCURRENT_JOBS": "3", "NETSIM_API_TOKEN": "t", "NETSIM_API_MODEL_DIRS": "a=/x,b=rel/y", "NETSIM_API_ALLOW_ROOT": "1"})
-        self.assertEqual((s.max_concurrent_jobs, s.api_token, s.allow_root), (3, "t", True)); self.assertEqual(s.model_dirs["a"].as_posix(), "/x")
-        self.assertTrue(s.model_dirs["b"].is_absolute())
+        s = ServiceSettings.from_env({"NETSIM_API_MAX_CONCURRENT_JOBS": "3", "NETSIM_API_TOKEN": "t", "NETSIM_API_ALLOW_ROOT": "1"})
+        self.assertEqual((s.max_concurrent_jobs, s.api_token, s.allow_root), (3, "t", True))
 
     def test_bad_env_fails_fast(self):
-        for env in ({"NETSIM_API_MAX_CONCURRENT_JOBS": "x"}, {"NETSIM_API_MAX_CONCURRENT_JOBS": "0"}, {"NETSIM_API_MODEL_DIRS": "nokey"}, {"NETSIM_API_ENVIRONMENTS": "live"}):
+        for env in ({"NETSIM_API_MAX_CONCURRENT_JOBS": "x"}, {"NETSIM_API_MAX_CONCURRENT_JOBS": "0"}, {"NETSIM_API_ENVIRONMENTS": "live"}):
             with self.assertRaises(ConfigurationError, msg=env):
                 ServiceSettings.from_env(env)
 

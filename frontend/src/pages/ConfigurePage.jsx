@@ -19,26 +19,28 @@ const Field = ({ id, label, error, hint, children }) => (
 );
 
 // Pure view: everything it shows and every action is a prop (tested without a browser).
-export function ConfigureView({ approaches, scenarios, capabilities, models, form, setForm, errors, general, warnings, submitting, checking, checkResult, onSubmit, onCheck, active, onStop, stopping, stopMessage }) {
+export function ConfigureView({ approaches, scenarios, capabilities, form, setForm, errors, general, warnings, submitting, checking, checkResult, onSubmit, onCheck, active, onStop, stopping, stopMessage }) {
   const approach = approaches.find((a) => a.id === form.approach);
   const scenario = scenarios.find((s) => s.id === form.scenario);
   const envs = runnableEnvironments(approach);
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.type === "checkbox" ? e.target.checked : e.target.value }));
   const setCond = (k) => (e) => setForm((f) => ({ ...f, conditions: { ...f.conditions, [k]: e.target.value } }));
   const lim = capabilities.limits;
-  const modelInfo = (models || []).find((m) => m.available);
   const hasErrors = Object.keys(errors).length > 0;
+  const ADV = ["environment", "rate_pps", "payload", "seed", "label"];
+  const advancedHasError = Object.keys(errors).some((k) => ADV.includes(k) || k.startsWith("conditions."));
   return (
     <>
-      <p className="muted">Experiments run as background jobs on the server in the simulator's virtual time (or on loopback sockets). Privileged <code>live</code> network-namespace runs are never available through the API.</p>
+      <p className="muted">Runs are background jobs in the simulator's virtual time or on loopback sockets. Privileged <code>live</code> namespace runs are never available through the API.</p>
+      <div className="grid-2">
       <form onSubmit={onSubmit} noValidate aria-label="Experiment configuration">
-        <fieldset><legend>Mobility approach and scenario</legend>
+        <fieldset><legend>Approach and scenario</legend>
           <Field id="approach" label="Mobility approach" error={errors.approach}>
             <select id="approach" value={form.approach} onChange={(e) => { const a = approaches.find((x) => x.id === e.target.value); setForm((f) => ({ ...f, approach: e.target.value, environment: runnableEnvironments(a).includes(f.environment) ? f.environment : runnableEnvironments(a)[0] || f.environment, handoff_mode: a && a.supports_make_before_break ? f.handoff_mode : "bbm" })); }}>
               {approaches.map((a) => { const ok = runnableEnvironments(a).length > 0; return <option key={a.id} value={a.id} disabled={!ok}>{approachName(a.id)}{ok ? "" : " (not runnable on this server)"}</option>; })}
             </select>
           </Field>
-          {approach ? <details className="approach-info" open><summary>About {approach.name}</summary>
+          {approach ? <details className="approach-info"><summary>About {approach.name}</summary>
             <p><strong>Mechanism:</strong> {approach.mechanism}</p><p><strong>Standards status:</strong> {approach.standards_status}</p><p><strong>Limits:</strong> {approach.scope_limits}</p>
             {Object.entries(approach.environments).filter(([, e]) => !e.runnable_here).map(([k, e]) => <p key={k} className="muted">Environment <code>{k}</code> unavailable: {e.check_reason || e.support_reason}</p>)}
           </details> : null}
@@ -48,56 +50,62 @@ export function ConfigureView({ approaches, scenarios, capabilities, models, for
             </select>
           </Field>
           <div className="row">
+            <Field id="duration_s" label="Duration (s)" error={errors.duration_s} hint={`> 0, ≤ ${lim.max_duration_s}`}><input id="duration_s" inputMode="decimal" value={form.duration_s} onChange={set("duration_s")} aria-invalid={!!errors.duration_s} /></Field>
+            {approach && approach.supports_make_before_break ? (
+              <Field id="handoff_mode" label="Handoff mode" error={errors.handoff_mode}>
+                <select id="handoff_mode" value={form.handoff_mode} onChange={set("handoff_mode")}><option value="bbm">break-before-make</option><option value="mbb">make-before-break</option></select>
+              </Field>) : null}
+            {form.approach === "tcp-reconnect" ? <Field id="tcp_detect" label="TCP loss detection"><select id="tcp_detect" value={form.tcp_detect} onChange={set("tcp_detect")}><option value="event">on network-change event</option><option value="timeout">on timeout</option></select></Field> : null}
+          </div>
+          {scenario ? <p className="muted">Handoff schedule (fixed by the scenario): {scenario.parameters.moves.map((m) => `→ ${m.interface} at ${m.at_s} s`).join(", ")}.</p> : null}
+          {errors.handoff_mode && !(approach && approach.supports_make_before_break) ? <small role="alert" className="field-error">{errors.handoff_mode}</small> : null}
+        </fieldset>
+
+        <details className="advanced advanced-plain" open={advancedHasError}><summary>Advanced settings</summary>
+          <div className="row">
             <Field id="environment" label="Environment" error={errors.environment}>
               <select id="environment" value={form.environment} onChange={set("environment")}>
                 {(approach ? Object.keys(approach.environments).filter((k) => approach.environments[k].exposed_via_api) : ["emulated"]).map((k) => <option key={k} value={k} disabled={!envs.includes(k)}>{k}{envs.includes(k) ? "" : " (unavailable)"}</option>)}
               </select>
             </Field>
-            <Field id="handoff_mode" label="Handoff mode" error={errors.handoff_mode} hint={approach && !approach.supports_make_before_break ? approach.make_before_break_note : null}>
-              <select id="handoff_mode" value={form.handoff_mode} onChange={set("handoff_mode")} disabled={!approach || !approach.supports_make_before_break}>
-                <option value="bbm">break-before-make</option><option value="mbb">make-before-break</option>
-              </select>
-            </Field>
-            {form.approach === "tcp-reconnect" ? <Field id="tcp_detect" label="TCP loss detection"><select id="tcp_detect" value={form.tcp_detect} onChange={set("tcp_detect")}><option value="event">on network-change event</option><option value="timeout">on timeout</option></select></Field> : null}
-          </div>
-        </fieldset>
-
-        <fieldset><legend>Traffic profile</legend>
-          <div className="row">
-            <Field id="duration_s" label="Duration (s)" error={errors.duration_s} hint={`> 0, ≤ ${lim.max_duration_s}`}><input id="duration_s" inputMode="decimal" value={form.duration_s} onChange={set("duration_s")} aria-invalid={!!errors.duration_s} /></Field>
             <Field id="rate_pps" label="Probe rate (packets/s)" error={errors.rate_pps} hint={`> 0, ≤ ${lim.max_rate_pps}; ≤ ${lim.max_probes} probes in total`}><input id="rate_pps" inputMode="decimal" value={form.rate_pps} onChange={set("rate_pps")} aria-invalid={!!errors.rate_pps} /></Field>
             <Field id="payload" label="Payload (bytes)" error={errors.payload} hint={`${lim.payload_bytes[0]}–${lim.payload_bytes[1]}`}><input id="payload" inputMode="numeric" value={form.payload} onChange={set("payload")} aria-invalid={!!errors.payload} /></Field>
-            <Field id="seed" label="Seed" error={errors.seed} hint="same seed → same result"><input id="seed" inputMode="numeric" value={form.seed} onChange={set("seed")} aria-invalid={!!errors.seed} /></Field>
+            <Field id="seed" label="Seed" error={errors.seed} hint="Same seed, same result"><input id="seed" inputMode="numeric" value={form.seed} onChange={set("seed")} aria-invalid={!!errors.seed} /></Field>
           </div>
-          {scenario ? <p className="muted">Scenario handoff schedule: {scenario.parameters.moves.map((m) => `→ ${m.interface} at ${m.at_s} s`).join(", ")} (fixed by the scenario).</p> : null}
-        </fieldset>
-
-        <details><summary>Network condition overrides (blank = use the scenario's value)</summary>
+          <h3>Network condition overrides</h3>
+          <p className="muted">Leave a field blank to use the scenario's value.</p>
           <div className="row">
             {CONDITION_KEYS.map((k) => (
               <Field key={k} id={`cond-${k}`} label={CONDITION_RANGES[k].label} error={errors[`conditions.${k}`]} hint={scenario ? `scenario: ${scenario.parameters.conditions[k]}` : null}>
                 <input id={`cond-${k}`} inputMode="decimal" value={form.conditions[k]} onChange={setCond(k)} placeholder={scenario ? String(scenario.parameters.conditions[k]) : ""} aria-invalid={!!errors[`conditions.${k}`]} />
               </Field>))}
           </div>
-        </details>
-
-        <fieldset><legend>Handoff prediction and label</legend>
-          <Field id="predict" label="Compute handoff predictions after the run" error={errors.predict} hint={modelInfo ? `model ${modelInfo.id} ${modelInfo.model_version} (simulated training data)` : "no prediction model available"}>
-            <input id="predict" type="checkbox" checked={form.predict} onChange={set("predict")} disabled={!modelInfo} />
-          </Field>
-          {form.predict && modelInfo ? <Field id="prediction_algorithm" label="Prediction algorithm"><select id="prediction_algorithm" value={form.prediction_algorithm} onChange={set("prediction_algorithm")}>{modelInfo.algorithms.map((a) => <option key={a} value={a}>{a}</option>)}</select></Field> : null}
+          <h3>Label</h3>
           <Field id="label" label="Label (optional)" error={errors.label}><input id="label" value={form.label} maxLength={200} onChange={set("label")} /></Field>
-        </fieldset>
+        </details>
 
         {general.length ? <ul role="alert" className="state state-error">{general.map((g, i) => <li key={i}>{g}</li>)}</ul> : null}
         {hasErrors ? <p role="alert" className="field-error">Fix the highlighted fields before starting.</p> : null}
         {warnings.length ? <ul className="notice" role="status">{warnings.map((w, i) => <li key={i}>{w}</li>)}</ul> : null}
         {checkResult && checkResult.valid ? <p role="status" className="ok-note">The server accepts this configuration{checkResult.resolved && checkResult.resolved.fingerprint ? ` (fingerprint ${checkResult.resolved.fingerprint.slice(0, 12)})` : ""}.</p> : null}
         <div className="actions">
-          <button type="button" onClick={onCheck} disabled={checking || submitting}>{checking ? "Checking…" : "Check with server"}</button>
           <button type="submit" className="primary" disabled={submitting}>{submitting ? "Starting…" : "Start experiment"}</button>
+          <button type="button" onClick={onCheck} disabled={checking || submitting}>{checking ? "Checking…" : "Check with server"}</button>
         </div>
       </form>
+      <aside className="card sticky" aria-label="Selected configuration">
+        <h2>Summary</h2>
+        <dl className="summary-list">
+          <dt>Approach</dt><dd>{approach ? approachName(approach.id) : "—"}</dd>
+          <dt>Scenario</dt><dd>{scenario ? scenario.title : "—"}</dd>
+          <dt>Environment</dt><dd>{form.environment} (simulated or loopback)</dd>
+          <dt>Duration</dt><dd>{form.duration_s} s</dd>
+          <dt>Probe rate</dt><dd>{form.rate_pps} packets/s, {form.payload} B</dd>
+          <dt>Seed</dt><dd>{form.seed}</dd>
+          <dt>Handoff mode</dt><dd>{form.handoff_mode === "mbb" ? "make-before-break" : "break-before-make"}</dd>
+        </dl>
+      </aside>
+      </div>
 
       <section aria-labelledby="active-h"><h2 id="active-h">Active experiments</h2>
         {stopMessage ? <p role="status">{stopMessage}</p> : null}
@@ -114,20 +122,20 @@ export function ConfigureView({ approaches, scenarios, capabilities, models, for
 export default function ConfigurePage() {
   const api = useApi();
   const catalog = useAsync(async () => {
-    const [a, s, c, m] = await Promise.all([api.approaches(), api.scenarios(), api.capabilities(), api.models()]);
-    return { approaches: a.approaches, scenarios: s.scenarios, capabilities: c, models: m.models };
+    const [a, s, c] = await Promise.all([api.approaches(), api.scenarios(), api.capabilities()]);
+    return { approaches: a.approaches, scenarios: s.scenarios, capabilities: c };
   }, [api]);
   const activeState = useAsync(async () => (await api.listExperiments({ status: ["queued", "running"], limit: 50, sort: "created_at" })).items, [api]);
   return (
     <>
-      <PageHeader title="Experiment configuration" />
+      <PageHeader title="Configure experiment" />
       <Async state={catalog} what="the approach and scenario catalogue">{(c) => <ConfigureLoaded catalog={c} api={api} activeState={activeState} />}</Async>
     </>
   );
 }
 
 function ConfigureLoaded({ catalog, api, activeState }) {
-  const { approaches, scenarios, capabilities, models } = catalog;
+  const { approaches, scenarios, capabilities } = catalog;
   const firstApproach = approaches.find((a) => runnableEnvironments(a).length) || approaches[0];
   const [form, setForm] = useState(() => initialForm(scenarios[0], firstApproach));
   const [errors, setErrors] = useState({});
@@ -172,7 +180,7 @@ function ConfigureLoaded({ catalog, api, activeState }) {
   return (
     <>
       {topError ? <ErrorState error={topError} title="The experiment was not started" /> : null}
-      <ConfigureView approaches={approaches} scenarios={scenarios} capabilities={capabilities} models={models} form={form} setForm={setForm} errors={errors} general={general} warnings={warnings}
+      <ConfigureView approaches={approaches} scenarios={scenarios} capabilities={capabilities} form={form} setForm={setForm} errors={errors} general={general} warnings={warnings}
         submitting={busy.submitting} checking={busy.checking} checkResult={checkResult} onSubmit={onSubmit} onCheck={onCheck}
         active={activeState.data || []} onStop={onStop} stopping={stopping} stopMessage={stopMessage} />
       {activeState.status === "error" ? <ErrorState error={activeState.error} onRetry={activeState.reload} title="Could not load the active experiments" /> : null}

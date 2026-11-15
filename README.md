@@ -5,7 +5,6 @@
 ![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)
 ![Vite](https://img.shields.io/badge/Vite-5-646CFF?logo=vite&logoColor=white)
 ![Linux](https://img.shields.io/badge/Linux-Namespaces_%26_tc_netem-FCC624?logo=linux&logoColor=black)
-![scikit-learn](https://img.shields.io/badge/ML-scikit--learn-F7931E?logo=scikit-learn&logoColor=white)
 ![Computer Networks](https://img.shields.io/badge/Domain-Computer_Networks-success)
 ![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
 
@@ -29,7 +28,6 @@ Every approach is run under the same traffic, the same topology and the same han
 - [Technology Stack](#technology-stack)
 - [Experiment Methodology](#experiment-methodology)
 - [Metrics](#metrics)
-- [Handoff Prediction](#handoff-prediction)
 - [Running the Project from Scratch (Fedora 44 KDE)](#running-the-project-from-scratch-fedora-44-kde)
 - [Other Linux Distributions](#other-linux-distributions)
 - [Running the Application](#running-the-application)
@@ -55,17 +53,13 @@ Every approach is run under the same traffic, the same topology and the same han
 
 ![Configure](docs/screenshots/configure.png)
 
-**Live metrics** — lifecycle of a run, headline measurements, per-handoff timing, packets lost per handoff, and the raw event timeline.
+**Experiment results** — headline measurements and per-handoff timing, with advanced sections for the raw handoff table, event timeline and lifecycle log; the page does not claim live metrics, headline measurements, per-handoff timing, packets lost per handoff, and the raw event timeline.
 
-![Live metrics](docs/screenshots/live-metrics.png)
+![Live metrics](docs/screenshots/results.png)
 
 **Approach comparison** — up to six completed experiments side by side, with a warning whenever their conditions differ.
 
-![Comparison](docs/screenshots/comparison.png)
-
-**Model evaluation** — held-out results of the handoff-prediction models, with their caveats.
-
-![Model evaluation](docs/screenshots/model-evaluation.png)
+![Comparison](docs/screenshots/compare.png)
 
 **Experiment history** — every run, filterable, with JSON/CSV/ZIP export.
 
@@ -83,8 +77,7 @@ The project is organised as one pipeline:
 4. **Measure** loss, interruption, application stall, RTT, jitter, goodput and mobility overhead, never inventing a value that was not measured.
 5. **Store** raw CSV/JSON for every run, together with its configuration, seed and software versions.
 6. **Analyse** replicated campaigns with medians, distributions, confidence intervals and paired significance tests, and export tables and charts.
-7. **Predict** upcoming handoff-related degradation with a threshold rule, logistic regression and a random forest, evaluated on held-out scenario families.
-8. **Serve** all of it through a FastAPI backend and **explore** it in a React dashboard.
+7. **Serve** all of it through a FastAPI backend and **explore** it in a React dashboard.
 
 ## Key Features
 
@@ -107,20 +100,14 @@ The project is organised as one pipeline:
 * 24 generated charts, CSV and JSON exports, and a Markdown report
 * Repeated samples from one run are never treated as independent observations
 
-### Prediction
-* Explicit labels and prediction window, features computed only from past observations
-* Threshold baseline, logistic regression and random forest
-* Split by scenario family rather than by random rows, so correlated observations never leak between training and test sets
-* Model bundles with a verified manifest
-
 ### Backend API
 * FastAPI service with validated requests, a job queue, worker processes and cancellation
 * SQLite experiment store with an append-only lifecycle log
 * Idempotent submission, duplicate-run protection, concurrency and queue limits
-* Metrics, handoffs, raw events, predictions, model evaluation and exports (JSON, CSV, ZIP)
+* Metrics, handoffs, raw events and exports (JSON, CSV, ZIP)
 
 ### Dashboard
-* Seven pages on the real API: topology, configuration, live metrics, handoff prediction, approach comparison, model evaluation and experiment history
+* Six pages on the real API in two groups: overview, topology, configure experiment, experiment results, compare experiments and experiment history, with a light/dark theme
 * No hard-coded or fabricated numbers; every value shown comes from an API response
 * Every value is labelled with its origin (simulated, historical, not live)
 * Accessible tables behind every chart, CSV/JSON export on every result view
@@ -139,7 +126,7 @@ The project is organised as one pipeline:
 | Basic Mobile IP | `mip-basic` | Educational Mobile IPv4-style demonstration: signed, replay-protected registration with the Home Agent, IP-in-IP tunnelling to the care-of address, direct replies (triangle routing) | 20 B per packet | Not RFC 5944 compliant: HMAC-SHA256 instead of keyed MD5, no foreign agent, no ARP, no reverse tunnelling |
 | Mobile IP, make-before-break | `mip-mbb` | Basic Mobile IP with an overlap period: the new link is up before the old one is released | 20 B per packet | A testbed extension, not a separate protocol |
 | Route optimisation (model) | `ro-model` | Basic Mobile IP plus a Return Routability exchange and an authenticated Binding Update, after which the correspondent sends directly to the care-of address | 20 B per packet on the direct path | A simplified model inspired by Mobile IPv6 route optimisation. It is not Mobile IPv6 |
-| QUIC connection migration | `quic-migration` | A real QUIC engine (`aioquic`) migrating one connection to a new path with a fresh connection ID and path validation | none specific | Optional: requires `aioquic` (`pip install aioquic`). Works only for applications that use QUIC; it does not make arbitrary TCP applications mobile |
+| QUIC connection migration | `quic-migration` | A real QUIC engine (`aioquic`) migrating one connection to a new path with a fresh connection ID and path validation | none specific | Installed by `make setup` (`aioquic` is in `requirements.txt`). If the library is missing the option stays visible but disabled with the install hint (`pip install aioquic`). Works only for applications that use QUIC; it does not make arbitrary TCP applications mobile |
 
 The project deliberately separates what is implemented protocol behaviour from what is a simplified emulation. See [`docs/MOBILE_IP.md`](docs/MOBILE_IP.md) and [`docs/MOBILITY_COMPARISON.md`](docs/MOBILITY_COMPARISON.md) for exactly what each approach does and does not claim.
 
@@ -148,7 +135,7 @@ The project deliberately separates what is implemented protocol behaviour from w
 ```mermaid
 flowchart TD
     U[User]
-    D["React Dashboard<br/>7 pages, polling"]
+    D["React Dashboard<br/>6 pages, polling"]
     A["FastAPI Backend<br/>validation, auth token, routes"]
     S["Experiment Service<br/>no web framework imports"]
     DB[("SQLite<br/>experiments, lifecycle log")]
@@ -157,15 +144,13 @@ flowchart TD
     R["Experiment Runner<br/>common interface for 5 approaches"]
     E["Emulator / Loopback<br/>deterministic virtual time"]
     F[("Raw run files<br/>CSV + JSON per run")]
-    ML["Prediction Models<br/>verified bundle"]
-    CLI["Command-line tools<br/>campaigns, analysis, ML"]
+    CLI["Command-line tools<br/>campaigns, analysis"]
 
     U --> D --> A --> S
     S --> DB
     S --> J --> W --> R --> E
     E --> F
     F --> A
-    ML --> A
     CLI --> R
     CLI --> F
 ```
@@ -250,12 +235,11 @@ netsim-lab/
 │   │   │                            discrete-event network simulator
 │   │   ├── compare/                 common experiment interface, approach adapters, TcpLite,
 │   │   │                            QUIC adapter, campaigns, statistics, plots, reproducibility check
-│   │   └── ml/                      features, labels, dataset, splits, models, evaluation, bundles, prediction
 │   └── tests/                       51 test modules
 │
 ├── frontend/
 │   ├── src/
-│   │   ├── pages/                   Topology, Configure, Live, Predictions, Compare, Models, History
+│   │   ├── pages/                   Overview, Topology, Configure, Live (results), Compare, History
 │   │   ├── components/              badges, state views, accessible SVG charts
 │   │   ├── api/                     client and endpoint wrappers
 │   │   ├── lib/                     metrics, formatting, validation, polling, routing, CSV/download helpers
@@ -277,7 +261,6 @@ netsim-lab/
 ├── examples/
 │   ├── experiments/stage7/          plan, ledger and analysis (report, tables, charts) of the 372-run example campaign;
 │   │                                the 104 MB of raw runs are git-ignored (regenerate with `make exp-example`)
-│   ├── ml/stage6/                   prediction dataset, trained model bundle, results
 │   └── comparison/ mobileip/ results/ api/    sample outputs of the individual tools
 │
 ├── docs/                            in-depth documentation and screenshots
@@ -301,7 +284,6 @@ netsim-lab/
 | Traffic | UDP probes over sockets, monotonic clocks |
 | Mobility | Own Mobile IP implementation (HMAC-SHA256, IP-in-IP), simplified route-optimisation model, TcpLite, `aioquic` (optional) |
 | Data and statistics | NumPy, pandas, bootstrap confidence intervals |
-| Machine learning | scikit-learn (logistic regression, random forest), joblib |
 | Charts | Matplotlib (analysis), hand-written accessible SVG (dashboard) |
 | Frontend | React 18, Vite 5, plain CSS |
 | Frontend tests | Vitest, React Testing Library, jsdom |
@@ -347,26 +329,6 @@ Baseline medians of the shipped example campaign (12 replicates per approach, si
 
 These describe the emulator under its stated parameters. Some cells have zero-width intervals because the simulator is deterministic there; the report says so.
 
-## Handoff Prediction
-
-The prediction module asks: *can the next second of a run be flagged as "a handoff with a service gap of at least 60 ms is about to begin"?*
-
-* **Features** are computed only from observations at or before the decision time: RTT level, trend and slope, jitter, probe-loss rates, time since the last echo, goodput, retransmission and timeout counts, and handoff history.
-* **Features that do not exist are never invented**: signal strength, SNR, position, queue length and TCP retransmissions are not available from the emulator and are listed as unavailable.
-* **Models:** a threshold rule (`alarm iff long-window loss rate ≥ 0.004`), logistic regression and a random forest, each also trained on measurements only.
-* **Split:** by scenario family, with the validation set choosing the alarm threshold and the test set used once.
-* **Dataset:** 120 controlled emulator experiments across 40 scenario families.
-
-Held-out test results (F1, higher is better; the *always alarm* reference scores 0.388):
-
-| Model | F1 | Precision | Recall |
-|---|---|---|---|
-| Threshold baseline | 0.323 | 0.221 | 0.597 |
-| Logistic regression | 0.436 | 0.426 | 0.447 |
-| Random forest | 0.452 | 0.386 | 0.543 |
-
-**Read this honestly.** The emulator is deterministic and a handoff is an abrupt link change, so the measurements contain no gradual degradation before a handoff. The threshold rule does not beat the always-alarm reference, and logistic regression falls below it when dwell times are exponentially distributed. Any skill the models show comes from regularities in how the experiments are generated, not from radio-like warning signs. These models are an evaluation of a pipeline, not a handoff predictor for real networks. See [`docs/HANDOFF_PREDICTION.md`](docs/HANDOFF_PREDICTION.md).
-
 ## Running the Project from Scratch (Fedora 44 KDE)
 
 Follow the steps in order. Run all application commands as your normal user, **never as root**. The API refuses to start when run as root.
@@ -409,7 +371,7 @@ PYTHON=python3.12 make setup
 make setup
 ```
 
-This creates a virtual environment in `.venv`, installs `requirements-dev.txt` (FastAPI, Uvicorn, Pydantic, NumPy, pandas, scikit-learn, Matplotlib, pytest, ruff and friends) and creates your `.env` from `.env.example`.
+This creates a virtual environment in `.venv`, installs `requirements-dev.txt` (FastAPI, Uvicorn, Pydantic, NumPy, pandas, Matplotlib, pytest, ruff and friends) and creates your `.env` from `.env.example`.
 
 ### 5. Run the backend tests
 
@@ -510,15 +472,16 @@ The dashboard talks to the API through the relative path `/api`; the Vite dev se
 
 ## The Dashboard
 
-| Page | Route | What it shows |
-|---|---|---|
-| Network topology | `#/topology` | Nodes, links, routes and the configured link conditions from `GET /api/topology` |
-| Experiment configuration | `#/configure` | Approach and scenario pickers, validated parameters, start button, active runs with a Stop button |
-| Live metrics | `#/live/<id>` | Lifecycle of the run, then RTT, loss, goodput, overhead, per-handoff timing charts, event timeline, exports |
-| Handoff prediction | `#/predictions/<id>` | Decision-by-decision alarms and scores for a run that was started with predictions |
-| Approach comparison | `#/compare` | 1–6 completed runs side by side, a banner when conditions differ, charts and exports |
-| Model evaluation | `#/models` | Registered prediction models and their held-out evaluation, with caveats |
-| Experiment history | `#/history` | All runs with filters, details, delete, and CSV/JSON export |
+| Group | Page | Route | What it shows |
+|---|---|---|---|
+| Workspace | Overview | `#/overview` | What the lab is, a configure shortcut, three counts read from the API, the topology and recent runs |
+| Workspace | Network topology | `#/topology` | One diagram of the five nodes and their link conditions; node, link and route tables below it |
+| Experiments | Configure experiment | `#/configure` | Approach, scenario and duration up front; probe rate, payload, seed, environment, condition overrides, label under **Advanced settings**; live summary; active runs with a Stop button |
+| Experiments | Experiment results | `#/live/<id>` | Packet loss, service gap, handoff latency, RTT and goodput, two handoff charts and exports; additional metrics, raw handoff table, event timeline, configuration and lifecycle log under **Advanced** sections |
+| Experiments | Compare experiments | `#/compare` | 1-6 completed runs side by side, a warning when conditions differ, charts and exports; no winner is declared |
+| Experiments | Experiment history | `#/history` | All runs with status and approach filters, per-run details and CSV/JSON export |
+
+The navigation has two groups (Workspace and Experiments). The header has a light/dark theme toggle; the choice is stored in the browser. Every colour, chart and diagram uses the same theme tokens (`frontend/src/styles.css`).
 
 The backend executes runs in the emulator's virtual time and writes the metrics when a run finishes, so there is no live metric stream. The dashboard **polls** the lifecycle and shows measurements after completion, and says so on screen.
 
@@ -532,7 +495,6 @@ All tools run from the project root as `PYTHONPATH=backend python -m app.<tool> 
 | `app.traffic` | Probe sender/receiver, run analysis | `python -m app.traffic analyze <run-dir> --no-write` |
 | `app.mobileip` | Emulated Mobile IP handoff demonstration | `make mip-sim` |
 | `app.compare` | Run one approach, a matrix, or a replicated campaign; analyse; plot; reproduce | `python -m app.compare list` |
-| `app.ml` | Features, data generation, training pipeline, evaluation | `make ml-pipeline` |
 
 Useful `make` targets:
 
@@ -545,8 +507,6 @@ Useful `make` targets:
 | `make exp-analyze DIR=…` | Recompute statistics, exports and the report from saved results |
 | `make exp-plots DIR=…` | Regenerate charts from saved analysis |
 | `make exp-reproduce DIR=…` | Re-run a sample of saved runs and verify they are byte-identical |
-| `make ml-generate` | Generate the 120 controlled runs for training (about 8 minutes) |
-| `make ml-pipeline` | Dataset → split → train → evaluate → model bundle |
 | `make traffic-examples`, `make mip-examples` | Regenerate the small example outputs |
 | `make e2e-browser` | Drive the dashboard in real headless Chrome (needs Playwright, Chrome and esbuild) |
 | `make lint` | `ruff check` the backend |
@@ -569,7 +529,6 @@ Copy `.env.example` to `.env` (done by `make setup`). Every variable is optional
 | `NETSIM_API_RETENTION_DAYS` | `30` | Delete finished experiments after N days (`0` = keep) |
 | `NETSIM_API_MAX_DURATION_S` / `_MAX_RATE_PPS` / `_MAX_PROBES` | `120` / `1000` / `120000` | Per-request limits |
 | `NETSIM_API_ENVIRONMENTS` | `emulated,loopback` | Environments the API may use (`live` can never be enabled) |
-| `NETSIM_API_MODEL_DIRS` | `stage6=examples/ml/stage6/model` | Prediction model bundles to register |
 | `NETSIM_API_TOKEN` | *(unset)* | If set, every `/api` route except `/api/health` requires `Authorization: Bearer <token>` |
 | `NETSIM_API_ALLOW_ROOT` | `0` | Set to `1` only inside a disposable container |
 | `NETSIM_FRONTEND_PORT` | `5173` | Used by `scripts/stack.sh` |
@@ -599,11 +558,8 @@ Base path `/api`. Interactive documentation is served at `/docs`; the full reque
 | `GET /api/experiments/{id}/metrics` | The run's metrics with provenance |
 | `GET /api/experiments/{id}/handoffs` | Per-handoff metrics and summary |
 | `GET /api/experiments/{id}/events` | Raw approach event log, paginated |
-| `GET /api/experiments/{id}/predictions` | Predictions attached to the run |
 | `GET /api/experiments/{id}/export?format=json\|csv\|zip` | Export one experiment |
 | `GET /api/history/export?format=csv\|json` | One summary row per experiment |
-| `GET /api/models` | Registered prediction models (manifest-verified) |
-| `GET /api/models/{id}/evaluation` | Held-out evaluation recorded at training time |
 
 Example:
 
@@ -622,7 +578,6 @@ Errors carry a machine-readable `code` and a human message; common codes include
 * `python -m app.compare analyze <campaign-dir>` regenerates the statistics, tables, charts and report from the saved raw runs alone.
 * The repository ships the plan, ledger and analysis of a 372-run example campaign (`examples/experiments/stage7/`), so the report and charts can be read without running anything. The 104 MB of raw run files are **not** committed: regenerate them with `make exp-example` (about 15–20 minutes, written to `data/experiments/stage7-example`), then verify with `make exp-reproduce DIR=data/experiments/stage7-example`.
 * When this was done during development, all 372 runs completed, the outcomes matched the shipped ledger with zero differences, the report was identical, and 10 of 10 sampled runs were byte-identical when re-executed.
-* The prediction pipeline re-run from the shipped dataset gives an identical `results.json`.
 * Fixed base seed `20261028` for the example campaign; change it to draw a different, equally valid sample.
 
 ## Testing
@@ -661,12 +616,12 @@ The one cryptographic constant in the code (`RO_SECRET` in the route-optimisatio
 | `refusing to start the job manager as root` | You ran the API as root. Run it as your normal user (`NETSIM_API_ALLOW_ROOT=1` only inside a disposable container) |
 | `make setup` fails while building a package | Your Python is newer than 3.12. Install `python3.12` and run `PYTHON=python3.12 make setup` |
 | `fastapi/uvicorn … are not importable` from `stack.sh` | Run `make setup` first |
+| QUIC migration is greyed out on the Configure page | `aioquic` is not importable in `.venv`. Run `.venv/bin/pip install -r requirements.txt` and restart the API (`make stack-stop && make stack-start`) |
 | `frontend dependencies missing` | Run `make frontend-install` |
 | `port 8000 / 5173 is already in use` | Stop the other process, or set `NETSIM_API_PORT` / `NETSIM_FRONTEND_PORT` |
 | Dashboard header says *API: unreachable* | The API is not running or crashed: `make stack-status`, then read `.run/logs/api.log` |
 | `429 queue_full` | More than 20 experiments are waiting; wait or cancel some |
 | `409 results_not_available` | The run has not finished (or failed); open its status page |
-| Predictions page says *not available* | The run was started without predictions, or the model bundle failed verification: check **Model evaluation** |
 | `sudo modprobe sch_netem` fails | `sudo dnf install kernel-modules-extra` and retry |
 | Live kernel tunnel tests skipped | The kernel refuses `ipip` links; the emulated Mobile IP path is unaffected |
 | `ModuleNotFoundError: app` when running a tool | Run from the project root with `PYTHONPATH=backend` |
@@ -678,7 +633,6 @@ The one cryptographic constant in the code (`RO_SECRET` in the route-optimisatio
 * All results are simulator-generated or loopback. The emulator is deterministic: fixed link delays, no random loss or jitter in the default scenario, abrupt handoffs.
 * Mobile IP here is educational, not an RFC 5944 implementation. Route optimisation is a simplified model of a Mobile IPv6 feature. TcpLite is a model of TCP. QUIC migration uses the real `aioquic` engine but only works for QUIC applications.
 * The dashboard has no live metric stream; it polls and shows measurements after a run completes. The comparison metrics do not include jitter. There is no UI for entering an API token.
-* Prediction models show no skill beyond generator regularities, and few scenario families are held out.
 * Browser coverage so far is Chrome at one viewport width; dark mode, focus order and other browsers are unchecked.
 * The privileged lab (`tc netem`, kernel tunnels) depends on your kernel and has been validated mainly through command plans and the emulator.
 * The API has no user accounts. Without a token it trusts anyone on the machine.
@@ -694,9 +648,9 @@ The one cryptographic constant in the code (`RO_SECRET` in the route-optimisatio
 | [`docs/MOBILITY_COMPARISON.md`](docs/MOBILITY_COMPARISON.md) | The common interface and the five approaches |
 | [`docs/MOBILE_IP.md`](docs/MOBILE_IP.md) | The Mobile IP implementation and its limits |
 | [`docs/TRAFFIC_MEASUREMENT.md`](docs/TRAFFIC_MEASUREMENT.md) | Probe protocol, clocks, metric definitions |
-| [`docs/HANDOFF_PREDICTION.md`](docs/HANDOFF_PREDICTION.md) | Labels, features, splits, results, limitations |
 | [`docs/PRIVILEGED_OPERATIONS.md`](docs/PRIVILEGED_OPERATIONS.md) | Exactly which commands run with elevated rights, and the guard rails |
-| [`docs/DEMONSTRATION_GUIDE.md`](docs/DEMONSTRATION_GUIDE.md) | How to present and explain the project |
+| [`docs/FEATURES.md`](docs/FEATURES.md) | Every feature and combination, in depth, and how it works |
+| [`docs/DEMO_GUIDE.md`](docs/DEMO_GUIDE.md) | Step-by-step demo script with expected numbers |
 
 ## License
 

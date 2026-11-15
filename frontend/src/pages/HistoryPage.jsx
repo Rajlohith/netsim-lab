@@ -23,8 +23,8 @@ export function HistoryTable({ page, filters, setFilters, offset, setOffset, app
         <label>Approach <select value={filters.approach} onChange={(e) => { setOffset(0); setFilters({ ...filters, approach: e.target.value }); }}><option value="">all</option>{approaches.map((a) => <option key={a} value={a}>{approachName(a)}</option>)}</select></label>
       </div>
       {items.length === 0 ? <EmptyState title={total === 0 && !filters.status && !filters.approach ? "No experiments have been run yet." : "No experiment matches these filters."}>Start one on the <a href={hrefFor("configure")}>configuration page</a>.</EmptyState> : (
-        <div className="table-scroll"><table data-testid="history-table"><thead><tr><th>Experiment</th><th>Status</th><th>Approach</th><th>Scenario</th><th>Environment</th><th>Label</th><th>Created</th><th>Finished</th><th>Loss</th><th>Handoff latency (mean)</th><th>Predictions</th></tr></thead>
-          <tbody>{items.map((e) => <tr key={e.id}><th scope="row"><a href={hrefFor("history", e.id)}>{shortId(e.id)}</a></th><td><StatusBadge status={e.status} /></td><td>{approachName(e.approach)}</td><td>{e.scenario}</td><td>{e.environment}</td><td>{e.label || NA}</td><td>{fmtTimestamp(e.created_at)}</td><td>{fmtTimestamp(e.finished_at)}</td><td>{fmtPercent(e.summary && e.summary.loss_percent)}</td><td>{fmtMs(e.summary && e.summary.handoff_latency_ms_mean)}</td><td>{e.prediction_status}</td></tr>)}</tbody></table></div>)}
+        <div className="table-scroll"><table data-testid="history-table"><thead><tr><th>Experiment</th><th>Status</th><th>Approach</th><th>Scenario</th><th>Environment</th><th>Label</th><th>Created</th><th>Finished</th><th>Loss</th><th>Handoff latency (mean)</th></tr></thead>
+          <tbody>{items.map((e) => <tr key={e.id}><th scope="row"><a href={hrefFor("history", e.id)}>{shortId(e.id)}</a></th><td><StatusBadge status={e.status} /></td><td>{approachName(e.approach)}</td><td>{e.scenario}</td><td>{e.environment}</td><td>{e.label || NA}</td><td>{fmtTimestamp(e.created_at)}</td><td>{fmtTimestamp(e.finished_at)}</td><td>{fmtPercent(e.summary && e.summary.loss_percent)}</td><td>{fmtMs(e.summary && e.summary.handoff_latency_ms_mean)}</td></tr>)}</tbody></table></div>)}
       <nav className="pager" aria-label="History pages"><button type="button" disabled={offset === 0} onClick={() => setOffset(Math.max(0, offset - PAGE_SIZE))}>Previous</button><span>{total ? `${offset + 1}–${last} of ${total}` : "0 of 0"}</span><button type="button" disabled={offset + PAGE_SIZE >= total} onClick={() => setOffset(offset + PAGE_SIZE)}>Next</button></nav>
     </>
   );
@@ -54,12 +54,12 @@ export function ExperimentDetailView({ experiment, transitions, api }) {
       <p><StatusBadge status={e.status} /> <code>{e.id}</code> {e.data && e.data.origin ? <OriginBadge origin={e.data.origin} /> : null}</p>
       {e.error ? <div role="alert" className="state state-error"><strong>{e.status}</strong>: <code>{e.error.code}</code> {e.error.message}</div> : null}
       <KeyValueTable caption="Overview" rows={[["Approach", approachName(e.approach)], ["Scenario", e.scenario], ["Environment", e.environment], ["Label", e.label || NA], ["Created", fmtTimestamp(e.created_at)], ["Started", fmtTimestamp(e.started_at)], ["Finished", fmtTimestamp(e.finished_at)], ["Wall-clock duration", fmtDuration(e.started_at, e.finished_at)],
-        ["Partial outputs kept", e.partial_outputs ? "yes (not shown as results)" : "no"], ["Predictions", e.prediction ? `${e.prediction.status}${e.prediction.model ? ` · ${e.prediction.model}/${e.prediction.algorithm}` : ""}` : NA]]} />
+        ["Partial outputs kept", e.partial_outputs ? "yes (not shown as results)" : "no"]]} />
       <details open><summary>Configuration (as stored with the experiment)</summary><KeyValueTable rows={flatten(e.configuration)} /></details>
       {transitions ? <details><summary>Lifecycle log ({transitions.items.length})</summary><div className="table-scroll"><table><thead><tr><th>#</th><th>Time</th><th>From</th><th>To</th><th>Note</th></tr></thead><tbody>{transitions.items.map((t) => <tr key={t.seq}><td>{t.seq}</td><td>{fmtTimestamp(t.at)}</td><td>{t.from_status || NA}</td><td>{t.to_status}</td><td>{t.note || ""}</td></tr>)}</tbody></table></div></details> : null}
-      <p><a href={hrefFor("live", e.id)}>Open metrics and timeline</a>{e.prediction && e.prediction.status === "available" ? <> · <a href={hrefFor("predictions", e.id)}>Open predictions</a></> : null}</p>
+      <p><a href={hrefFor("live", e.id)}>Open metrics and timeline</a></p>
       <h2>Export</h2>
-      {done ? <ExportButtons api={api} id={e.id} predictionAvailable={e.prediction && e.prediction.status === "available"} />
+      {done ? <ExportButtons api={api} id={e.id} />
         : e.partial_outputs ? <ExportButtons api={api} id={e.id} partial /> : <p className="muted">Nothing to export: only completed experiments have results (status is {e.status}).</p>}
     </>
   );

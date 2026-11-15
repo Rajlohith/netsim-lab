@@ -16,7 +16,7 @@ export function initialForm(scenario, approach) {
   return {
     approach: approach ? approach.id : "", scenario: scenario ? scenario.id : "", environment: "emulated", handoff_mode: "bbm",
     duration_s: p.duration_s != null ? String(p.duration_s) : "10", rate_pps: "100", payload: "64", seed: "0", tcp_detect: "event",
-    conditions: Object.fromEntries(CONDITION_KEYS.map((k) => [k, ""])), predict: false, prediction_algorithm: "random_forest", label: "",
+    conditions: Object.fromEntries(CONDITION_KEYS.map((k) => [k, ""])), label: "",
   };
 }
 
@@ -67,7 +67,6 @@ export function validateForm(form, { capabilities, approach, scenario }) {
     if (Number.isNaN(v) || v === null || !inRange(v, CONDITION_RANGES[k])) errors[`conditions.${k}`] = `${CONDITION_RANGES[k].label} must be a number in ${CONDITION_RANGES[k].minExclusive ? "(" : "["}${CONDITION_RANGES[k].min}, ${CONDITION_RANGES[k].max}${CONDITION_RANGES[k].maxExclusive ? ")" : "]"}`;
   }
   if ((form.label || "").length > (lim.label_max_chars || 80)) errors.label = `label may have at most ${lim.label_max_chars || 80} characters`;
-  if (form.predict && (!capabilities || !(capabilities.prediction_models || []).length)) errors.predict = "no prediction model is available on this server";
   return { errors, warnings };
 }
 
@@ -82,7 +81,6 @@ export function formToRequest(form, { approach }) {
   const conditions = {};
   for (const k of CONDITION_KEYS) if (form.conditions[k] !== "" && form.conditions[k] !== undefined) conditions[k] = parseNumberField(form.conditions[k]);
   if (Object.keys(conditions).length) req.conditions = conditions;
-  if (form.predict) { req.predict = true; req.prediction_algorithm = form.prediction_algorithm; }
   if ((form.label || "").trim()) req.label = form.label.trim();
   return req;
 }

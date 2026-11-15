@@ -25,8 +25,8 @@ TERMINAL = ("completed", "failed", "cancelled", "incomplete")
 ALLOWED_TRANSITIONS = {"queued": {"running", "cancelled", "failed"},
                        "running": {"completed", "failed", "cancelled", "incomplete"}}
 UPDATABLE = {"phase", "worker_pid", "worker_start_ticks", "error_code", "error_message", "run_status", "run_dir", "summary_json",
-             "prediction_status", "prediction_error", "prediction_summary_json", "cancel_requested", "owner", "partial_outputs"}
-_JSON_COLS = {"request_json": "request", "spec_json": "spec", "summary_json": "summary", "prediction_summary_json": "prediction_summary"}
+             "cancel_requested", "owner", "partial_outputs"}
+_JSON_COLS = {"request_json": "request", "spec_json": "spec", "summary_json": "summary"}
 
 _DDL = """
 CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT NOT NULL);
@@ -37,8 +37,6 @@ CREATE TABLE IF NOT EXISTS experiments (
   approach TEXT NOT NULL, scenario TEXT NOT NULL, environment TEXT NOT NULL, label TEXT,
   request_json TEXT NOT NULL, spec_json TEXT NOT NULL,
   fingerprint TEXT NOT NULL, idempotency_key TEXT, request_hash TEXT NOT NULL,
-  predict_model TEXT, predict_algorithm TEXT,
-  prediction_status TEXT NOT NULL DEFAULT 'not_requested', prediction_error TEXT, prediction_summary_json TEXT,
   phase TEXT, cancel_requested INTEGER NOT NULL DEFAULT 0,
   worker_pid INTEGER, worker_start_ticks INTEGER, owner TEXT,
   error_code TEXT, error_message TEXT, run_status TEXT, run_dir TEXT, summary_json TEXT, partial_outputs INTEGER NOT NULL DEFAULT 0
@@ -131,14 +129,12 @@ class Store:
                                                     details={"existing_experiment_id": dup["id"], "existing_status": dup["status"]})
                 if c.execute("SELECT COUNT(*) FROM experiments WHERE status='queued'").fetchone()[0] >= max_queue:
                     raise QueueFull(f"the queue is full ({max_queue} experiments waiting); retry later", headers={"Retry-After": "30"})
-                p = resolved.predict
                 c.execute("""INSERT INTO experiments (id, created_at, updated_at, status, approach, scenario, environment, label, request_json, spec_json,
-                             fingerprint, idempotency_key, request_hash, predict_model, predict_algorithm, prediction_status)
-                             VALUES (?,?,?,'queued',?,?,?,?,?,?,?,?,?,?,?,?)""",
+                             fingerprint, idempotency_key, request_hash)
+                             VALUES (?,?,?,'queued',?,?,?,?,?,?,?,?,?)""",
                           (exp_id, now, now, resolved.approach, resolved.scenario, resolved.environment, resolved.label,
                            json.dumps(resolved.request, sort_keys=True), json.dumps(resolved.spec.to_json(), sort_keys=True),
-                           resolved.fingerprint, idempotency_key, resolved.request_hash,
-                           p["model"] if p else None, p["algorithm"] if p else None, "pending" if p else "not_requested"))
+                           resolved.fingerprint, idempotency_key, resolved.request_hash))
                 c.execute("INSERT INTO transitions (experiment_id, at, from_status, to_status, note) VALUES (?,?,NULL,'queued','accepted')", (exp_id, now))
                 return _row(c.execute("SELECT * FROM experiments WHERE id=?", (exp_id,)).fetchone()), True
         except sqlite3.IntegrityError:

@@ -18,7 +18,7 @@ to reproduce a reported finding. The framework **extends** the Stage 5 compariso
 | Provenance | `experiment.json` now also records library versions, effective link delays/loss and which conditions apply to the approach | `app/compare/runner.py` |
 | Campaigns | design, resumable execution, append-only ledger, failure/interrupt recording | `app/compare/campaign.py` |
 | Statistics | exact median CI, bootstrap, matched-pairs tests, Holm, sample size | `app/compare/stats.py` |
-| Analysis | run table, handoff table, summaries, comparisons, prediction join, CSV/JSON/Markdown | `app/compare/analysis.py` |
+| Analysis | run table, handoff table, summaries, comparisons, CSV/JSON/Markdown | `app/compare/analysis.py` |
 | Charts | PNG charts from saved analysis | `app/compare/plots.py` |
 | Reproduction | re-run saved runs and compare byte-for-byte | `app/compare/reproduce.py` |
 
@@ -43,9 +43,9 @@ PYTHONPATH=backend python3 -m app.compare list --json
 # show the design of a campaign without running anything
 PYTHONPATH=backend python3 -m app.compare plan --config config/experiments/stage7_example.yaml
 
-# run (or resume) a campaign, then analyse and plot it; --predict-model attaches the Stage 6 predictions
+# run (or resume) a campaign, then analyse and plot it
 PYTHONPATH=backend python3 -m app.compare campaign --config config/experiments/stage7_example.yaml \
-        --out-dir data/experiments/stage7-example --predict-model examples/ml/stage6/model      # make exp-example
+        --out-dir data/experiments/stage7-example      # make exp-example
 
 # analyse EXISTING data (no experiment is run); also accepts older folders such as `compare matrix` output
 PYTHONPATH=backend python3 -m app.compare analyze examples/experiments/stage7                    # make exp-analyze DIR=...
@@ -141,9 +141,9 @@ Each metric carries a provenance label in `summary.csv` and a definition in `met
 <campaign>/campaign.json   config + SHA-256 + software versions        plan.json   every planned run with full spec/seeds
 <campaign>/ledger.jsonl    append-only start/end records (fsync per record)
 <campaign>/runs/<scenario>/<run>/    sent/echoes/received/events/approach_events CSVs, experiment.json, comparison_metrics.json,
-                                     campaign_run.json, handoff_predictions.{csv,json} (when predicting), traceback.txt (failures)
+                                     campaign_run.json, traceback.txt (failures)
 <campaign>/_attempts/      earlier failed/interrupted/crashed attempts, moved aside, never deleted
-<campaign>/analysis/       runs/handoffs/summary/comparisons/vs_baseline/predictions_summary (.csv/.json), REPORT.md, plots/
+<campaign>/analysis/       runs/handoffs/summary/comparisons/vs_baseline (.csv/.json), REPORT.md, plots/
 ```
 
 * `failed` — exception inside a run: traceback and experiment.json kept. `interrupted` — Ctrl-C/SIGTERM: partial raw files kept and
@@ -152,16 +152,7 @@ Each metric carries a provenance label in `summary.csv` and a definition in `met
 * `analyze` reads only these files, never runs a simulation, contains no absolute paths and is seeded: regenerated outputs are
   byte-identical except the timestamp in `analysis_meta.json` (tested).
 
-## 7. Stage 6 predictions
-
-With `--predict-model`, every finished run is replayed through the Stage 6 predictor (`ml.integration.annotate_run`). Each decision sees
-only observations up to its decision time (tested: predictions at times ≤ a cut are identical with the future removed). The measured
-degradation episodes are labelled afterwards from the same run (`derived`) and joined per handoff (`handoffs.csv`: `pred_warned`,
-`pred_warning_s`) and per run/cell (`predictions_summary.*`, warned fraction with a CI that resamples **runs**). Whether a run belongs
-to the model's training split is recorded; Stage 7 scenario ids are new, so none do. Predictor failures are recorded and never
-invalidate the measurement. Predictions are for simulated data and are not evidence of skill on real networks.
-
-## 8. Reproducing reported findings
+## 7. Reproducing reported findings
 
 1. `make exp-example` (or the `campaign` command above) regenerates every raw run and the analysis from `config/experiments/stage7_example.yaml`
    (same `base_seed`, same code → identical raw files).
@@ -170,7 +161,7 @@ invalidate the measurement. Predictions are for simulated data and are not evide
 3. `python -m app.compare analyze examples/experiments/stage7` regenerates all tables, `REPORT.md` and, with `plots`, all charts from the saved runs.
    The statements in `examples/experiments/stage7/analysis/REPORT.md` come from `comparisons.csv`/`vs_baseline.csv`.
 
-## 9. Limitations
+## 8. Limitations
 
 * Fixed link delays (no jitter, queueing or bandwidth limits in the emulator); loss is independent per packet and direction.
 * TcpLite simplifications (see §1); the QUIC adapter was not runnable (`aioquic` missing); `live`/namespace environments were not run
@@ -179,10 +170,12 @@ invalidate the measurement. Predictions are for simulated data and are not evide
 * Replicates vary the seeded handoff schedule and loss draws; they do not vary protocol parameters or the topology.
 * The shipped results come from the 12-replicate example campaign; the 20-replicate standard campaign is defined but its results are not shipped.
 
-## 10. Shipped example results (`examples/experiments/stage7/`)
+## 9. Shipped example results (`examples/experiments/stage7/`)
 
-Campaign `stage7-example`: 372 runs (12 replicates × 31 cells), all finished (`ok`), emulated environment, 12 s runs, 100 pps probes,
-Stage 6 predictions attached. QUIC was **not measured** (`aioquic` missing → reported as `unavailable` in `not_executed_cells.csv`);
+> The handoff-prediction module that originally appeared in these results has been removed from the project. The shipped analysis files had their prediction columns and report section removed; the measurements are unchanged.
+
+Campaign `stage7-example`: 372 runs (12 replicates × 31 cells), all finished (`ok`), emulated environment, 12 s runs, 100 pps probes.
+QUIC was **not measured** (`aioquic` missing → reported as `unavailable` in `not_executed_cells.csv`);
 Home-Agent factors skip TCP/QUIC (`not_applicable`). The full tables are in `analysis/`; `analysis/REPORT.md` is generated from them.
 Everything below is *simulator-generated*; intervals are exact 95 % CIs of the median over 12 independent runs.
 
@@ -207,11 +200,6 @@ retransmits, so this is not like-for-like (flagged in every loss comparison).
   recovered (`handoffs_unrecovered`, reported, not hidden). `mip-mbb`'s application stall stays 20 ms because its old link stays up, even though
   a handoff did not complete in at least one run.
 * Movement-detection delay 100 ms and a 1.5 s dwell: detection delay lengthens the break-before-make stalls (`mip-basic` 160, `ro-model` 240); the dwell change does not alter the medians.
-
-**Prediction (Stage 6 model, replayed per run, no future data).** Fraction of measured degradation episodes that had an advance warning at
-baseline: `mip-basic` 11/21, `ro-model` 24/24, `tcp-notify` 19/24, `tcp-stall-timeout` 21/24 (`mip-mbb` had no episodes); false-alarm decisions
-5–29 per 100. Under 2 % loss the warned fraction collapses (e.g. `mip-basic` 1/21, `tcp-notify` 1/24). The model was trained on a different generator
-and conditions, none of these runs are in its training split, and this is a record of its behaviour — not evidence of predictive skill.
 
 **Verification performed on these results:** the analysis was regenerated from the saved runs (byte-identical apart from its timestamp), and
 `reproduce --sample 0` re-ran all 372 runs from `plan.json` (result recorded in `STAGE7_MANIFEST.md`).

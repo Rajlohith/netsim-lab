@@ -6,7 +6,7 @@ EXPECTED = [
     "README.md", "requirements.txt", "requirements-dev.txt", "pytest.ini", ".gitignore",
     ".env.example", "Makefile",
     "backend/app/main.py", "backend/app/config.py",
-    "backend/app/netem/__init__.py", "backend/app/ml/__init__.py", "backend/app/analysis/__init__.py",
+    "backend/app/netem/__init__.py", "backend/app/analysis/__init__.py",
     "frontend/package.json", "frontend/src/App.jsx",
     "scripts/setup.sh", "scripts/check_env.sh", "scripts/topology.sh", "config/topology.yaml",
     "backend/app/traffic/sender.py", "backend/app/traffic/receiver.py", "backend/app/traffic/metrics.py",
@@ -24,12 +24,10 @@ def test_expected_files_exist():
     assert not missing, f"missing: {missing}"
 
 
-def test_analysis_is_still_a_placeholder_and_ml_is_implemented():
-    """Stage 2 asserted that ml/ and analysis/ were both placeholders. Stage 6 implements ml/ (this assertion was changed on
-    purpose); analysis/ (a dashboard / plotting layer) is still a placeholder."""
+def test_analysis_is_still_a_placeholder_and_ml_is_gone():
+    """analysis/ (a dashboard / plotting layer) is still a placeholder. The Stage 6 ml/ package was removed on purpose."""
     assert [p.name for p in (ROOT / "backend/app/analysis").glob("*.py")] == ["__init__.py"]
-    ml = {p.name for p in (ROOT / "backend/app/ml").glob("*.py")}
-    assert {"features.py", "labels.py", "dataset.py", "splits.py", "models.py", "evaluate.py", "bundle.py", "predict.py", "pipeline.py"} <= ml
+    assert not (ROOT / "backend/app/ml").exists()
 
 
 def test_subprocess_and_sudo_confined_to_runner():

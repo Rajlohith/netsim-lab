@@ -21,7 +21,7 @@ EVENT_COLUMNS = ("seq", "mono_ns", "wall_ns", "approach", "node", "kind", "bytes
 HISTORY_COLUMNS = ("experiment_id", "status", "approach", "scenario", "environment", "label", "created_at", "started_at", "finished_at", "error_code",
                    "handoff_count", "all_handoffs_recovered", "handoff_latency_ms_mean", "handoff_latency_ms_max", "service_gap_ms_mean", "service_gap_ms_max",
                    "loss_packets_total", "loss_percent", "packets_lost", "packets_sent", "loss_is_exact", "rtt_p50_ms", "goodput_bps",
-                   "mobility_overhead_bytes_per_packet", "run_status", "data_origin", "prediction_status")
+                   "mobility_overhead_bytes_per_packet", "run_status", "data_origin")
 ZIP_SUFFIXES = (".csv", ".json", ".txt")
 
 
@@ -63,7 +63,7 @@ def history_rows(rows: list[dict]) -> list[dict]:
         s = r.get("summary") or {}
         out.append({"experiment_id": r["id"], "status": r["status"], "approach": r["approach"], "scenario": r["scenario"], "environment": r["environment"],
                     "label": r["label"], "created_at": r["created_at"], "started_at": r["started_at"], "finished_at": r["finished_at"],
-                    "error_code": r["error_code"], "prediction_status": r["prediction_status"], **{k: s.get(k) for k in HISTORY_COLUMNS if k in s}})
+                    "error_code": r["error_code"], **{k: s.get(k) for k in HISTORY_COLUMNS if k in s}})
     return out
 
 
