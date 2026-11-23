@@ -1,6 +1,6 @@
 """The common application workload for the transport-based approaches (TCP reconnection, QUIC migration).
 
-Same job as the UDP probes of Stage 3: the correspondent node (server) pushes sequence-numbered probes at a fixed
+Same job as the UDP probes of app.traffic: the correspondent node (server) pushes sequence-numbered probes at a fixed
 rate to the mobile node (client) and gets an echo per probe, over ONE reliable byte stream.
 Framing: 4-byte length + payload.  H = client hello (session id, next expected seq), D = data (probe packet),
 A = ack (echo packet).  The app is written against two tiny interfaces so the same code runs on

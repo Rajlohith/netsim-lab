@@ -23,7 +23,7 @@ def check_id(exp_id) -> str:
 
 
 def job_dir(experiments_dir: Path, exp_id: str) -> Path:
-    """experiments/<id>; the id format is validated and the resolved path must stay inside experiments_dir."""
+    """Experiments/<id>; the id format is validated and the resolved path must stay inside experiments_dir."""
     check_id(exp_id)
     base = Path(experiments_dir).resolve()
     p = (base / exp_id).resolve()

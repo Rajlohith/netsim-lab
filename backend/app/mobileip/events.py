@@ -1,4 +1,4 @@
-"""mip_events.csv: protocol-level event log (one row per event), timestamps from the injected clock."""
+"""Mip_events.csv: protocol-level event log (one row per event), timestamps from the injected clock."""
 from __future__ import annotations
 
 import csv

@@ -1,4 +1,4 @@
-"""Stage 7: network conditions, seeded loss in the emulator, spec round trip, backwards compatibility with Stage 5 results."""
+"""Network conditions, seeded loss in the emulator, spec round trip, backwards compatibility with results."""
 import hashlib
 import json
 import tempfile
@@ -10,6 +10,8 @@ from app.compare.runner import check, run_experiment
 from app.mobileip.simnet import Sim, SimLink
 from app.netem.conditions import NetworkConditions, apply_conditions, direct_path_rtt_ms
 from app.netem.topology_config import load_config
+
+FIXTURES = Path(__file__).resolve().parent / "fixtures" / "baseline_runs"   # recorded reference runs (default conditions)
 
 TOPO = ROOT / "config" / "topology_ro.yaml"
 
@@ -155,23 +157,23 @@ class EndToEnd(unittest.TestCase):
         self.assertEqual(ExperimentSpec.from_json(e["spec"]), ExperimentSpec("mip-basic", seed=4, conditions=NetworkConditions(
             loss_percent=2, latency_scale=2, seed=4)))
 
-    def test_spec_from_json_accepts_stage5_files_and_rejects_unknown_fields(self):
-        old = json.loads((ROOT / "examples/comparison/mip-basic-emulated/run-1/experiment.json").read_text())["spec"]
+    def test_spec_from_json_accepts_recorded_files_and_rejects_unknown_fields(self):
+        old = json.loads((FIXTURES / "mip-basic-emulated/run-1/experiment.json").read_text())["spec"]
         self.assertTrue(ExperimentSpec.from_json(old).conditions.is_default())
         with self.assertRaises(ValueError):
             ExperimentSpec.from_json(dict(old, surprise=1))
 
 
 class BackwardsCompatibility(unittest.TestCase):
-    """Default conditions must reproduce the Stage 5 example results exactly (these three approaches are unaffected by the TcpLite fix)."""
+    """Default conditions must reproduce the recorded baseline runs exactly (these three approaches are unaffected by the TcpLite fix)."""
 
-    def test_stage5_examples_are_reproduced_byte_for_byte(self):
+    def test_recorded_baseline_runs_are_reproduced_byte_for_byte(self):
         cases = {"mip-basic-emulated": ExperimentSpec("mip-basic"), "ro-model-emulated": ExperimentSpec("ro-model"),
                  "tcp-reconnect-emulated-notify": ExperimentSpec("tcp-reconnect", variant="notify")}
         for scen, spec in cases.items():
             with tempfile.TemporaryDirectory() as d:
                 res = run_experiment(spec, d)
-                old = ROOT / "examples" / "comparison" / scen / "run-1"
+                old = FIXTURES / scen / "run-1"
                 for n in ("sent.csv", "echoes.csv", "received.csv", "events.csv", "comparison_metrics.json"):
                     self.assertEqual(hashlib.sha256((res.run_dir / n).read_bytes()).hexdigest(),
                                      hashlib.sha256((old / n).read_bytes()).hexdigest(), f"{scen}/{n}")

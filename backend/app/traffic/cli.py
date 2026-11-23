@@ -1,4 +1,4 @@
-"""python -m app.traffic analyze RUN_DIR [...]   |   python -m app.traffic scenario SPEC.yaml"""
+"""Python -m app.traffic analyze RUN_DIR [...]   |   python -m app.traffic scenario SPEC.yaml"""
 from __future__ import annotations
 
 import argparse

@@ -7,7 +7,7 @@ Protocol (files in <job_dir>, written by the server before launch / by this proc
   result.json    OUT  {"outcome", "reason", "run_dir", ...} written LAST and atomically; its absence means the process died
   runs/          OUT  the run directory written by app.compare.runner.run_experiment
   worker.log     OUT  stdout/stderr (tracebacks)
-The worker only calls existing code: run_experiment (Stage 5/7) and annotate_run (Stage 6). It never accepts a command or a path from
+The worker only calls existing code: run_experiment. It never accepts a command or a path from
 anywhere except job.json, refuses the privileged 'live' environment and refuses to run as root."""
 from __future__ import annotations
 

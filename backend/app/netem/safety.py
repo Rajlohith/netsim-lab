@@ -79,7 +79,7 @@ _TNL = re.compile(r"^tnl-[a-z0-9-]{1,10}$")
 
 
 def _validate_launch(argv, inner):
-    """setpriv --reuid=N --regid=N --clear-groups -- env PYTHONPATH=/abs /abs/python -m <tool> args..."""
+    """Setpriv --reuid=N --regid=N --clear-groups -- env PYTHONPATH=/abs /abs/python -m <tool> args..."""
     ok = (len(inner) >= 11 and re.fullmatch(r"--reuid=\d{1,10}", inner[1]) and
           re.fullmatch(r"--regid=\d{1,10}", inner[2]) and inner[3:6] == ["--clear-groups", "--", "env"])
     if not ok:

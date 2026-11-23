@@ -1,5 +1,5 @@
 // Interaction tests (user events in a DOM). These need @testing-library/react + jsdom, i.e. `npm install && npm test` (vitest).
-// They could NOT be executed in the environment Stage 9 was built in (no network, so no jsdom): see docs/FRONTEND.md "Verification status".
+// They could NOT be executed in the sandbox-style environments without jsdom.
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import App from "./App.jsx";

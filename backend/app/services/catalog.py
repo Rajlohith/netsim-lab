@@ -1,4 +1,4 @@
-"""What the API can run: mobility approaches (from the Stage 5 registry), network scenarios (config/api/scenarios.yaml) and limits.
+"""What the API can run: mobility approaches (from the registry), network scenarios (config/api/scenarios.yaml) and limits.
 
 Nothing here is a second source of truth: approaches, their documentation strings and where they can run come from
 app.compare.approaches; availability is decided by the runner's own `check()`."""
@@ -79,7 +79,7 @@ class Catalog:
                 "effective_for_approaches": sorted(TUNNELLED) if s["requires_home_agent"] else sorted(APPROACHES),
                 "note": ("the setting acts through the Home Agent: for the other approaches the run executes unchanged and the response carries a warning"
                          if s["requires_home_agent"] else None),
-                "source": "config/api/scenarios.yaml (one-factor levels of the Stage 7 example campaign)",
+                "source": "config/api/scenarios.yaml (one-factor levels of the example campaign)",
             })
         return out
 

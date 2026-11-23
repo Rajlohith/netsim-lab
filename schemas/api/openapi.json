@@ -1195,7 +1195,7 @@
   "paths": {
     "/api/approaches": {
       "get": {
-        "description": "Every approach of the Stage 5 registry with what it is and is NOT, where it can run, and whether it can run on THIS server\n(e.g. `quic-migration` needs aioquic). Environments the API does not expose (`live`) are listed as not exposed.",
+        "description": "Every approach of the registry with what it is and is NOT, where it can run, and whether it can run on THIS server\n(e.g. `quic-migration` needs aioquic). Environments the API does not expose (`live`) are listed as not exposed.",
         "operationId": "list_approaches_api_approaches_get",
         "parameters": [
           {
@@ -1882,7 +1882,7 @@
     },
     "/api/experiments/{experiment_id}/cancel": {
       "post": {
-        "description": "queued: cancelled immediately (200). running: the worker process group gets SIGTERM, then SIGKILL after the grace period; the response is 202\nand the status becomes `cancelled` shortly after (poll). An experiment that already finished returns 409 `not_cancellable`.",
+        "description": "Queued: cancelled immediately (200). running: the worker process group gets SIGTERM, then SIGKILL after the grace period; the response is 202\nand the status becomes `cancelled` shortly after (poll). An experiment that already finished returns 409 `not_cancellable`.",
         "operationId": "cancel_experiment_api_experiments__experiment_id__cancel_post",
         "parameters": [
           {
@@ -2806,7 +2806,7 @@
     },
     "/api/topology": {
       "get": {
-        "description": "Read from the same YAML the experiments use (Stage 2 loader); nothing is generated.",
+        "description": "Read from the same YAML the experiments use (loader); nothing is generated.",
         "operationId": "topology_api_topology_get",
         "parameters": [
           {

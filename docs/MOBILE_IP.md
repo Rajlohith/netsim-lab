@@ -1,4 +1,4 @@
-# Basic Mobile IP (Stage 4) — an educational Mobile IPv4-style demonstration
+# Basic Mobile IP — an educational Mobile IPv4-style demonstration
 
 Code: `backend/app/mobileip/`. **This is not an RFC 5944 (Mobile IPv4) compliant implementation and makes no
 such claim.** It reproduces the core ideas — home address, care-of address, registration with a lifetime, a Home
@@ -16,7 +16,7 @@ Agent binding table, IP-in-IP tunnelling — so they can be observed and measure
 | Replay protection | **Implemented** (timestamp method) | NTP-format identification, ±7 s window, strictly increasing; code 133 with the HA's time lets a skewed MN resynchronise |
 | Binding management | **Implemented** | one binding per home address (S bit is answered with code 1) |
 | IP-in-IP (RFC 2003 style) encapsulation | **Implemented in Python** (`ipip.py`), **kernel `ipip` devices on Linux** | outer header protocol 4, +20 bytes, inner TTL decremented, DF/TOS copied, checksum/fragment validation. No ICMP errors, no PMTU handling, no tunnel-loop detection |
-| Delivery to the MN through its Home Agent | **Demonstrated in the emulator; implemented with kernel tunnels in the live demo (live run not verified in the dev sandbox)** | CN → HA → tunnel → MN, replies direct to the CN (triangle routing) |
+| Delivery to the MN through its Home Agent | **Demonstrated in the emulator; implemented with kernel tunnels in the live demo** | CN → HA → tunnel → MN, replies direct to the CN (triangle routing) |
 | Movement between two foreign networks | **Emulated** | an interface of the MN is brought up/down; the MN is told the new care-of address after a modelled detection delay (20 ms by default) |
 | Foreign Agents, agent advertisement/solicitation, movement detection | **Absent** | |
 | Home network | **Emulated** | `10.10.100.0/24` is virtual: addresses live on `lo`; there is no ARP, proxy/gratuitous ARP, or home link |
@@ -37,7 +37,7 @@ Agent binding table, IP-in-IP tunnelling — so they can be observed and measure
   1. `mobility_sim.py` + `simnet.py` — discrete-event emulator, virtual time, byte-accurate IPv4/UDP/IP-in-IP, same addresses/delays as
      `config/topology.yaml`. Deterministic: two runs produce identical files. **Needs no root and no network.**
   2. `runtime.py` — real UDP sockets (`HomeAgentServer`, `MobileNodeClient`, CLI `python -m app.mobileip.runtime ha|mn`).
-  3. `demo.py` — the live demo inside the Stage 2 namespaces with kernel `ipip` tunnels.
+  3. `demo.py` — the live demo inside the network namespaces with kernel `ipip` tunnels.
 - **Privilege split (live demo).** The daemons run *inside* the namespaces as **your** user (via `setpriv`). They cannot run `ip`, so
   they ask the orchestrator through a file handshake (`dataplane.py`: `Handshake*DataPlane` ↔ `DataPlaneController`), which applies
   allow-listed commands with `sudo -n` per command (`applier.py`) and acknowledges. The HA replies only **after** the tunnel is
@@ -64,8 +64,7 @@ Agent binding table, IP-in-IP tunnelling — so they can be observed and measure
      the packets bounce HA <-> router until the TTL expires (ICMP *time exceeded*).
    The emulator reproduces both: `link_semantics="both-ends"` (default; the loop, counted as `ha:ttl_expired`) and `"kernel-veth"`
    (the router keeps the route, packets die at the dead link, counted as `<router>:link_down`). Delivery metrics (loss, gaps, latency)
-   are identical in both modes. (An earlier version of this document claimed the live testbed "behaves the same way" as the default
-   emulator mode; that was wrong for the demo as implemented.)
+   are identical in both modes. The live testbed does not behave the same way as the default emulator mode.
 
 ## 4. Metrics (`python -m app.mobileip analyze RUN_DIR`)
 | Metric | Definition | Where it comes from |
@@ -73,7 +72,7 @@ Agent binding table, IP-in-IP tunnelling — so they can be observed and measure
 | Registration delay | MN request sent → matching authenticated reply received | MN's own monotonic clock (`mip_events*.csv`) |
 | Time to registered | attach → first accepted reply (includes retransmits and clock resync) | same |
 | Handoff latency | link change → first accepted reply = detection + registration | link_change event + MN events (same-host clock) |
-| Connectivity interruption | arrival gap / loss burst around the handoff | Stage 3 probe metrics (`metrics.json`) |
+| Connectivity interruption | arrival gap / loss burst around the handoff | probe metrics (`metrics.json`) |
 | Tunnel overhead | emulator: counted from real encapsulated bytes (20 B/packet = 21.7 % of a 92-byte inner packet). **Live: analytic** (the kernel does the tunnelling; only the constant RFC 2003 header is known) | `tunnel_stats` event / `mip_summary.json` |
 | Failures | auth failures, replays, rejections, timeouts, expiries, data-plane errors, drops by reason | event kinds + `mip_summary.json` |
 Unavailable values are `null` with a warning; nothing is interpolated (see `docs/TRAFFIC_MEASUREMENT.md` for the probe side).
@@ -82,7 +81,7 @@ Emulator timings are *model* values (e.g. 31 ms = 2 × 15 ms path + 1 ms HA proc
 ## 5. Security, authentication and replay: limitations
 - **Authentication** is a static shared key per MN (HMAC-SHA256 over everything before the authenticator, SPI ≥ 256). No key
   distribution, rotation, or per-session keys. The demo key is random per run and stored in `<run>/mip.key` (mode 0600); it is never put
-  on a command line. Examples in `examples/` use a fixed, public demo key — **never reuse it**.
+  on a command line. The demo and simulator use a fixed, public demo key — **never reuse it**.
 - **No confidentiality or integrity for user data**: IP-in-IP carries plain packets. Anyone able to inject packets with the right outer
   addresses can inject inner packets at the MN (the kernel tunnel only checks the outer addresses). IPsec is not used.
 - **Replay protection** needs roughly synchronised clocks (±7 s). A replayed or reordered request older than the last accepted one is
@@ -103,13 +102,12 @@ Emulator timings are *model* values (e.g. 31 ms = 2 × 15 ms path + 1 ms HA proc
 ```bash
 make test                                              # includes all Mobile IP tests
 PYTHONPATH=backend python -m app.mobileip sim --out-dir data/results --duration 10
-PYTHONPATH=backend python -m app.mobileip analyze examples/mobileip/mip-handoff/example-1
-python scripts/generate_mobileip_examples.py           # regenerate examples/mobileip/
+PYTHONPATH=backend python -m app.mobileip analyze data/results/<run-directory>   # metrics of a run written by `sim`
 ```
-**Live namespace demo (Linux, sudo; unverified in the dev sandbox):**
+**Live namespace demo (Linux, sudo; needs kernel `ipip` support):**
 ```bash
 sudo modprobe ipip                       # one-time; Fedora: kernel-modules-extra may be required
-scripts/topology.sh create               # Stage 2 lab
+scripts/topology.sh create               # the namespace lab
 PYTHONPATH=backend python -m app.mobileip demo             # dry-run: prints the privileged commands
 sudo -v && PYTHONPATH=backend python -m app.mobileip demo --execute
 scripts/topology.sh status; scripts/topology.sh destroy    # inspect / reset the lab
@@ -118,18 +116,14 @@ The demo registers on network A, starts probes CN → home address (50 pps), mov
 writes `data/results/mip-live-demo/<run-id>/` (raw files + `mip_metrics.json` + `metrics.json`). Inspect while it runs with
 `sudo ip -n nsl-ha tunnel show` / `sudo ip -n nsl-ha route`. Live test: `sudo -v && NETSIM_RUN_PRIVILEGED=1 python -m unittest tests.test_mip_live`.
 
-## 6b. Make-before-break (Stage 5 extension)
+## 6b. Make-before-break
 `MobilitySpec(make_before_break=True, old_link_hold_ms=...)` (emulator) and `DemoSpec(make_before_break=True)` (live) keep the old link up,
 register from the NEW care-of address and release the old link `hold` ms after the registration succeeded. In the emulator the mobile node
 decapsulates for both care-of addresses during the overlap (zero loss with a 100 ms drain, see `docs/MOBILITY_COMPARISON.md`); in the live
 demo one tunnel device is re-pointed, so packets still in flight for the old care-of address are not accepted there.
-Bug fixed in this stage: `handoff_end` was recorded about 1 ms after the movement instead of when registration completed.
+## 7. What the automated tests cover
 
-## 7. Verification status
-Exact counts: `docs/TEST_REPORT.md` (generated). Verified by automated tests in a sandbox **without** iproute2/sudo and whose kernel has
-**no ipip/gre/dummy support**: wire formats, authentication, replay, lifetime/expiry, retransmission, binding updates, IP-in-IP bytes,
-the emulated end-to-end handoff (delivery, interruption, overhead, failures, cleanup), registration over real UDP sockets, the allow-list
-and the handshake/controller logic, the demo orchestrator against a fake host, **and, on the real kernel, the Stage 2 lab the demo builds
-on** (namespaces, veth, routing, forwarding, failover, cleanup) plus our IPv4/UDP/TCP/IP-in-IP packet encoding against the kernel's parser.
-**Not verified:** kernel `ipip` tunnels (impossible on this kernel), `ip` command syntax, the `setpriv` launch, and the daemons running in
-namespaces (only `tests/test_mip_live.py`, which must be run on a Linux host with ipip support).
+Wire formats, authentication, replay, lifetime/expiry, retransmission, binding updates, IP-in-IP bytes, the emulated end-to-end handoff
+(delivery, interruption, overhead, failures, cleanup), registration over real UDP sockets, the command allow-list, the handshake/controller
+logic, the demo orchestrator against a fake host and, on a real kernel, the namespace lab the demo builds on. Tests that need privileges or
+kernel `ipip` support are skipped unless `NETSIM_RUN_PRIVILEGED=1` is set (`make test-live-mip`).

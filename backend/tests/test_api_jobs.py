@@ -12,7 +12,7 @@ from tests.api_helpers import CRASH, FAST, SLEEP, make_service, script_launcher,
 
 
 def wait_launched(s, exp_id, timeout=30):
-    """status 'running' is set by the claim; the worker pid is recorded and the process registered one step later."""
+    """Status 'running' is set by the claim; the worker pid is recorded and the process registered one step later."""
     end = time.time() + timeout
     while time.time() < end:
         if s.store.get(exp_id)["worker_pid"] and exp_id in s.manager.active_job_ids():

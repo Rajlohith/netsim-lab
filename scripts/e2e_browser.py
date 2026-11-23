@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Real-browser end-to-end check of the React dashboard (Stage 10).
+"""Real-browser end-to-end check of the React dashboard.
 
 What runs for real:  the dashboard bundle (esbuild, same entry as `vite build`), headless Chrome/Chromium driven by Playwright,
 the real ExperimentService (SQLite store, worker PROCESSES, real emulator runs, real exports).
 What is a stand-in:  the HTTP layer is scripts/service_http_adapter.py (stdlib), NOT FastAPI - so FastAPI routing/pydantic/CORS
 are NOT covered here (that is `make api-test`). The bundler is esbuild, not Vite (no `npm install` needed).
 
-    python scripts/e2e_browser.py --out docs/e2e_browser_results.json --screenshots docs/demo
+    python scripts/e2e_browser.py --out data/reports/e2e_browser_results.json --screenshots data/reports/screenshots
 
 Needs: node + esbuild + react/react-dom resolvable through NODE_PATH, python `playwright`, a Chrome/Chromium binary
 (CHROME_PATH, or the first found in PATH / ~/.cache/puppeteer). Exits non-zero if any check fails; every check is recorded.
@@ -188,7 +188,7 @@ def main() -> int:
             check("approach selector offers exactly the approaches of /api/approaches", sorted(options) == sorted(ids), f"{options} vs {ids}")
             page.select_option("#approach", "mip-basic")
             page.fill("#seed", "1")
-            page.fill("#label", "stage10-e2e")
+            page.fill("#label", "e2e-browser")
             shot("2-configure")
             page.fill("#duration_s", "-5")
             page.click("button.primary")
@@ -278,12 +278,6 @@ def main() -> int:
                 if needle:
                     check(f"page {hashp.split('/')[1]} shows the experiment", needle in body)
                 shot(nm)
-            models = api_get(a.api_port, "/models")
-            mid = (models.get("models") or models.get("items") or [{}])[0].get("id")
-            page.goto(base + "#/models")
-            time.sleep(1.5)
-            check("model page names the model the API reports", bool(mid) and mid in page.inner_text("body"), str(mid))
-
             # history page lists the experiment; history CSV from API has the same id
             hist_csv = api_get(a.api_port, "/history/export?format=csv", raw=True).decode()
             check("API history export contains the experiment started from the UI", exp_id in hist_csv)

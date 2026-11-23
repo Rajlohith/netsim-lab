@@ -38,7 +38,7 @@ export function extractRunMetrics(metrics) {
     run_status: m.run_status ?? null,
     origin: m.provenance ? m.provenance.data_origin ?? null : null,
     warnings: Array.isArray(m.warnings) ? m.warnings : [],
-    // the comparison metric set has no jitter series; Stage 3 computes jitter for raw traffic runs only
+    // the comparison metric set has no jitter series; only raw traffic runs compute jitter for raw traffic runs only
     jitter_ms: null,
   };
 }

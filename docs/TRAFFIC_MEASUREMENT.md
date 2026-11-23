@@ -1,7 +1,7 @@
-# Traffic generation and measurement (Stage 3)
+# Traffic generation and measurement
 
 Code: `backend/app/traffic/` (measurement only; it knows nothing about mobility protocols).
-Schemas: `schemas/`. Example raw data: `examples/results/`.
+Schemas: `schemas/`. Sample raw data: run `scripts/` free of root with `python -m app.traffic` on loopback, or any run directory written by `make mip-sim` / `make compare`.
 
 ## Tools
 ```bash
@@ -11,7 +11,7 @@ python -m app.traffic.receiver --scenario-id S --run-id R --out-dir data/results
 python -m app.traffic.sender 10.10.1.2:5005 --scenario-id S --run-id R --out-dir data/results --rate 100 --duration 20
 # metrics from the raw files -> <run>/metrics.json
 python -m app.traffic analyze data/results/S/R          # add --json for everything
-# handoff scenario inside the Stage 2 topology (needs sudo; see PRIVILEGED_OPERATIONS.md)
+# handoff scenario inside the namespace topology (needs sudo; see PRIVILEGED_OPERATIONS.md)
 python -m app.traffic scenario config/scenarios/handoff_a_to_b.yaml --execute
 ```
 (run with `PYTHONPATH=backend`, or `cd backend`). Sender and receiver of one run share
@@ -68,7 +68,7 @@ in a crash, make loss inexact; this is flagged, not corrected.
    (`sender_schedule_slip_ms`) exposes this. Python limits practical rates to a few thousand packets/s.
 6. UDP gives no delivery feedback: a probe that is "lost" may simply be late beyond the receiver's stop time; echo loss and probe loss are different paths.
 7. Handoff times are orchestrator-side instants (before/after the `ip link set` command); the kernel acts somewhere in between.
-8. The loopback proxy (`loopback_proxy.py`) models loss/delay/blackout in user space for tests and examples; its numbers say nothing about `tc netem`.
+8. The loopback proxy (`loopback_proxy.py`) models loss/delay/blackout in user space for tests and demos; its numbers say nothing about `tc netem`.
 9. Crash behaviour: CSVs are flushed every 0.2 s, so `SIGKILL` can lose up to ~0.2 s of the *sender's* log while the receiver still logged those
    packets (counted as `received_not_in_sent_log`). Metadata stays `running`.
 

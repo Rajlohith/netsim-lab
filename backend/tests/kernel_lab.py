@@ -238,7 +238,7 @@ BACKEND = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def ns_cmd(ex, ns, *argv):
-    """argv prefix that runs a command inside the namespace (nsenter works because the holder process owns it)."""
+    """Argv prefix that runs a command inside the namespace (nsenter works because the holder process owns it)."""
     return ["nsenter", "-t", str(ex.pid(ns)), "-n", "--", *argv]
 
 

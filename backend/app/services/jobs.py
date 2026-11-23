@@ -133,7 +133,7 @@ class JobManager:
         return row, created
 
     def cancel(self, exp_id: str) -> dict:
-        """queued -> cancelled immediately; running -> cancel requested (the scheduler terminates the worker; poll the status);
+        """Queued -> cancelled immediately; running -> cancel requested (the scheduler terminates the worker; poll the status);
         already finished -> NotCancellable (409)."""
         R.check_id(exp_id)
         row = self.store.get(exp_id)

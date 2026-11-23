@@ -1,4 +1,4 @@
-"""Stage 7: experiment network conditions, applied ON TOP of a loaded topology (the YAML file is never edited).
+"""Experiment network conditions, applied ON TOP of a loaded topology (the YAML file is never edited).
 
 A `NetworkConditions` object is a small, serialisable description of how a run differs from the plain topology file:
 

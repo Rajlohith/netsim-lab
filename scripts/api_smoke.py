@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run one real experiment through the Stage 8 service layer (SQLite + worker process), without HTTP. Works without FastAPI.
+"""Run one real experiment through the service layer (SQLite + worker process), without HTTP. Works without FastAPI.
     make api-smoke        # or: PYTHONPATH=backend python scripts/api_smoke.py"""
 import json
 import sys

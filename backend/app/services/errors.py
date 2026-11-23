@@ -24,7 +24,7 @@ class NotFound(ServiceError):
 
 
 class ValidationFailed(ServiceError):
-    """details = list of {field, code, message} issues (see validation.Issue)."""
+    """Details = list of {field, code, message} issues (see validation.Issue)."""
     http_status, code = 422, "validation_failed"
 
 

@@ -105,7 +105,7 @@ class TcpConn:
             self._tx(self.iss, SYN | ACK)
         elif self.unacked:
             # go-back-N, as documented in the module docstring: the receiver does not buffer out-of-order data, so every
-            # outstanding segment must be resent. (Stage 5 retransmitted only the head segment: harmless on loss-free paths,
+            # outstanding segment must be resent. (retransmitting only the head segment is harmless on loss-free paths,
             # but with random loss each queued segment then needed its own backed-off timeout and delivery collapsed.)
             for seg in self.unacked:
                 seg[3] = True

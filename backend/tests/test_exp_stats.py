@@ -1,4 +1,4 @@
-"""Stage 7: statistical calculations (app.compare.stats). Known values are derived by hand or from the binomial distribution."""
+"""Statistical calculations (app.compare.stats). Known values are derived by hand or from the binomial distribution."""
 import math
 import unittest
 

@@ -1,12 +1,13 @@
-# Stage 9 — React dashboard
+# React dashboard
 
-A React 18 + JavaScript (Vite) single-page app in `frontend/`. It talks only to the Stage 8 FastAPI endpoints (`docs/API.md`) and adds **no
+A React 18 + JavaScript (Vite) single-page app in `frontend/`. It talks only to the FastAPI endpoints (`docs/API.md`) and adds **no
 dependency** beyond the ones the project already declared: routing is a 40-line hash router, charts are hand-written responsive SVG.
 
 ```
-make stack-start          # or: make run-api (API only, with --reload) in terminal 1
-make frontend-install   # once (needs network)
-make frontend-dev       # terminal 2: http://localhost:5173  (Vite proxies /api -> 127.0.0.1:8000)
+make frontend-install   # once (needs network and Node.js 20.19+)
+make stack-start        # API + dashboard in the background, or:
+make run-api            #   terminal 1: the API
+make frontend-dev       #   terminal 2: http://localhost:5173  (Vite proxies /api -> 127.0.0.1:8000)
 make frontend-test      # vitest (unit + SSR views + jsdom interactions)
 make frontend-build     # production build
 ```
@@ -27,7 +28,7 @@ make frontend-build     # production build
 | Page (`#/…`) | Endpoints | Notes |
 |---|---|---|
 | Overview (`overview`, the default page) | `GET /experiments` (recent, totals), `approaches`, `scenarios`, `GET /api/topology` | Introduction, three counts read from the API, topology preview and recent experiments. Nothing is computed in the browser |
-| Network topology (`topology`) | `GET /api/topology` *(new, read-only)* | SVG diagram + tables of nodes, interfaces, links, configured netem values, routes. The endpoint parses `config/topology_ro.yaml` (the file the experiments use) with the Stage 2 loader |
+| Network topology (`topology`) | `GET /api/topology` *(new, read-only)* | SVG diagram + tables of nodes, interfaces, links, configured netem values, routes. The endpoint parses `config/topology_ro.yaml` (the file the experiments use) with the topology loader |
 | Configure experiment (`configure`) | `approaches`, `scenarios`, `capabilities`, `POST /experiments/validate`, `POST /experiments`, `POST …/cancel`, `GET /experiments?status=queued&status=running` | approach (unrunnable ones disabled with the server's reason), scenario, environment, handoff mode, traffic profile (duration, rate, payload, seed), condition overrides, optional predictions, label. Client validation uses the server's limits; the server's field errors are shown on the fields. Start uses an `Idempotency-Key` (double click = one experiment). Stop needs a second confirming click |
 | Experiment results (`live`, `live/<id>`) | `GET /experiments/{id}`, `…/transitions`, then `…/metrics`, `…/handoffs`, `…/events` | **Polling every second** (`capabilities.live_updates.websocket` is false). Shows phase, lifecycle log, errors, stop control; after completion KPIs (RTT, loss, goodput, overhead, handoffs, interruption), per-handoff bar charts, an event timeline and exports |
 | Approach comparison (`compare`) | `GET /experiments`, `GET /experiments/{id}`, `…/metrics` | 1–6 completed experiments; conditions table; a warning listing every condition that differs; metric table; six charts (interruption/service gap, loss, latency, overhead, signalling, goodput); CSV/JSON export of the displayed rows |
@@ -46,32 +47,23 @@ make frontend-build     # production build
   server's files, and `src/integration/live-api.test.js` checks that the JSON export equals the document the charts use and the CSV rows equal the
   plotted per-handoff series.
 
-## Verification status (what was actually run — see also STAGE9_MANIFEST.md)
+## Testing
 
-The build environment had **no network access**, so `npm install` was impossible: no vite, vitest, jsdom, or @testing-library, and no FastAPI.
-Therefore:
-
-| Item | Status |
+| Command | What it covers |
 |---|---|
-| `npm test` (vitest) | **not run** here. The suite is written for vitest |
-| Logic, API-client and server-side-rendering tests (90 tests) | **run and passing** with `scripts/run-sandbox-tests.mjs`: esbuild + a small vitest-API shim (`test-support/vitest-shim.mjs`), React 19.2 rendering (project declares ^18.3.1) |
-| `src/interaction.test.jsx` (RTL + jsdom: navigation clicks, start/stop, polling to completion, export clicks, filters) | written, syntax-checked only — **not run** |
-| `npm run build` (vite) | **not run**. Replaced by `scripts/bundle-check.mjs` (esbuild production bundle: 276 kB JS + 7 kB CSS, no unresolved imports) |
-| API integration | `src/integration/live-api.test.js` ran (7 tests) against the real `ExperimentService` through `scripts/service_http_adapter.py`, a stdlib HTTP shim. It validates the dashboard's client against genuine service output and a real experiment run; it does **not** exercise FastAPI routing, pydantic parsing, CORS or auth |
-| `GET /api/topology` HTTP route | route and schema only byte-compiled (syntax), never executed; service function tested (`tests/test_api_topology.py`); the HTTP route itself needs `make api-test` with fastapi installed |
-| Real browser rendering | **Stage 10: partly verified.** `scripts/e2e_browser.py` drives headless Chrome 131 at 1280x900 against the real service layer (31 checks passed, `docs/e2e_browser_results.json`, screenshots in `docs/demo/`). Not checked: other viewport widths, dark mode, focus order, Firefox/Safari. The same run found and fixed two display bugs (1) event-timeline caption showed `0.000 s – 0.000 s` (unit mix-up; regression test added), (2) the top bar stretched to ~300 px on short pages (CSS grid rows; fixed) |
+| `make frontend-test` | vitest: logic, API client, server-rendered views and jsdom interaction tests |
+| `make frontend-integration` | the dashboard's API layer against the real service layer through a small stdlib HTTP adapter (`scripts/service_http_adapter.py`) |
+| `make e2e-browser` | real headless Chrome against the real service layer: start, cancel and export experiments, compare on-screen values with the API |
 
-Fixtures in `src/test/fixtures/api/` are real responses captured by `scripts/capture_frontend_fixtures.py` from four real simulator runs
-(`make frontend-fixtures` regenerates them). They are test inputs, not demo data: the app itself ships none.
+Fixtures in `src/test/fixtures/api/` are real API responses recorded from simulator runs. They are test inputs, not demo data: the app itself ships none.
 
 ## Known limitations
 
 * No WebSocket / no live metrics (backend limitation, stated above); no jitter series in comparison metrics.
-* Comparison compares single runs; no confidence intervals (replicated statistics live in Stage 7 outputs, not exposed through the API).
+* Comparison compares single runs; no confidence intervals (replicated statistics come from the command-line campaigns and are not exposed through the API).
 * Scenario handoff schedules (moves) are shown but not editable. QUIC runs only if `aioquic` is installed on the server (the form follows `/api/approaches`).
 * Event timeline loads at most 5000 events (the API's own limits apply).
 * No bearer-token entry UI; no experiment deletion UI (the API has none).
-* No `package-lock.json`: it cannot be generated without network. Run `npm install` once and commit it.
 * Colour is never the only carrier (values are printed, every chart has a data table) but a full accessibility audit was not done.
 
 

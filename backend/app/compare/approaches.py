@@ -29,7 +29,7 @@ APPROACHES = {a.id: a for a in (
         "Needs an application that implements resume; an unmodified TCP application simply loses its connection."),
     ApproachInfo(
         "mip-basic", "Basic Mobile IP",
-        "Educational Mobile IPv4-style demonstration (Stage 4). NOT RFC 5944 compliant: HMAC-SHA256 instead of keyed-MD5, "
+        "Educational Mobile IPv4-style demonstration. NOT RFC 5944 compliant: HMAC-SHA256 instead of keyed-MD5, "
         "no Foreign Agent, no ARP, no reverse tunnelling (see docs/MOBILE_IP.md).",
         "Registration with the Home Agent (signed, replay-protected); the Home Agent tunnels (IP-in-IP) packets for the "
         "home address to the current care-of address; replies go direct (triangle routing).",
@@ -70,12 +70,12 @@ SUPPORT = {
     "tcp-reconnect": {
         "emulated": ("supported", "TcpLite transport model + shared application logic"),
         "loopback": ("supported", "real kernel TCP; validates the application logic only, timings are not comparable (no path delay)"),
-        "live": ("unsupported", "not implemented in Stage 5 (it would only need the probe apps launched in the namespaces)"),
+        "live": ("unsupported", "not implemented (it would only need the probe apps launched in the namespaces)"),
     },
     "mip-basic": {
         "emulated": ("supported", "protocol code + byte-accurate IP-in-IP on the emulated network"),
         "loopback": ("unsupported", "needs kernel tunnels and routing, which loopback sockets do not provide"),
-        "live": ("unverified", "Stage 4 live demo through the adapter; written but not run in the development sandbox (no iproute2/sudo)"),
+        "live": ("unverified", "live demo through the adapter; needs iproute2, sudo and kernel ipip support"),
     },
     "mip-mbb": {
         "emulated": ("supported", "link overlap + registration from the new interface in the emulator"),
@@ -90,7 +90,7 @@ SUPPORT = {
     "quic-migration": {
         "emulated": ("supported", "real aioquic engine driven in virtual time; runnable only when aioquic is installed (pip install aioquic); verified end to end with aioquic 1.8.0"),
         "loopback": ("unsupported", "no loopback QUIC harness implemented (the emulator drives aioquic in virtual time instead)"),
-        "live": ("unsupported", "not implemented in Stage 5"),
+        "live": ("unsupported", "not implemented"),
     },
 }
 
@@ -99,12 +99,12 @@ MBB_CAPABLE = {"mip-mbb"}
 MBB_REASON = {
     "tcp-reconnect": "the TCP baseline does not use link overlap (it does not pre-establish the new connection), so an MBB run would just delay link release",
     "mip-basic": "basic Mobile IP is break-before-make by definition here; use approach 'mip-mbb' for the overlap variant",
-    "ro-model": "the RO model is only defined for break-before-make in this stage",
+    "ro-model": "the RO model is only defined for break-before-make",
     "quic-migration": "this harness does not exploit link overlap (no probing of the new path before the old one is released)",
 }
 
 
-# Stage 7: configurations of one approach that the experiment framework treats as separate, comparable "approach configurations".
+# configurations of one approach that the experiment framework treats as separate, comparable "approach configurations".
 # Everything else (approach ids, where each can run, why not) is discovered from APPROACHES / SUPPORT above, not listed again.
 # (variant label, ExperimentSpec overrides)
 VARIANTS = {

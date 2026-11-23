@@ -1,4 +1,4 @@
-# Privileged network operations (Stage 2)
+# Privileged network operations
 
 The Python process (CLI, API) **always runs as a normal user** and refuses to start as root
 (`--allow-root` overrides, not recommended). Only individual `ip` commands are elevated, one at a
@@ -30,8 +30,8 @@ for create/destroy/shape) or `NETSIM_DRY_RUN=false`; `validate` and `plan` need 
 | Bring up lo, add veth/addr/route | `ip -n nsl-<key> link\|addr\|route ...` | inside namespace |
 | Forwarding / rp_filter | `ip netns exec nsl-<key> sysctl -w ...` | namespace-local |
 | Latency / loss / rate | `ip netns exec nsl-<key> tc qdisc add\|replace\|del dev <if> root netem ...` | namespace-local |
-| Handoff simulation (Stage 3) | `ip -n nsl-<key> link set <if> up\|down` (never `lo` down) | inside namespace |
-| Run sender/receiver in a namespace (Stage 3) | `ip netns exec nsl-<key> setpriv --reuid=<uid> --regid=<gid> --clear-groups -- env PYTHONPATH=<abs> <abs python> -m app.traffic.sender\|receiver ...` | tool runs as **you**, not root; uid 0 refused |
+| Handoff simulation (probe traffic) | `ip -n nsl-<key> link set <if> up\|down` (never `lo` down) | inside namespace |
+| Run sender/receiver in a namespace (probe traffic) | `ip netns exec nsl-<key> setpriv --reuid=<uid> --regid=<gid> --clear-groups -- env PYTHONPATH=<abs> <abs python> -m app.traffic.sender\|receiver ...` | tool runs as **you**, not root; uid 0 refused |
 | Inspect / measure | `ip -n ...`, `ip netns exec ... tc qdisc show`, `... ping` | read-only |
 | List namespaces | `ip netns list` | unprivileged |
 
@@ -46,7 +46,7 @@ Allowing someone to run `ip netns exec` with sudo is effectively root. Do not ad
 `NOPASSWD` sudoers rule for `ip`; prefer cached credentials (`sudo -v`) as the wrapper does.
 `ip netns add` creates `/run/netns/<name>` (standard behaviour; removed by `ip netns del` or reboot).
 
-## Stage 3 additions
+## Running probe tools in namespaces
 - `ip netns exec` needs root, so measurement tools are started through `setpriv`, which drops to the invoking user's uid/gid
   before Python starts. The allow-list only accepts `app.traffic.sender|receiver`, absolute paths, and arguments matching
   `[A-Za-z0-9_./:=,@+-]` (so output paths must not contain spaces).
@@ -54,7 +54,7 @@ Allowing someone to run `ip netns exec` with sudo is effectively root. Do not ad
   stop file, not with `kill`.
 - If a scenario aborts, interfaces it brought down are brought back up in cleanup; `topology.sh destroy`/`create` resets everything.
 
-## Stage 4 additions (Mobile IP live demo)
+## Mobile IP live demo
 | Purpose | Command (always `ip -n nsl-<node> ...`) |
 |---|---|
 | Virtual home addresses | `addr add 10.10.100.1/32 dev lo` (HA), `addr add 10.10.100.2/32 dev lo` (MN); removed with `addr del ... dev lo` (only `/32` on `lo`) |

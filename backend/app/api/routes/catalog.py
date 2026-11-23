@@ -12,7 +12,7 @@ _E = {401: {"model": S.ErrorResponse}, 404: {"model": S.ErrorResponse}}
 @router.get("/approaches", tags=["catalog"], response_model=None, responses={200: {"model": S.ApproachesOut}, 401: _E[401]},
             summary="List the supported mobility approaches")
 def list_approaches(svc: ExperimentService = Depends(get_service)):
-    """Every approach of the Stage 5 registry with what it is and is NOT, where it can run, and whether it can run on THIS server
+    """Every approach of the registry with what it is and is NOT, where it can run, and whether it can run on THIS server
     (e.g. `quic-migration` needs aioquic). Environments the API does not expose (`live`) are listed as not exposed."""
     return svc.approaches()
 
@@ -27,7 +27,7 @@ def list_scenarios(svc: ExperimentService = Depends(get_service)):
 @router.get("/topology", tags=["catalog"], response_model=None, responses={200: {"model": S.TopologyOut}, 401: _E[401]},
             summary="The lab topology the experiments run on (nodes, links, routes, configured link impairments)")
 def topology(svc: ExperimentService = Depends(get_service)):
-    """Read from the same YAML the experiments use (Stage 2 loader); nothing is generated."""
+    """Read from the same YAML the experiments use (loader); nothing is generated."""
     return svc.topology()
 
 

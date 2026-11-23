@@ -1,4 +1,4 @@
-"""Mobile-IP metrics derived ONLY from mip_events*.csv (+ optional Stage 3 probe metrics).
+"""Mobile-IP metrics derived ONLY from mip_events*.csv (+ optional probe metrics).
 Unavailable values are null with a reason; nothing is interpolated.
 
 registration_delay  MN request sent -> matching authenticated reply received (MN clock only).
@@ -6,7 +6,7 @@ time_to_registered  attach (care-of address acquired) -> first accepted reply; i
 handoff_latency     link_change (movement) -> first accepted reply = detection + registration.
 tunnel overhead     bytes added by IP-in-IP: simulation counts real encapsulated bytes; for the live kernel
                     tunnel only the constant 20-byte RFC 2003 header is known (analytic, NOT measured).
-interruption        taken from the Stage 3 probe metrics (loss burst / arrival gap around the handoff).
+interruption        taken from the probe metrics (loss burst / arrival gap around the handoff).
 """
 from __future__ import annotations
 
@@ -121,7 +121,7 @@ def compute_mip_metrics(events, summary=None, traffic_metrics=None, notes=None) 
     conn = None
     if traffic_metrics:
         hs = traffic_metrics.get("handoffs") or []
-        conn = {"source": "Stage 3 probe metrics", "loss": {k: traffic_metrics["loss"].get(k) for k in
+        conn = {"source": "probe metrics", "loss": {k: traffic_metrics["loss"].get(k) for k in
                                                              ("lost", "sent_ok", "loss_percent", "exact", "longest_burst_packets")},
                 "handoffs": [{"event_id": h.get("event_id"), "detail": h.get("detail"),
                               "loss_burst_packets": (h.get("loss_burst") or {}).get("packets"),

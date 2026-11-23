@@ -71,7 +71,7 @@ def _span_rate(total_bytes, t_first, t_last):
 
 def compute_metrics(sent, received, echoes, events, sender_meta, receiver_meta, scenario_meta=None,
                     *, session_id=None, bin_s=1.0, handoff_margin_ms=250.0, load_notes=None) -> dict:
-    """sent/received/echoes/events: lists of row dicts (as parsed by loader.read_csv) or None if the
+    """Sent/received/echoes/events: lists of row dicts (as parsed by loader.read_csv) or None if the
     file does not exist."""
     warnings = list(load_notes or [])
     sid = session_id if session_id is not None else (sender_meta or {}).get("session_id")

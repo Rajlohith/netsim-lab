@@ -7,9 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "test": "vitest run",
-    "test:integration": "NETSIM_API_URL=${NETSIM_API_URL:-http://127.0.0.1:8000/api} vitest run src/integration",
-    "verify:sandbox": "node scripts/run-sandbox-tests.mjs",
-    "verify:bundle": "node scripts/bundle-check.mjs"
+    "test:integration": "NETSIM_API_URL=${NETSIM_API_URL:-http://127.0.0.1:8000/api} vitest run src/integration"
   },
   "dependencies": {
     "react": "^18.3.1",

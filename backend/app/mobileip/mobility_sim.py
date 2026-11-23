@@ -3,7 +3,7 @@
 The REAL parts: the registration protocol code (HomeAgent / MobileNode), the wire formats, authentication,
 replay protection, binding lifetime, and byte-accurate IP-in-IP encapsulation of the data packets.
 The EMULATED parts: links, routers, delays and the movement itself (an interface is switched up/down).
-Raw output uses the Stage 3 file formats (sent/received/echoes/events.csv + meta) plus mip_events.csv, so the
+Raw output uses the file formats (sent/received/echoes/events.csv + meta) plus mip_events.csv, so the
 existing traffic analyser computes loss/interruption on simulated runs. Virtual time makes runs byte-repeatable.
 """
 from __future__ import annotations
@@ -56,7 +56,7 @@ class MobilitySpec:
     old_link_hold_ms: float = 0.0          # extra time the old link stays up after registration (MBB only)
     link_semantics: str = "both-ends"      # "both-ends" (default) | "kernel-veth": see simnet.SimLink.go_down
     topology: Path = ROOT / "config" / "topology.yaml"
-    conditions: NetworkConditions = field(default_factory=NetworkConditions)     # Stage 7: latency / loss / HA distance / registration
+    conditions: NetworkConditions = field(default_factory=NetworkConditions)     # latency / loss / HA distance / registration
 
 
 class SimHaDataPlane(HaDataPlane):
@@ -71,7 +71,7 @@ class SimHaDataPlane(HaDataPlane):
 
 
 class SimMnDataPlane(MnDataPlane):
-    """keep_old=True (make-before-break): packets for a previous care-of address are still decapsulated."""
+    """Keep_old=True (make-before-break): packets for a previous care-of address are still decapsulated."""
 
     def __init__(self):
         self.care_of = None
@@ -188,7 +188,7 @@ class MobilitySim:
 
     # ---- Mobile Node side ----------------------------------------------------------------------
     def _reg_lost(self, node):
-        """Stage 7 registration-condition: independent loss of Mobile IP registration messages (0 by default: no draw)."""
+        """Registration-condition: independent loss of Mobile IP registration messages (0 by default: no draw)."""
         p = self.spec.conditions.registration_loss_percent / 100.0
         if p > 0.0 and self._reg_rng.random() < p:
             self.sim.drop(node, "registration_loss_injected")

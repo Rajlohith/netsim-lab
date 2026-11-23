@@ -1,4 +1,4 @@
-"""Stage 7: analysis from saved results, export formats, provenance labels, comparison logic, charts."""
+"""Analysis from saved results, export formats, provenance labels, comparison logic, charts."""
 import csv
 import hashlib
 import json
@@ -184,7 +184,7 @@ class IncompleteAndFailedRunsInTheAnalysis(unittest.TestCase):
 
 
 class DiscoveredResults(unittest.TestCase):
-    def test_stage5_style_folder_is_analysed_without_inventing_statistics(self):
+    def test_plain_folder_is_analysed_without_inventing_statistics(self):
         with tempfile.TemporaryDirectory() as t:
             for a in ("mip-basic", "tcp-reconnect"):
                 run_experiment(ExperimentSpec(a), t)
@@ -196,11 +196,11 @@ class DiscoveredResults(unittest.TestCase):
             self.assertTrue(all(c["verdict"] == "insufficient data" for c in json.loads((Path(t) / "analysis" / "comparisons.json").read_text())))
             self.assertIn("NO confidence intervals", (Path(t) / "analysis" / "REPORT.md").read_text())
 
-    def test_shipped_stage5_example_results_can_be_analysed(self):
-        from app.compare.experiment import ROOT
+    def test_recorded_baseline_runs_can_be_analysed(self):
+        fixtures = Path(__file__).resolve().parent / "fixtures" / "baseline_runs"
         with tempfile.TemporaryDirectory() as t:
-            res = A.analyze(ROOT / "examples" / "comparison", Path(t))
-            self.assertGreaterEqual(res["runs"], 5)
+            res = A.analyze(fixtures, Path(t))
+            self.assertGreaterEqual(res["runs"], 3)
 
 
 class ComparisonLogic(unittest.TestCase):

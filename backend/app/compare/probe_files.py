@@ -1,4 +1,4 @@
-"""Stage 3 raw-file writer shared by the transport labs (sent/received/echoes/events.csv + metas + scenario.json)."""
+"""Raw-file writer shared by the transport labs (sent/received/echoes/events.csv + metas + scenario.json)."""
 from __future__ import annotations
 
 import json

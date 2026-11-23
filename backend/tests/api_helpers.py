@@ -1,4 +1,4 @@
-"""Helpers for the Stage 8 API tests (service layer; no web framework needed)."""
+"""Helpers for the API tests (service layer; no web framework needed)."""
 import os
 import shutil
 import subprocess

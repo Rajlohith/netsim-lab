@@ -15,7 +15,7 @@ BACKEND = Path(__file__).resolve().parents[1]
 
 def run_loopback(tmp, rules: PathRules, *, rate=200.0, count=None, duration=None, scenario="lb", run="r1",
                  drain=0.5, size=64, margin_ms=250.0):
-    """sender -> impairment proxy -> receiver(echo) on loopback; returns (metrics, run_dir, proxy_stats)."""
+    """Sender -> impairment proxy -> receiver(echo) on loopback; returns (metrics, run_dir, proxy_stats)."""
     run_dir = Path(tmp) / scenario / run
     run_dir.mkdir(parents=True)
     (run_dir / "scenario.json").write_text(json.dumps(

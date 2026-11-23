@@ -13,16 +13,16 @@ echo "Tools:"
 for t in python3 git node npm ip tc ping unshare; do
   command -v "$t" >/dev/null && ok "$t" || warn "$t not found"
 done
-command -v ip >/dev/null || echo "    install: Zorin 'sudo apt install iproute2' | Fedora 'sudo dnf install iproute iproute-tc'"
+command -v ip >/dev/null || echo "    install: Debian/Ubuntu 'sudo apt install iproute2' | Fedora 'sudo dnf install iproute iproute-tc'"
 
 echo "Capabilities:"
 if unshare -Urn true 2>/dev/null; then
   ok "unprivileged user+net namespaces work (no host changes made)"
 else
-  warn "unprivileged namespaces disabled; later stages will need the privileged helper (docs/PRIVILEGED_OPERATIONS.md)"
+  warn "unprivileged namespaces disabled; the live namespace lab will need the privileged helper (docs/PRIVILEGED_OPERATIONS.md)"
 fi
 if command -v tc >/dev/null && unshare -Urn sh -c 'ip link set lo up && tc qdisc add dev lo root netem delay 1ms' 2>/dev/null; then
   ok "tc netem usable inside a private namespace"
 else
-  warn "tc netem not usable (Fedora: sudo dnf install iproute-tc kernel-modules-extra; Zorin: sudo modprobe sch_netem)"
+  warn "tc netem not usable (Fedora: sudo dnf install iproute-tc kernel-modules-extra; Debian/Ubuntu: sudo modprobe sch_netem)"
 fi

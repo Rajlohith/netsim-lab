@@ -1,4 +1,4 @@
-"""Stage 7 charts, drawn from the saved analysis outputs (runs.csv / summary.json), never from a live
+"""Charts, drawn from the saved analysis outputs (runs.csv / summary.json), never from a live
 simulation: `python -m app.compare plots <results_dir>` can be rerun at any time. matplotlib with the Agg backend (no display)."""
 from __future__ import annotations
 

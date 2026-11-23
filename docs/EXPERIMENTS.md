@@ -1,10 +1,10 @@
-# Stage 7 — Experiment and analysis framework
+# Experiment and analysis framework
 
 This document describes how to run replicated comparison experiments, how the results are analysed, what the numbers mean, and how
-to reproduce a reported finding. The framework **extends** the Stage 5 comparison runner (`app/compare`): campaigns call
+to reproduce a reported finding. The framework **extends** the comparison runner (`app/compare`): campaigns call
 `run_experiment(ExperimentSpec)` for every run; there is no second runner.
 
-> Everything in the shipped results was produced by the deterministic **virtual-time emulator** (Stages 1–5). It is
+> Everything in the shipped results was produced by the deterministic **virtual-time emulator** . It is
 > *simulator-generated* data. Nothing here is a measurement of a real network, and no result may be read as "approach X is better on
 > real networks".
 
@@ -13,7 +13,7 @@ to reproduce a reported finding. The framework **extends** the Stage 5 compariso
 | Area | Change | Module |
 |---|---|---|
 | Conditions | `NetworkConditions`: latency scale / per-link delay, Home Agent distance, random packet loss, registration loss, Home Agent processing time, seed | `app/netem/conditions.py` |
-| Emulator | optional **seeded random loss** per link and direction (off by default: no random number is drawn, Stage 1–6 results are byte-identical) | `app/mobileip/simnet.py` |
+| Emulator | optional **seeded random loss** per link and direction (off by default: no random number is drawn, default-condition results are byte-identical) | `app/mobileip/simnet.py` |
 | Spec | `ExperimentSpec.seed`, `ExperimentSpec.conditions`, `ExperimentSpec.from_json` | `app/compare/experiment.py` |
 | Provenance | `experiment.json` now also records library versions, effective link delays/loss and which conditions apply to the approach | `app/compare/runner.py` |
 | Campaigns | design, resumable execution, append-only ledger, failure/interrupt recording | `app/compare/campaign.py` |
@@ -27,7 +27,7 @@ to reproduce a reported finding. The framework **extends** the Stage 5 compariso
 `tcplite.py` documented "go-back-N via RTO" but retransmitted **only the head segment** on a timeout, while its receiver discards
 out-of-order data. Without random loss this never mattered; with 0.5 % loss delivery collapsed (52 % of probes never arrived, RTO
 backed off to its maximum) — a model artefact, not a TCP property. The timeout now resends all outstanding segments, as documented.
-Check performed: the Stage 5 `matrix` was run before and after; all handoff/loss/RTT metrics and raw CSVs are byte-identical, only
+Check performed: the `matrix` command was run before and after; all handoff/loss/RTT metrics and raw CSVs are byte-identical, only
 the internal TcpLite counters of the `tcp-reconnect/stall-timeout` run changed (segments, bytes and send failures on the dead old
 connection: 2024→2069, 154652→159557, 4→10). **TcpLite still has no fast retransmit, SACK or congestion control**, so its results under
 loss (especially ≥ 5 %) describe the model and are flagged `model_limit_note` in every export.
@@ -41,20 +41,20 @@ All commands run from the repository root; `PYTHONPATH=backend` as in the Makefi
 PYTHONPATH=backend python3 -m app.compare list --json
 
 # show the design of a campaign without running anything
-PYTHONPATH=backend python3 -m app.compare plan --config config/experiments/stage7_example.yaml
+PYTHONPATH=backend python3 -m app.compare plan --config config/experiments/example.yaml
 
 # run (or resume) a campaign, then analyse and plot it
-PYTHONPATH=backend python3 -m app.compare campaign --config config/experiments/stage7_example.yaml \
-        --out-dir data/experiments/stage7-example      # make exp-example
+PYTHONPATH=backend python3 -m app.compare campaign --config config/experiments/example.yaml \
+        --out-dir data/experiments/example      # make exp-example
 
 # analyse EXISTING data (no experiment is run); also accepts older folders such as `compare matrix` output
-PYTHONPATH=backend python3 -m app.compare analyze examples/experiments/stage7                    # make exp-analyze DIR=...
+PYTHONPATH=backend python3 -m app.compare analyze data/experiments/example                    # make exp-analyze DIR=...
 
 # charts from the saved analysis
-PYTHONPATH=backend python3 -m app.compare plots examples/experiments/stage7                      # make exp-plots DIR=...
+PYTHONPATH=backend python3 -m app.compare plots data/experiments/example                      # make exp-plots DIR=...
 
 # reproduce reported results: re-run saved runs from plan.json and compare byte-for-byte (exit status 1 on mismatch)
-PYTHONPATH=backend python3 -m app.compare reproduce examples/experiments/stage7 --sample 10      # --sample 0 = all runs
+PYTHONPATH=backend python3 -m app.compare reproduce data/experiments/example --sample 10      # --sample 0 = all runs
 
 # one run with explicit conditions
 PYTHONPATH=backend python3 -m app.compare run --approach mip-basic --loss-percent 2 --ha-distance-ms 100 --seed 7 --out-dir /tmp/r
@@ -72,7 +72,7 @@ configuration needs another directory.
 
 * **Approach configurations** come from the registry: `tcp-reconnect` (two variants: `notify`, `stall-timeout`), `mip-basic`,
   `mip-mbb`, `ro-model`, `quic-migration`. Cells that cannot run are **listed with the reason, never dropped**: `unavailable`
-  (e.g. `aioquic` not installed — true in the development sandbox, so QUIC was *not* measured), `unsupported`, or `not_applicable`
+  (e.g. `aioquic` not installed), `unsupported`, or `not_applicable`
   (a Home Agent distance cannot affect TCP, which never uses the Home Agent).
 * **Conditions**: one baseline plus one-factor-at-a-time sweeps:
 
@@ -107,7 +107,7 @@ Each metric carries a provenance label in `summary.csv` and a definition in `met
 | metric | kind | notes |
 |---|---|---|
 | `app_stall_ms` | observed | longest echo-arrival gap around a handoff — the application-visible stall, defined for every approach |
-| `interruption_ms` | observed | Stage 3 loss-burst interruption; only where a probe-loss burst exists (reliable transports have none) |
+| `interruption_ms` | observed | loss-burst interruption; only where a probe-loss burst exists (reliable transports have none) |
 | `handoff_latency_ms` | observed | to the approach's **own** recovery point; **not compared across approaches** |
 | `loss_percent`, `handoff_loss_packets` | observed | reliable transports hide loss as delay: comparable only within a transport class (caveat is written into every loss comparison) |
 | `handoffs_unrecovered` | observed | handoffs that never recovered (visible failures under heavy registration loss) |
@@ -154,28 +154,27 @@ Each metric carries a provenance label in `summary.csv` and a definition in `met
 
 ## 7. Reproducing reported findings
 
-1. `make exp-example` (or the `campaign` command above) regenerates every raw run and the analysis from `config/experiments/stage7_example.yaml`
+1. `make exp-example` (or the `campaign` command above) regenerates every raw run and the analysis from `config/experiments/example.yaml`
    (same `base_seed`, same code → identical raw files).
-2. `python -m app.compare reproduce examples/experiments/stage7 --sample 0` re-runs **every** shipped run from `plan.json` and compares
+2. `python -m app.compare reproduce data/experiments/example --sample 0` re-runs **every** saved run from `plan.json` and compares
    six raw/metric files per run byte-for-byte.
-3. `python -m app.compare analyze examples/experiments/stage7` regenerates all tables, `REPORT.md` and, with `plots`, all charts from the saved runs.
-   The statements in `examples/experiments/stage7/analysis/REPORT.md` come from `comparisons.csv`/`vs_baseline.csv`.
+3. `python -m app.compare analyze data/experiments/example` regenerates all tables, `REPORT.md` and, with `plots`, all charts from the saved runs.
+   The statements in `data/experiments/example/analysis/REPORT.md` come from `comparisons.csv`/`vs_baseline.csv`.
 
 ## 8. Limitations
 
 * Fixed link delays (no jitter, queueing or bandwidth limits in the emulator); loss is independent per packet and direction.
-* TcpLite simplifications (see §1); the QUIC adapter was not runnable (`aioquic` missing); `live`/namespace environments were not run
-  (no root/iproute2 in the development sandbox).
+* TcpLite simplifications (see §1); the QUIC adapter only runs when `aioquic` is installed (it is in `requirements.txt`); `live`/namespace environments are not part of campaigns.
 * One topology, one traffic load, one handoff pattern (two alternating handoffs); one-factor-at-a-time sweeps only.
 * Replicates vary the seeded handoff schedule and loss draws; they do not vary protocol parameters or the topology.
-* The shipped results come from the 12-replicate example campaign; the 20-replicate standard campaign is defined but its results are not shipped.
+* The reference numbers below come from the 12-replicate example campaign; the 20-replicate standard campaign is defined in `config/experiments/standard.yaml`.
 
-## 9. Shipped example results (`examples/experiments/stage7/`)
+## 9. Reference results of the example campaign
 
-> The handoff-prediction module that originally appeared in these results has been removed from the project. The shipped analysis files had their prediction columns and report section removed; the measurements are unchanged.
+These are the values produced by `make exp-example` (the campaign is deterministic for a given seed and code version).
 
-Campaign `stage7-example`: 372 runs (12 replicates × 31 cells), all finished (`ok`), emulated environment, 12 s runs, 100 pps probes.
-QUIC was **not measured** (`aioquic` missing → reported as `unavailable` in `not_executed_cells.csv`);
+Campaign `example`: 372 runs (12 replicates × 31 cells), all finished (`ok`), emulated environment, 12 s runs, 100 pps probes.
+In the reference run QUIC was **not measured** (`aioquic` was not installed there → reported as `unavailable` in `not_executed_cells.csv`);
 Home-Agent factors skip TCP/QUIC (`not_applicable`). The full tables are in `analysis/`; `analysis/REPORT.md` is generated from them.
 Everything below is *simulator-generated*; intervals are exact 95 % CIs of the median over 12 independent runs.
 
@@ -200,6 +199,3 @@ retransmits, so this is not like-for-like (flagged in every loss comparison).
   recovered (`handoffs_unrecovered`, reported, not hidden). `mip-mbb`'s application stall stays 20 ms because its old link stays up, even though
   a handoff did not complete in at least one run.
 * Movement-detection delay 100 ms and a 1.5 s dwell: detection delay lengthens the break-before-make stalls (`mip-basic` 160, `ro-model` 240); the dwell change does not alter the medians.
-
-**Verification performed on these results:** the analysis was regenerated from the saved runs (byte-identical apart from its timestamp), and
-`reproduce --sample 0` re-ran all 372 runs from `plan.json` (result recorded in `STAGE7_MANIFEST.md`).

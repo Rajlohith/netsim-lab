@@ -1,11 +1,11 @@
-# Stage 8 — Backend API
+# Backend API
 
 Managed experiments over HTTP: validate a configuration, start it as a **background job**, watch its lifecycle, read metrics / handoff events /
 results **after it completes**, export results, browse history. The API runs the **existing** experiment code
 (`app.compare.run_experiment`); it adds orchestration and persistence, never measurements.
 
 * Base path `/api`. Interactive docs at `/docs` (Swagger) and `/openapi.json` when the server runs. `make api-openapi` writes
-  `schemas/api/openapi.json` from the code (needs FastAPI installed — see *Verification status* in `STAGE8_MANIFEST.md`).
+  `schemas/api/openapi.json` from the code (needs FastAPI installed, which `make setup` does).
 * Start: `make run-api` (unprivileged, `127.0.0.1:8000`). The job manager starts with the server (FastAPI lifespan).
 * No FastAPI available? `make api-smoke` runs one real experiment through the same service layer without HTTP.
 
@@ -16,7 +16,7 @@ results **after it completes**, export results, browse history. The API runs the
 | Job execution | Every experiment runs in its **own worker process** (`python -m app.services.worker <job dir>`), started by a scheduler thread; request handlers only validate and enqueue | long jobs never block or crash the server; a process can be killed, a thread cannot |
 | Live updates | **Polling, no WebSocket** | Runs execute in the simulator's virtual time and produce their metrics only when they finish. There is no metric stream to forward; a WebSocket would have nothing true to send. `GET /api/capabilities` → `live_updates` states this machine-readably. Poll `GET /api/experiments/{id}` or, for incremental updates, `GET /api/experiments/{id}/transitions?after_seq=N` |
 | Progress | phase only (`queued → starting → running_experiment → finalizing → done`); `fraction` is `null` while running | the runner has no finer progress; inventing a percentage would be fabrication |
-| Metadata | SQLite (`data/api/experiments.sqlite3`, WAL); raw outputs are files in `data/api/experiments/<id>/` | metadata is small and relational; measurements stay in the formats of earlier stages |
+| Metadata | SQLite (`data/api/experiments.sqlite3`, WAL); raw outputs are files in `data/api/experiments/<id>/` | metadata is small and relational; measurements stay in the run-file formats described in `docs/TRAFFIC_MEASUREMENT.md` |
 | Data origin | every result carries `provenance` (`data_origin`, `is_live: false`) | results are simulator-generated (or real loopback TCP), read from files after the run |
 | Privileges | the API never starts privileged work: the `live` environment is **not selectable**; the launcher uses a fixed argv, no shell, no sudo; the manager refuses to run as root | project constraint: never run the app as root |
 
@@ -41,7 +41,7 @@ Terminal states are final (compare-and-set in SQLite; every change is appended t
 | Concurrency | `NETSIM_API_MAX_CONCURRENT_JOBS` (default 2) workers; FIFO queue of `NETSIM_API_MAX_QUEUE` (default 20), beyond which `429 queue_full` + `Retry-After` |
 | Cancel race | A cancel that arrives after the worker finished does not undo it: the status is `completed` and `cancel_requested` stays `true` |
 | Cancelled outputs | the half-written run directory is **deleted** (`partial_outputs: false`) |
-| Failed/incomplete outputs | partial files are **kept** for diagnosis, flagged `partial_outputs: true`, never served by `/metrics`, `/handoffs`, `/events`, `/predictions`, JSON/CSV export. Only `export?format=zip&include_partial=true` returns them, with `partial: true` in the manifest |
+| Failed/incomplete outputs | partial files are **kept** for diagnosis, flagged `partial_outputs: true`, never served by `/metrics`, `/handoffs`, `/events`, JSON/CSV export. Only `export?format=zip&include_partial=true` returns them, with `partial: true` in the manifest |
 | Restart | at start-up: `running` rows → `incomplete` (`server_restarted`; or `cancelled` if a cancel was pending; or `completed` if the worker had already written a good result). A surviving orphan worker is killed only if pid **and** start time **and** command line match. `queued` rows stay queued and run |
 | Clean shutdown | running workers are terminated and become `incomplete` (`server_shutdown`); queued ones stay queued |
 | Single owner | an `flock` on `data/api/server.lock` allows one API process per data directory (the second refuses to start) |
@@ -54,10 +54,10 @@ All responses are JSON unless noted. `{id}` has the form `exp-` + 16 hex digits;
 
 | Method & path | Purpose | Success | Errors |
 |---|---|---|---|
-| `GET /api/health` | liveness (Stage 1) | 200 | |
+| `GET /api/health` | liveness | 200 | |
 | `GET /api/approaches` | approaches, what they are/aren't, where they can run **on this server** | 200 | 401 |
 | `GET /api/scenarios` | network scenarios with every resolved parameter | 200 | 401 |
-| `GET /api/topology` | the lab topology the experiments run on: nodes, links, routes and the *configured* netem values (read from `config/topology_ro.yaml` with the Stage 2 loader; added in Stage 9 for the dashboard) | 200 | 401 |
+| `GET /api/topology` | the lab topology the experiments run on: nodes, links, routes and the *configured* netem values (read from `config/topology_ro.yaml` with the topology loader in `app.netem`) | 200 | 401 |
 | `GET /api/capabilities` | limits, accepted fields, live-update policy | 200 | 401 |
 | `GET /api/status` | job-manager state, counts per status | 200 | 401 |
 | `POST /api/experiments/validate` | check a request without running it | 200 (`valid` true/false) | 401, 422 (malformed body) |

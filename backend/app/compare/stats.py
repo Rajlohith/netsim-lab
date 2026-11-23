@@ -1,4 +1,4 @@
-"""Statistical methods for the Stage 7 experiment analysis (numpy + scipy only; every function is deterministic given its seed).
+"""Statistical methods for the experiment analysis (numpy + scipy only; every function is deterministic given its seed).
 
 UNIT OF ANALYSIS. One independent replicate = ONE experiment run (own seed). Several handoffs inside one run share that run's
 loss realisation, protocol state and probe grid, so they are NOT independent replicates; the analysis first reduces each run to
@@ -130,7 +130,7 @@ class PairedResult:
 
 
 def paired_compare(a, b, conf: float = DEFAULT_CONF, n_boot: int = DEFAULT_BOOT, seed: int = 0) -> PairedResult:
-    """a, b: equally long sequences, element i of each belongs to the same replicate seed. Pairs with a missing value in either
+    """A, b: equally long sequences, element i of each belongs to the same replicate seed. Pairs with a missing value in either
     sequence are dropped (the count of pairs actually used is returned). d = a - b, so a NEGATIVE effect means a is lower."""
     if len(a) != len(b):
         raise ValueError("paired_compare needs sequences of equal length")

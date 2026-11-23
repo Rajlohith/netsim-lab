@@ -203,11 +203,11 @@ Use these if your teacher wants more depth, or if you have spare time.
 | Standard comparison with a report | `make compare` | "Runs all approaches and writes a comparison report." |
 | One run from the command line | `PYTHONPATH=backend .venv/bin/python -m app.compare run --approach mip-mbb --handoff-mode mbb --duration 10 --seed 7 --out-dir /tmp/run` | "Same engine as the dashboard." |
 | Design of a statistical campaign | `make exp-plan` | "Campaigns repeat runs with fixed seeds for confidence intervals and statistical tests." |
-| Reproducibility check | `make exp-reproduce DIR=examples/experiments/stage7` (needs raw runs, see note) | "Re-runs saved runs and checks they are identical." |
+| Reproducibility check | `make exp-reproduce DIR=data/experiments/example` (needs the example campaign, see note) | "Re-runs saved runs and checks they are identical." |
 | API documentation | open `http://127.0.0.1:8000/docs` | "Every endpoint is documented and typed." |
 | Test suites | `make test` and `make frontend-test` | "Backend and frontend tests." |
 
-Note: `examples/experiments/stage7` ships the saved analysis only. To reproduce runs you must first generate raw data with `make exp-example` (about 6 to 8 minutes), so do that before the demo if you want to show it. `make exp-analyze` and `make exp-plots` also need the raw data.
+Note: the reproducibility check needs raw data, so run `make exp-example` first (about 15 to 20 minutes) if you want to show it. `make exp-analyze` and `make exp-plots` need the same data.
 
 Campaign statistics, if asked: "Each cell is repeated with fixed seeds. I report medians and quartiles with exact distribution-free 95 % confidence intervals, compare approaches with a Wilcoxon signed-rank test with Holm correction for multiple comparisons, and use seeded bootstrap intervals for the median difference. This is command-line only."
 
@@ -246,8 +246,6 @@ Campaign statistics, if asked: "Each cell is repeated with fixed seeds. I report
 **How did you make it safe?** The API runs unprivileged, refuses to run as root, never exposes the privileged live-namespace mode, accepts only whitelisted fields, and runs each experiment in a separate limited process. Privileged network commands (command line only) use an allow-list and only touch namespaces created by this project.
 
 **What about statistics?** One run is one sample. For defensible comparisons the command-line campaign tools repeat runs with fixed seeds and report confidence intervals and tests. The dashboard shows single runs and says so.
-
-**Did you remove anything?** Yes. A machine-learning handoff-prediction module and the dashboard's Research section were removed to keep the project focused on mobility mechanisms and their measurement. The campaign and statistics command-line tools remain.
 
 ## 8. What not to claim
 

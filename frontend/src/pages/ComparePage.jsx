@@ -26,7 +26,7 @@ export function ComparisonView({ rows, save = saveText }) {
   };
   return (
     <>
-      <DataNotice>Each row is ONE run of one configuration (no replication), so differences are observations, not statistically established effects, and no approach is ranked here. For replicated statistics see <code>docs/EXPERIMENTS.md</code> (Stage 7). Values come from <code>/api/experiments/{"{id}"}/metrics</code>; “—” means not measurable, never zero.</DataNotice>
+      <DataNotice>Each row is ONE run of one configuration (no replication), so differences are observations, not statistically established effects, and no approach is ranked here. For replicated statistics see <code>docs/EXPERIMENTS.md</code> . Values come from <code>/api/experiments/{"{id}"}/metrics</code>; “—” means not measurable, never zero.</DataNotice>
       {notes.length ? <div role="alert" className="state state-warning"><strong>These runs were not made under identical conditions:</strong><ul>{notes.map((n, i) => <li key={i}>{n}</li>)}</ul></div> : rows.length > 1 ? <p className="ok-note" role="status">Scenario, environment, handoff mode, duration, rate, payload, seed and conditions are identical across the selected runs.</p> : null}
       <details className="advanced" open={notes.length > 0}><summary>Experimental conditions</summary>
         <div className="table-scroll"><table><thead><tr><th>Experiment</th><th>Scenario</th><th>Environment</th><th>Origin</th><th>Handoff mode</th><th>Duration</th><th>Rate</th><th>Payload</th><th>Seed</th><th>Conditions</th></tr></thead>

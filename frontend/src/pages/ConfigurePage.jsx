@@ -72,7 +72,7 @@ export function ConfigureView({ approaches, scenarios, capabilities, form, setFo
             <Field id="payload" label="Payload (bytes)" error={errors.payload} hint={`${lim.payload_bytes[0]}–${lim.payload_bytes[1]}`}><input id="payload" inputMode="numeric" value={form.payload} onChange={set("payload")} aria-invalid={!!errors.payload} /></Field>
             <Field id="seed" label="Seed" error={errors.seed} hint="Same seed, same result"><input id="seed" inputMode="numeric" value={form.seed} onChange={set("seed")} aria-invalid={!!errors.seed} /></Field>
           </div>
-          <h3>Network condition overrides</h3>
+          <hp>Network condition overrides</hp>
           <p className="muted">Leave a field blank to use the scenario's value.</p>
           <div className="row">
             {CONDITION_KEYS.map((k) => (
@@ -80,7 +80,7 @@ export function ConfigureView({ approaches, scenarios, capabilities, form, setFo
                 <input id={`cond-${k}`} inputMode="decimal" value={form.conditions[k]} onChange={setCond(k)} placeholder={scenario ? String(scenario.parameters.conditions[k]) : ""} aria-invalid={!!errors[`conditions.${k}`]} />
               </Field>))}
           </div>
-          <h3>Label</h3>
+          <hp>Label</hp>
           <Field id="label" label="Label (optional)" error={errors.label}><input id="label" value={form.label} maxLength={200} onChange={set("label")} /></Field>
         </details>
 

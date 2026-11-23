@@ -1,4 +1,4 @@
-"""Live Mobile IP demo inside the Stage 2 namespace testbed (needs sudo + ip/ipip; NOT runnable in a sandbox).
+"""Live Mobile IP demo inside the namespace testbed (needs sudo + ip/ipip; NOT runnable in a sandbox).
 
 REAL here: the registration protocol over real UDP sockets between a Home Agent daemon (ns ha) and a Mobile Node
 agent (ns mn), and the Linux kernel's IP-in-IP tunnels. All of it runs inside the project's namespaces.

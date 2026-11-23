@@ -1,4 +1,4 @@
-"""python -m app.mobileip.analyze RUN_DIR -> mip_metrics.json (+ Stage 3 metrics.json when probe data exists)."""
+"""Python -m app.mobileip.analyze RUN_DIR -> mip_metrics.json (+ metrics.json when probe data exists)."""
 from __future__ import annotations
 
 import json

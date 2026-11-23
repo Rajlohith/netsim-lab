@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """VERIFICATION HARNESS ONLY - not part of the product and NOT the FastAPI application.
 
-FastAPI/uvicorn/httpx are not installed in some environments (this was the case when Stage 9 was built), so the real HTTP layer
+FastAPI/uvicorn/httpx are not installed in some environments (e.g. in offline sandboxes), so the real HTTP layer
 (`backend/app/main.py`, `backend/app/api/`) cannot be started there. This script serves the *same* `ExperimentService` (real
 worker processes, real simulator runs, real SQLite store, real exports) over a standard-library HTTP server using the documented URL
 scheme, so the dashboard's API client can be exercised against genuine service output.
@@ -82,12 +82,9 @@ def make_handler(svc):
             m = re.fullmatch(r"/api/experiments/(exp-[0-9a-f]{16})(?:/([a-z]+))?", p)
             if method == "GET":
                 simple = {"/api/approaches": svc.approaches, "/api/scenarios": svc.scenarios, "/api/capabilities": svc.capabilities,
-                          "/api/status": svc.status, "/api/topology": svc.topology, "/api/models": svc.models_list}
+                          "/api/status": svc.status, "/api/topology": svc.topology}
                 if p in simple:
                     return self._send(200, simple[p]())
-                mm = re.fullmatch(r"/api/models/([\w.-]+)/evaluation", p)
-                if mm:
-                    return self._send(200, svc.model_evaluation(mm.group(1)))
                 if p == "/api/experiments":
                     return self._send(200, svc.list(statuses=q.get("status"), approach=one("approach"), scenario=one("scenario"), environment=one("environment"),
                                                     created_after=one("created_after"), created_before=one("created_before"), label_contains=one("label"),

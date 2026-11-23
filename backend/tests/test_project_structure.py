@@ -6,7 +6,7 @@ EXPECTED = [
     "README.md", "requirements.txt", "requirements-dev.txt", "pytest.ini", ".gitignore",
     ".env.example", "Makefile",
     "backend/app/main.py", "backend/app/config.py",
-    "backend/app/netem/__init__.py", "backend/app/analysis/__init__.py",
+    "backend/app/netem/__init__.py",
     "frontend/package.json", "frontend/src/App.jsx",
     "scripts/setup.sh", "scripts/check_env.sh", "scripts/topology.sh", "config/topology.yaml",
     "backend/app/traffic/sender.py", "backend/app/traffic/receiver.py", "backend/app/traffic/metrics.py",
@@ -24,17 +24,17 @@ def test_expected_files_exist():
     assert not missing, f"missing: {missing}"
 
 
-def test_analysis_is_still_a_placeholder_and_ml_is_gone():
-    """analysis/ (a dashboard / plotting layer) is still a placeholder. The Stage 6 ml/ package was removed on purpose."""
-    assert [p.name for p in (ROOT / "backend/app/analysis").glob("*.py")] == ["__init__.py"]
+def test_removed_packages_stay_removed():
+    """The handoff-prediction package (app.ml) and the empty app.analysis placeholder were removed on purpose."""
     assert not (ROOT / "backend/app/ml").exists()
+    assert not (ROOT / "backend/app/analysis").exists()
 
 
 def test_subprocess_and_sudo_confined_to_runner():
-    """Only the reviewed modules below may spawn processes: netem/runner.py (privileged namespace commands, Stage 2) and, since Stage 8,
+    """Only the reviewed modules below may spawn processes: netem/runner.py (privileged namespace commands) and
     services/process_launcher.py (the fixed-argv experiment worker). Everything else must not import subprocess or call os.system."""
     allowed = {"netem/runner.py", "compare/runner.py", "services/process_launcher.py"}   # compare/runner.py spawns nothing; it is listed only because the
-    for f in (ROOT / "backend/app").rglob("*.py"):                                        # pre-Stage-8 test matched on the file NAME runner.py
+    for f in (ROOT / "backend/app").rglob("*.py"):                                        # an older test matched on the file NAME runner.py
         rel = f.relative_to(ROOT / "backend/app").as_posix()
         text = f.read_text()
         assert "os.system" not in text, f
@@ -44,7 +44,7 @@ def test_subprocess_and_sudo_confined_to_runner():
 
 
 def test_api_launcher_is_fixed_argv_and_never_privileged():
-    """Stage 8: the API can start exactly one kind of process, without a shell, without sudo, and nothing else in api/services spawns or forks."""
+    """The API can start exactly one kind of process, without a shell, without sudo, and nothing else in api/services spawns or forks."""
     app = ROOT / "backend/app"
     launcher = (app / "services/process_launcher.py").read_text()
     assert "shell=False" in launcher and "shell=True" not in launcher

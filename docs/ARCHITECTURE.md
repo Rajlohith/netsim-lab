@@ -1,14 +1,14 @@
-# Architecture (through Stage 10)
+# Architecture
 
 ```
 netsim-lab/
 ├── backend/app/
-│   ├── main.py, config.py           FastAPI app factory (service started by the lifespan handler), settings (Stage 1)
-│   ├── api/                         Stage 8 HTTP layer ONLY (docs/API.md): schemas.py (pydantic), errors.py (one error envelope),
+│   ├── main.py, config.py           FastAPI app factory (service started by the lifespan handler), settings
+│   ├── api/                         HTTP layer ONLY (docs/API.md): schemas.py (pydantic), errors.py (one error envelope),
 │   │   │                            deps.py (service/auth), health.py, routes/{catalog,experiments}.py
-│   ├── services/                    Stage 8 business logic, NO FastAPI/pydantic import (unit-testable anywhere)
+│   ├── services/                    business logic, NO FastAPI/pydantic import (unit-testable anywhere)
 │   │   ├── settings.py errors.py    NETSIM_API_* settings (plain dataclass), service errors with an HTTP status hint
-│   │   ├── catalog.py model_registry.py   approaches/scenarios (config/api/scenarios.yaml), verified model bundles
+│   │   ├── catalog.py                    approaches and scenarios (config/api/scenarios.yaml)
 │   │   ├── validation.py            whitelist + limits + the runner's own check() -> structured issues
 │   │   ├── store.py                 SQLite: state machine, duplicate-active UNIQUE index, idempotency, transition log
 │   │   ├── jobs.py                  scheduler thread: queue, concurrency, cancel, timeout, recovery, retention
@@ -16,7 +16,7 @@ netsim-lab/
 │   │   ├── worker.py                `python -m app.services.worker <job dir>`: run_experiment (+ annotate_run) in its own process
 │   │   ├── results.py exports.py    read finished runs from files; JSON/CSV/ZIP exports
 │   │   └── experiments.py           ExperimentService facade used by the routes
-│   ├── netem/                       Stage 2: network emulation
+│   ├── netem/                       network emulation
 │   │   ├── topology_config.py       YAML -> validated dataclasses (NetemSpec, Link, Route, ...)
 │   │   ├── names.py                 namespace / interface naming rules
 │   │   ├── plan.py                  pure command builders (no execution)
@@ -25,21 +25,21 @@ netsim-lab/
 │   │   ├── topology.py              create / destroy / status / shape / ping orchestration
 │   │   ├── measure.py               ping output parser
 │   │   └── cli.py, __main__.py      python -m app.netem <command>
-│   ├── traffic/                     Stage 3: measurement only (no protocol logic)
+│   ├── traffic/                     measurement only (no protocol logic)
 │   │   ├── wire.py schema.py        packet format, raw-data schema
 │   │   ├── sender.py receiver.py    UDP probe tools (CSV/JSON out, clean shutdown)
 │   │   ├── recorder.py shutdown.py  crash-tolerant writers, signal/stop-file handling
 │   │   ├── loader.py metrics.py analyze.py   raw files -> metrics.json (no fabrication)
 │   │   ├── loopback_proxy.py        userspace impairment proxy (tests/examples, no root)
 │   │   └── scenario.py              orchestrates probes + handoff in the netns lab
-│   ├── mobileip/                    Stage 4: educational Mobile IPv4-style demo (see docs/MOBILE_IP.md)
+│   ├── mobileip/                    educational Mobile IPv4-style demo (see docs/MOBILE_IP.md)
 │   │   ├── messages.py ipip.py      registration wire format + auth/replay ids; IPv4/UDP/IP-in-IP bytes
 │   │   ├── home_agent.py mobile_node.py binding.py   protocol cores (pure logic, injected clock/data plane)
 │   │   ├── dataplane.py applier.py  data-plane interface, ip command plans, file handshake, controller
 │   │   ├── simnet.py mobility_sim.py  discrete-event emulator + the handoff scenario (deterministic)
 │   │   ├── runtime.py demo.py cli.py  real-UDP drivers, live namespace demo, CLI
 │   │   └── events.py metrics.py analyze.py   mip_events*.csv -> mip_metrics.json
-│   ├── compare/                     Stage 5: common experiment interface (docs/MOBILITY_COMPARISON.md); Stage 7: campaign, analysis, stats, plots, reproduce (docs/EXPERIMENTS.md)
+│   ├── compare/                     common experiment interface (docs/MOBILITY_COMPARISON.md) plus campaigns, analysis, stats, plots, reproduce (docs/EXPERIMENTS.md)
 │   │   ├── experiment.py runner.py  ExperimentSpec, run_experiment (ok/unsupported/unavailable/failed), adapters
 │   │   ├── approaches.py            registry: what each approach is/is not, support per environment
 │   │   ├── apps.py                  shared stream workload + resume protocol (TCP baseline, QUIC)
@@ -48,15 +48,12 @@ netsim-lab/
 │   │   ├── quic_sim.py              aioquic in virtual time (needs aioquic; unverified here)
 │   │   ├── events.py normalize.py matrix.py cli.py   common events -> comparison_metrics.json -> matrix
 │   ├── mobileip/ro.py ro_sim.py     simplified route-optimisation model (+ MBB in mobility_sim.py / demo.py)
-│   ├── analysis/                    unused empty package (statistics live in compare/: analysis.py stats.py plots.py)
 │   └── tests/                       unit tests (fake host), real-kernel lab (kernel_lab.py netlink executor), gated live tests, stubs/
 ├── config/topology.yaml, scenarios/ lab definition + handoff scenarios (repeatable)
-├── schemas/  examples/results/      raw-data schemas, real example runs (loopback)
-├── examples/mobileip/               emulated Mobile IP runs (raw + metrics)
-├── examples/comparison/             generated comparison matrix + one run directory per scenario
-├── config/topology_ro.yaml          Stage 2 lab + direct cn-ana / cn-anb links (comparison topology)
-├── scripts/                         setup.sh, check_env.sh, topology.sh, run_all_tests.py (generates docs/TEST_REPORT.md)
-├── frontend/                        Stage 9: React dashboard (7 pages, docs/FRONTEND.md); scripts/e2e_browser.py = Stage 10 browser check
+├── schemas/                         JSON schemas: raw run files, metrics, CSV columns, OpenAPI document
+├── config/topology_ro.yaml          namespace lab + direct cn-ana / cn-anb links (comparison topology)
+├── scripts/                         setup.sh, check_env.sh, topology.sh, run_all_tests.py (writes data/reports/TEST_REPORT.md)
+├── frontend/                        React dashboard (6 pages, docs/FRONTEND.md); scripts/e2e_browser.py = real-browser check
 └── docs/                            ARCHITECTURE.md, PRIVILEGED_OPERATIONS.md
 ```
 
@@ -67,9 +64,9 @@ netsim-lab/
                            10.10.3.0/24 --- anb (access net B, router) --- 10.10.5.0/24 --- mn
 ```
 Namespaces: `nsl-cn nsl-ha nsl-mn nsl-ana nsl-anb`. `mn` has two interfaces (`eth-a`, `eth-b`) and two
-default routes (A metric 100 preferred, B metric 200 standby). Handover logic is not part of Stage 2.
+default routes (A metric 100 preferred, B metric 200 standby). Handover logic lives in the mobility approaches, not in the topology.
 
-## Data flow (Stage 10 view)
+## Data flow
 ```
 dashboard (React, hash router, polling) --/api--> FastAPI routes (api/, pydantic) --> ExperimentService (services/, no FastAPI import)
    ExperimentService --> SQLite store (state machine, idempotency, duplicate guard) --> job manager --> WORKER PROCESS (own process group)

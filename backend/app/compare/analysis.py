@@ -1,4 +1,4 @@
-"""Stage 7 analysis: everything here is computed from SAVED files only (campaign.json, plan.json, ledger.jsonl and each run
+"""Analysis: everything here is computed from SAVED files only (campaign.json, plan.json, ledger.jsonl and each run
 directory), so `analyze` can be repeated at any time, on another machine, without rerunning an experiment. All random procedures
 (bootstrap) are seeded, therefore regenerated outputs are byte-identical apart from analysis_meta.json's timestamp.
 
@@ -33,9 +33,9 @@ ANALYSIS_SEED = 20261028
 #       value that is not itself a measurement of that run (topology-derived denominator, after-the-fact labelling, model output).
 METRICS = {
     "app_stall_ms": ("ms", "observed", True, True,
-                     "longest gap between consecutive echo arrivals in the window [handoff start - 250 ms, handoff end + 250 ms], mean over the run's handoffs (Stage 3 'max_interarrival_gap_in_window_ms'). Nominal probe spacing is 1000/rate_pps ms, so a no-stall value is that spacing."),
+                     "longest gap between consecutive echo arrivals in the window [handoff start - 250 ms, handoff end + 250 ms], mean over the run's handoffs ('max_interarrival_gap_in_window_ms'). Nominal probe spacing is 1000/rate_pps ms, so a no-stall value is that spacing."),
     "interruption_ms": ("ms", "observed", True, False,
-                        "Stage 3 loss-burst interruption (time between the last echo before and the first after a loss burst); defined ONLY for handoffs where a probe-loss burst overlaps the window, so reliable transports (no probe loss) have no value. Mean over the run's handoffs that have one."),
+                        "loss-burst interruption (time between the last echo before and the first after a loss burst); defined ONLY for handoffs where a probe-loss burst overlaps the window, so reliable transports (no probe loss) have no value. Mean over the run's handoffs that have one."),
     "handoff_latency_ms": ("ms", "observed", True, False,
                            "time from the handoff start to the approach's OWN recovery point (registration reply, binding update, first data on the new connection...). The recovery point differs per approach, so this is not compared across approaches."),
     "loss_percent": ("%", "observed", True, True,
@@ -51,7 +51,7 @@ METRICS = {
     "mobility_overhead_bytes_per_packet": ("bytes", "observed", True, False,
                                            "extra header bytes the approach adds to each data packet. Counted from byte-accurate simulated packets; 'derived' when the run's overhead basis says analytic."),
     "rtt_after_ms": ("ms", "observed", True, False,
-                     "median RTT of the first 10 echoes after the handoff window (Stage 3), mean over the run's handoffs."),
+                     "median RTT of the first 10 echoes after the handoff window, mean over the run's handoffs."),
     "path_stretch": ("ratio", "derived", True, True,
                      "rtt_after_ms divided by the DIRECT-path RTT to the new access network. Numerator observed; denominator DERIVED from the run's effective link delays (2 x (cn-AN + AN-mn)). 1.0 = as short as the direct path; >1 = detour via the Home Agent or retransmission delay."),
 }
@@ -121,7 +121,7 @@ def _collect_campaign(root: Path, camp: dict, plan: dict) -> dict:
 
 
 def _collect_discovered(root: Path) -> dict:
-    """Fallback for result folders produced before Stage 7 (e.g. `compare matrix` output): no design, no replicates."""
+    """Fallback for result folders produced without a campaign design (e.g. `compare matrix` output): no design, no replicates."""
     runs, handoffs = [], []
     for ej in sorted(root.rglob("experiment.json")):
         exp = _read_json(ej)

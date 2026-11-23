@@ -2,8 +2,8 @@
 # NetSim Lab .gitignore
 #
 # Rule of thumb used here: ignore by LOCATION and by KIND OF FILE-THAT-IS-ALWAYS-GENERATED, never by data extension.
-# .csv / .json / .png / .joblib files are real, tracked project content in this repo (example results, JSON schemas,
-# frontend test fixtures, the trained model bundle, README screenshots), so they are NOT ignored globally.
+# .csv / .json / .png files are real, tracked project content (JSON schemas, test fixtures, README screenshots),
+# so they are NOT ignored globally.
 # =====================================================================================================================
 
 # --- Python ----------------------------------------------------------------------------------------------------------
@@ -33,17 +33,9 @@ yarn-error.log*
 *.pem
 *.key
 
-# --- Runtime output (everything the app, the CLI tools and the campaigns write while running) ---------------------------
-# API database + one directory per experiment, campaign output, generated ML data, demo runs, ...
-data/*
-!data/.keep_dir
-# scripts/stack.sh: pid files and logs
+# --- Runtime output (created on demand: API database, run files, campaigns, reports, pid files and logs) -----------------
+data/
 .run/
-
-# --- Generated reports (rewritten on every run, machine-specific, produce noisy diffs) -------------------------------
-docs/TEST_REPORT.md
-docs/test_results.json
-docs/e2e_browser_results.json
 
 # --- Release archives and packaging leftovers --------------------------------------------------------------------------
 *.zip
@@ -66,13 +58,3 @@ docs/e2e_browser_results.json
 .DS_Store
 Thumbs.db
 .directory
-
-# =====================================================================================================================
-# OPTIONAL: keep the repository small.
-# examples/experiments/stage7/runs/ holds ~100 MB of raw CSV/JSON (2,500+ files) of the 372-run example campaign. It is
-# tracked by default so that `make exp-analyze` and `make exp-reproduce` work straight after cloning. If you prefer a
-# lightweight repository, uncomment the next line and run:   git rm -r --cached examples/experiments/stage7/runs
-# The runs can always be regenerated with `make exp-example`.
-# =====================================================================================================================
-# examples/experiments/stage7/runs/
-examples/experiments/stage7/runs/

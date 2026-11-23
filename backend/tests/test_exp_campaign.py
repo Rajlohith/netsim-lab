@@ -1,4 +1,4 @@
-"""Stage 7: campaign design, reproducibility, failed / incomplete / interrupted runs, raw-data retention, resume."""
+"""Campaign design, reproducibility, failed / incomplete / interrupted runs, raw-data retention, resume."""
 import hashlib
 import json
 import os

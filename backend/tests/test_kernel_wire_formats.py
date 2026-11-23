@@ -51,7 +51,7 @@ class KernelAcceptsOurPackets(unittest.TestCase):
         with self.assertRaises(socket.timeout):
             u.recvfrom(2048)
 
-    def test_stage3_probe_datagram_survives_the_real_stack(self):
+    def test_probe_datagram_survives_the_real_stack(self):
         from app.traffic import wire
         u = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.addCleanup(u.close)

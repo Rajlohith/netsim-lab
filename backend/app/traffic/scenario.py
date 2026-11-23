@@ -3,7 +3,7 @@
 Orchestration only (measurement code stays in sender/receiver/metrics). Same-host assumption: the
 orchestrator, sender and receiver all use this kernel's CLOCK_MONOTONIC, which is what makes
 `events.csv` timestamps comparable with packet timestamps (checked through boot_id).
-Needs the Stage 2 topology plus sudo; it cannot run in a sandbox without `ip`.
+Needs the topology plus sudo; it cannot run in a sandbox without `ip`.
 """
 from __future__ import annotations
 

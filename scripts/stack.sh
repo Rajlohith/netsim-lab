@@ -52,8 +52,9 @@ start_api() {
     die "refusing to start the API as root (the job manager refuses too). Run as a normal user."
   fi
   # no --reload: the reloader would restart the job manager (and its worker processes) on every file change
-  ( cd "$ROOT/backend" && PYTHONPATH="$ROOT/backend" setsid "$PY" -m uvicorn app.main:app --host "$API_HOST" --port "$API_PORT" \
-      >"$LOGS/api.log" 2>&1 < /dev/null & echo $! >"$(pidfile api)" )
+  ( cd "$ROOT/backend" && PYTHONPATH="$ROOT/backend" setsid bash -c 'echo $$ >"$0"; exec "$@"' "$(pidfile api)" "$PY" -m uvicorn app.main:app --host "$API_HOST" --port "$API_PORT" \
+      >"$LOGS/api.log" 2>&1 < /dev/null & )
+  sleep 0.3
   if wait_http "http://$API_HOST:$API_PORT/api/health" 20; then
     echo "api: up   http://$API_HOST:$API_PORT/api/health   docs: http://$API_HOST:$API_PORT/docs   (pgid $(cat "$(pidfile api)"))"
   else
@@ -66,8 +67,9 @@ start_frontend() {
   [ -z "$(running_pgid frontend)" ] || { echo "frontend: already running (pgid $(running_pgid frontend))"; return 0; }
   port_busy "$FE_PORT" && die "port $FE_PORT is already in use by another process (set NETSIM_FRONTEND_PORT)"
   [ -d "$ROOT/frontend/node_modules/vite" ] || die "frontend dependencies missing. Run 'make frontend-install' first (needs network)."
-  ( cd "$ROOT/frontend" && setsid npx --no-install vite --host 127.0.0.1 --port "$FE_PORT" --strictPort \
-      >"$LOGS/frontend.log" 2>&1 < /dev/null & echo $! >"$(pidfile frontend)" )
+  ( cd "$ROOT/frontend" && setsid bash -c 'echo $$ >"$0"; exec "$@"' "$(pidfile frontend)" npx --no-install vite --host 127.0.0.1 --port "$FE_PORT" --strictPort \
+      >"$LOGS/frontend.log" 2>&1 < /dev/null & )
+  sleep 0.3
   if wait_http "http://127.0.0.1:$FE_PORT/" 30; then
     echo "frontend: up   http://127.0.0.1:$FE_PORT/   (pgid $(cat "$(pidfile frontend)"))"
   else

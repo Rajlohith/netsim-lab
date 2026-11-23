@@ -24,7 +24,7 @@ class CommandError(NetemError):
 
 
 class PrivilegeError(CommandError):
-    """sudo needs a password / no privilege available."""
+    """Sudo needs a password / no privilege available."""
 
 
 class TopologyError(NetemError):

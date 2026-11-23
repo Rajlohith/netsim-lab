@@ -89,7 +89,7 @@ def experiment_transitions(experiment_id: str, after_seq: int = Query(default=0,
                         401: R401, 404: R404, 409: R409},
              summary="Cancel a queued or running experiment")
 def cancel_experiment(experiment_id: str, response: Response, svc: ExperimentService = Depends(get_running_service)):
-    """queued: cancelled immediately (200). running: the worker process group gets SIGTERM, then SIGKILL after the grace period; the response is 202
+    """Queued: cancelled immediately (200). running: the worker process group gets SIGTERM, then SIGKILL after the grace period; the response is 202
     and the status becomes `cancelled` shortly after (poll). An experiment that already finished returns 409 `not_cancellable`."""
     view, done = svc.cancel(experiment_id)
     response.status_code = 200 if done else 202

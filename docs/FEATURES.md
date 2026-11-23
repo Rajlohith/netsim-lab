@@ -21,7 +21,6 @@ This guide explains every feature of NetSim Lab, how it works inside, and what y
 15. [Command-line tools and campaigns](#15-command-line-tools-and-campaigns)
 16. [Safety model](#16-safety-model)
 17. [Honest limitations](#17-honest-limitations)
-18. [What was removed and why](#18-what-was-removed-and-why)
 
 ---
 
@@ -370,7 +369,3 @@ PYTHONPATH=backend .venv/bin/python -m app.compare run \
 - One run per configuration is one sample. For defensible differences use a campaign with replicates.
 - Handoff latency is not comparable as a ranking across approaches.
 - The dashboard does not show campaign results.
-
-## 18. What was removed and why
-
-The handoff-prediction machine-learning module and the dashboard's Research section (model evaluation, handoff prediction, campaign analysis page) were removed at the project owner's request to keep the project focused on mobility mechanisms and their measurement. This took out the `backend/app/ml` package, the model registry, the model and prediction API routes, the `predict` request fields, the prediction export table, the example model bundle and the related tests and pages. The campaign and statistics command-line tools were kept, without their prediction columns.

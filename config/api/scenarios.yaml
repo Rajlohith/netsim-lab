@@ -2,7 +2,7 @@
 #
 # A scenario is a NAMED SET OF EXPERIMENT PARAMETERS (handoff schedule + network conditions) that is applied on top of the
 # defaults of ExperimentSpec (backend/app/compare/experiment.py); fields sent explicitly in a request override the scenario.
-# They are the one-factor-at-a-time levels of the Stage 7 example campaign (config/experiments/stage7_example.yaml), so API runs
+# They are the one-factor-at-a-time levels of the example campaign (config/experiments/example.yaml), so API runs
 # and campaign runs are comparable. The simulator-generated nature of the results does not change with the scenario.
 #
 # parameters: duration_s, detect_delay_ms, moves [[seconds, interface], ...], conditions {latency_scale, loss_percent,

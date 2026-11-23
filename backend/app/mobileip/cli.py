@@ -1,4 +1,4 @@
-"""python -m app.mobileip sim|analyze|demo"""
+"""Python -m app.mobileip sim|analyze|demo"""
 from __future__ import annotations
 
 import argparse

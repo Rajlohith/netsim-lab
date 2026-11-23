@@ -1,4 +1,4 @@
-"""One normaliser for every approach: probe metrics (Stage 3) + approach_events.csv + experiment_summary.json
+"""One normaliser for every approach: probe metrics + approach_events.csv + experiment_summary.json
 -> comparison_metrics.json with the SAME core metrics. Values that cannot be measured are null with a reason."""
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ def normalize(run_dir, write=True) -> dict:
     summary = read_json(d / "experiment_summary.json") or {}
     hs = [r for r in read_csv(d / "events.csv", "events.csv").rows if r["kind"] == "handoff_start"]
     hs.sort(key=lambda r: r["mono_ns"])
-    stage3 = {h["event_id"]: h for h in (m.get("handoffs") or [])}
+    probe_metrics = {h["event_id"]: h for h in (m.get("handoffs") or [])}
     out = []
     for i, s in enumerate(hs):
         start = s["mono_ns"]
@@ -31,16 +31,16 @@ def normalize(run_dir, write=True) -> dict:
         rec = next((e for e in rows if e["kind"] == "recovered" and start <= e["mono_ns"] < lim), None)
         upto = rec["mono_ns"] if rec else lim
         sig = [e for e in rows if e["kind"] in ("signal_tx", "signal_rx") and start <= e["mono_ns"] <= upto]
-        h3 = stage3.get(s["event_id"])
-        burst = (h3 or {}).get("loss_burst")
+        hp = probe_metrics.get(s["event_id"])
+        burst = (hp or {}).get("loss_burst")
         out.append({
             "event_id": s["event_id"], "detail": s["detail"], "recovered": rec is not None,
             "handoff_latency_ms": _ms(start, rec["mono_ns"]) if rec else None,
-            "service_gap_ms": (h3 or {}).get("max_interarrival_gap_in_window_ms"),
-            "interruption_ms": (h3 or {}).get("interruption_ms"),
-            "loss_packets": (burst["packets"] if burst else 0) if h3 else None,
-            "rtt_before_ms": (h3 or {}).get("rtt_median_before_ms"),
-            "rtt_after_ms": (h3 or {}).get("rtt_median_after_ms"),
+            "service_gap_ms": (hp or {}).get("max_interarrival_gap_in_window_ms"),
+            "interruption_ms": (hp or {}).get("interruption_ms"),
+            "loss_packets": (burst["packets"] if burst else 0) if hp else None,
+            "rtt_before_ms": (hp or {}).get("rtt_median_before_ms"),
+            "rtt_after_ms": (hp or {}).get("rtt_median_after_ms"),
             "signalling_messages": len(sig), "signalling_bytes": sum(e["bytes"] for e in sig),
             "retransmits": sum(1 for e in rows if e["kind"] == "retransmit" and start <= e["mono_ns"] < lim),
             "failures": [e["detail"] for e in rows if e["kind"] == "failure" and start <= e["mono_ns"] < lim],

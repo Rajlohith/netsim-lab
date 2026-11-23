@@ -1,6 +1,6 @@
-"""Stage 7 experiment campaigns: a reproducible, resumable set of replicated comparison experiments.
+"""Experiment campaigns: a reproducible, resumable set of replicated comparison experiments.
 
-This EXTENDS the Stage 5 interface (it calls compare.runner.run_experiment with ExperimentSpec objects; no second runner).
+This EXTENDS the comparison interface (it calls compare.runner.run_experiment with ExperimentSpec objects; no second runner).
 
 DESIGN
   * approach configurations are discovered from the approach registry (approaches.APPROACHES / VARIANTS);
@@ -15,7 +15,7 @@ DESIGN
 PERSISTENCE (all under the campaign directory)
   campaign.json   configuration, its hash, software versions, plan summary      plan.json    every planned run with its full spec
   ledger.jsonl    append-only start/end records (survives crashes; a start without an end = incomplete run)
-  runs/<scenario>/<run>/   the raw files of each run (Stage 3-5 formats) + experiment.json + campaign_run.json
+  runs/<scenario>/<run>/   the raw files of each run (run-file formats) + experiment.json + campaign_run.json
   _attempts/      earlier failed/incomplete attempts of a run, moved aside (never deleted)
 """
 from __future__ import annotations
@@ -309,7 +309,7 @@ class Ledger:
         return out
 
     def final_status(self) -> dict:
-        """key -> last known state: {'status', 'reason', ...}; a key with a start but no end is 'incomplete'."""
+        """Key -> last known state: {'status', 'reason', ...}; a key with a start but no end is 'incomplete'."""
         state = {}
         for r in self.read():
             k = r.get("key")

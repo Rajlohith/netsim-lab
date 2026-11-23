@@ -1,4 +1,4 @@
-"""Regression tests for problems found by the Stage 5 verification sweep: results that said 'ok' but were meaningless."""
+"""Regression tests for results that said 'ok' but were meaningless: results that said 'ok' but were meaningless."""
 import json
 import tempfile
 import unittest

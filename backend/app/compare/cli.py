@@ -1,4 +1,4 @@
-"""python -m app.compare list | run | matrix"""
+"""Python -m app.compare list | run | matrix"""
 from __future__ import annotations
 
 import argparse
@@ -29,32 +29,32 @@ def main(argv=None) -> int:
     r.add_argument("--tcp-detect", default="event", choices=("event", "timeout"))
     r.add_argument("--hold-ms", type=float, default=100.0, help="make-before-break old-link hold")
     r.add_argument("--variant", default="")
-    r.add_argument("--seed", type=int, default=0, help="Stage 7: seed of the random streams (loss) and recorded with the run")
-    r.add_argument("--latency-scale", type=float, default=1.0, help="Stage 7: multiply every link delay")
-    r.add_argument("--loss-percent", type=float, default=0.0, help="Stage 7: random loss on the access links (both directions)")
-    r.add_argument("--ha-distance-ms", type=float, default=0.0, help="Stage 7: extra one-way delay on every link touching the Home Agent")
-    r.add_argument("--registration-loss-percent", type=float, default=0.0, help="Stage 7: loss of Mobile IP registration messages")
-    r.add_argument("--ha-processing-ms", type=float, default=1.0, help="Stage 7: Home Agent registration processing time")
+    r.add_argument("--seed", type=int, default=0, help="seed of the random streams (loss) and recorded with the run")
+    r.add_argument("--latency-scale", type=float, default=1.0, help="multiply every link delay")
+    r.add_argument("--loss-percent", type=float, default=0.0, help="random loss on the access links (both directions)")
+    r.add_argument("--ha-distance-ms", type=float, default=0.0, help="extra one-way delay on every link touching the Home Agent")
+    r.add_argument("--registration-loss-percent", type=float, default=0.0, help="loss of Mobile IP registration messages")
+    r.add_argument("--ha-processing-ms", type=float, default=1.0, help="Home Agent registration processing time")
     r.add_argument("--detect-delay-ms", type=float, default=20.0, help="movement-detection delay")
     r.add_argument("--execute", action="store_true", help="live environment: really run privileged commands")
     sub.choices["list"].add_argument("--json", action="store_true", help="machine-readable approach/configuration/support listing")
-    pl = sub.add_parser("plan", help="Stage 7: show the design of a campaign (conditions, approach configurations, run count) without running")
+    pl = sub.add_parser("plan", help="show the design of a campaign (conditions, approach configurations, run count) without running")
     pl.add_argument("--config", type=Path, required=True)
-    c = sub.add_parser("campaign", help="Stage 7: run (or resume) a replicated campaign, then analyse and plot it")
+    c = sub.add_parser("campaign", help="run (or resume) a replicated campaign, then analyse and plot it")
     c.add_argument("--config", type=Path, required=True)
     c.add_argument("--out-dir", type=Path, required=True)
     c.add_argument("--retry-failed", action="store_true", help="also rerun runs recorded as failed")
     c.add_argument("--max-runs", type=int, default=None, help="stop cleanly after this many NEW runs (resume later with the same command)")
     c.add_argument("--no-analyze", action="store_true")
-    an = sub.add_parser("analyze", help="Stage 7: recompute statistics/exports/report from saved results (no experiment is run)")
+    an = sub.add_parser("analyze", help="recompute statistics/exports/report from saved results (no experiment is run)")
     an.add_argument("results_dir", type=Path)
     an.add_argument("--out-dir", type=Path, default=None)
-    pt = sub.add_parser("plots", help="Stage 7: draw charts from the saved analysis outputs")
+    pt = sub.add_parser("plots", help="draw charts from the saved analysis outputs")
     pt.add_argument("results_dir", type=Path)
-    rp = sub.add_parser("reproduce", help="Stage 7: re-run saved runs from plan.json and check they are byte-identical")
+    rp = sub.add_parser("reproduce", help="re-run saved runs from plan.json and check they are byte-identical")
     rp.add_argument("results_dir", type=Path)
     rp.add_argument("--sample", type=int, default=10, help="number of runs to re-run (spread over the campaign); 0 = all")
-    ss = sub.add_parser("sample-size", help="Stage 7: replicates needed for a mean's CI half-width, from a pilot standard deviation (derived estimate)")
+    ss = sub.add_parser("sample-size", help="replicates needed for a mean's CI half-width, from a pilot standard deviation (derived estimate)")
     ss.add_argument("--sd", type=float, required=True)
     ss.add_argument("--halfwidth", type=float, required=True)
     ss.add_argument("--conf", type=float, default=0.95)
@@ -132,7 +132,7 @@ def main(argv=None) -> int:
         if a.environment == "live":
             st, why = check(spec)
             if st == "ok" and not a.execute:
-                print("live environment: dry-run only. Add --execute (needs the Stage 2 lab, sudo -v, ip/ipip).")
+                print("live environment: dry-run only. Add --execute (needs the lab, sudo -v, ip/ipip).")
                 return 0
             if st == "ok":
                 if os.geteuid() == 0:

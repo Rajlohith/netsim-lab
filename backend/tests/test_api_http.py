@@ -1,4 +1,4 @@
-"""HTTP-level tests of the Stage 8 API (FastAPI TestClient).
+"""HTTP-level tests of the API (FastAPI TestClient).
 
 These need fastapi + httpx (requirements.txt / requirements-dev.txt). They are SKIPPED when those packages are missing; the same rules are
 covered without a web framework by test_api_validation / _store / _jobs / _results, which test the service layer the routes call."""
@@ -43,7 +43,7 @@ class Http(unittest.TestCase):
         self.assertFalse(cap["live_updates"]["websocket"]); self.assertEqual(c.get("/api/status").json()["job_manager_running"], True)
         self.assertEqual(c.get("/api/health").status_code, 200)
 
-    def test_topology_endpoint(self):                # Stage 9: read-only topology for the dashboard (needs fastapi; not run where it is missing)
+    def test_topology_endpoint(self):                # read-only topology for the dashboard (needs fastapi; not run where it is missing)
         c, _ = client(self, script_launcher(SLEEP))
         r = c.get("/api/topology"); self.assertEqual(r.status_code, 200)
         t = r.json(); self.assertEqual(t["source_file"], "config/topology_ro.yaml")

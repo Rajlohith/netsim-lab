@@ -146,14 +146,14 @@ _SOFTWARE_CACHE: dict = {}
 
 
 def software_versions() -> dict:
-    """Versions of the interpreter, platform and the libraries that influence results (Stage 7: recorded with every run).
-    The first three keys are the ones Stage 5/6 wrote; the rest are additions. Cached per process."""
+    """Versions of the interpreter, platform and the libraries that influence results (recorded with every run).
+    The first three keys are the original ones; the rest are additions. Cached per process."""
     if not _SOFTWARE_CACHE:
         import importlib
         from .. import __version__ as project_version
         d = {"python": platform.python_version(), "platform": sys.platform, "aioquic_available": quic_available(),
-             "os": platform.platform(), "netsim_lab": project_version, "framework": "stage7-experiments"}
-        for mod in ("numpy", "scipy", "pandas", "matplotlib", "sklearn", "joblib", "yaml"):
+             "os": platform.platform(), "netsim_lab": project_version, "framework": "netsim-experiments"}
+        for mod in ("numpy", "scipy", "pandas", "matplotlib", "yaml"):
             try:
                 d[mod] = getattr(importlib.import_module(mod), "__version__", "unknown")
             except Exception:                                   # not installed: say so instead of omitting silently

@@ -13,11 +13,11 @@ PYTHON="${PYTHON:-python3}"
 "$PYTHON" - <<'PY'
 import sys
 if sys.version_info < (3, 10):
-    sys.exit(f"Python >= 3.10 required, found {sys.version.split()[0]}")
+    sys.exit(f"Python 3.10 or newer is required, found {sys.version.split()[0]}")
 PY
 
 if ! "$PYTHON" -m venv .venv 2>/dev/null; then
-  echo "python3-venv missing. Zorin/Ubuntu: sudo apt install python3-venv" >&2
+  echo "python3-venv missing. Debian/Ubuntu: sudo apt install python3-venv" >&2
   exit 1
 fi
 .venv/bin/python -m pip install --upgrade pip

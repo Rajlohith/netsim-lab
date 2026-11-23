@@ -1,5 +1,5 @@
-"""LIVE tests on the real Linux kernel: the project's own Stage 2 command plans are executed (via netlink) and the
-Stage 3 probe tools run in the resulting namespaces. REAL kernel veth, routing, forwarding and UDP; no emulation.
+"""LIVE tests on the real Linux kernel: the project's own command plans are executed (via netlink) and the
+probe tools run in the resulting namespaces. REAL kernel veth, routing, forwarding and UDP; no emulation.
 
 Not covered (this kernel has no ipip/gre/dummy and no visible netem; iproute2 is not installed): IP-in-IP tunnels,
 tc netem delay/loss/rate, and the `ip`/`tc` command-line syntax itself. Run elsewhere with:  unshare -Urn python -m unittest tests.test_live_kernel_lab
@@ -55,7 +55,7 @@ class KernelLab(unittest.TestCase):
 
 
 class Topology(KernelLab):
-    def test_the_stage2_plan_builds_the_documented_lab_on_the_real_kernel(self):
+    def test_the_plan_builds_the_documented_lab_on_the_real_kernel(self):
         created = self.mgr.create()
         self.assertEqual(sorted(created), ["nsl-ana", "nsl-anb", "nsl-cn", "nsl-ha", "nsl-mn"])
         want = {"nsl-cn": {"lo", "eth-ha"}, "nsl-ha": {"lo", "eth-cn", "eth-ana", "eth-anb"},
@@ -124,7 +124,7 @@ class RealProbes(KernelLab):
             p.stdout.close(), p.stderr.close()
         return out / "kernel" / "r1"
 
-    def test_stage3_probes_run_unmodified_across_real_namespaces(self):
+    def test_probes_run_unmodified_across_real_namespaces(self):
         run = self.run_probes(duration=1.5, rate=200)
         m = analyze_run(run)
         self.assertEqual((m["loss"]["lost"], m["loss"]["sent_ok"], m["loss"]["exact"]), (0, 300, True))
@@ -152,7 +152,7 @@ class RealProbes(KernelLab):
 
 
 class StaleCareOfAddress(KernelLab):
-    """What really happens to packets sent to a care-of address that has vanished (Stage 4 documentation claim)."""
+    """What really happens to packets sent to a care-of address that has vanished (documentation claim)."""
 
     def test_only_the_mobile_node_end_down_gives_host_unreachable_not_a_loop(self):
         self.mgr.create()

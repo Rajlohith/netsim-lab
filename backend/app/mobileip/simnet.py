@@ -1,7 +1,7 @@
 """Tiny discrete-event IPv4 network emulator (SIMPLIFIED EMULATION, not the Linux kernel).
 
 Packets are real IPv4/UDP byte strings (built/parsed with ipip.py); routing is longest-prefix match with
-metrics over *up* interfaces; links are point-to-point with a fixed delay, an up/down state and (Stage 7, off unless the
+metrics over *up* interfaces; links are point-to-point with a fixed delay, an up/down state and (off unless the
 topology/conditions ask for it) seeded independent random packet loss per direction. There is no
 queueing, bandwidth limit, jitter, ARP, ICMP or fragmentation. Time is virtual, so runs are exactly repeatable.
 """
@@ -49,7 +49,7 @@ class Sim:
         self.nodes, self.links = {}, {}
         self.drops: list = []                      # (mono_ns, node, reason)
         self.drop_counts: dict = {}
-        self.loss_seed: int = 0                    # Stage 7: seed of the per-link loss streams (only used when a link has loss > 0)
+        self.loss_seed: int = 0                    # seed of the per-link loss streams (only used when a link has loss > 0)
 
     def at(self, t_ns: int, fn):
         self._n += 1
@@ -87,8 +87,8 @@ class SimLink:
     up: bool = True                 # carrier: can frames cross the link?
     mtu: int = 1500
     keep_up_ends: set = field(default_factory=set)   # nodes whose end stays administratively UP while the carrier is down
-    # Stage 7: independent random loss per direction (probability 0..1 per packet that is actually put on the wire).
-    # Default 0 -> no random numbers are drawn and behaviour is byte-identical to Stages 1-6.
+    # independent random loss per direction (probability 0..1 per packet that is actually put on the wire).
+    # Default 0 -> no random numbers are drawn and behaviour is byte-identical to a lossless run.
     loss_a_to_b: float = 0.0
     loss_b_to_a: float = 0.0
     seed: int = 0
@@ -107,7 +107,7 @@ class SimLink:
         return r.random() < p
 
     def go_down(self, keep_up_ends=()):
-        """keep_up_ends=() : both ends lose address+routes (old emulator behaviour).
+        """Keep_up_ends=() : both ends lose address+routes (old emulator behaviour).
         keep_up_ends={'ana'}: Linux veth semantics when only the OTHER end is set down: the peer keeps its address and
         connected route but frames can no longer cross (verified on a real kernel, tests/test_live_kernel_lab.py)."""
         self.up = False
@@ -252,7 +252,7 @@ class SimNode:
 
 
 def build_from_topology(sim: Sim, cfg) -> dict:
-    """Instantiate nodes/links/routes from a Stage 2 TopologyConfig (same addresses and link delays)."""
+    """Instantiate nodes/links/routes from a TopologyConfig (same addresses and link delays)."""
     nodes = {k: SimNode(sim, k, n.forwarding) for k, n in cfg.nodes.items()}
     for l in cfg.links:
         delay = int(l.effective_netem(l.a).delay_ms * 1e6)

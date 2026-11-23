@@ -82,7 +82,7 @@ class RunMeta:
 
 
 class EventLog:
-    """events.csv: orchestrator-side markers (scenario start/end, handoff start/end)."""
+    """Events.csv: orchestrator-side markers (scenario start/end, handoff start/end)."""
 
     def __init__(self, run_dir: Path):
         self._rec = CsvRecorder(Path(run_dir) / "events.csv", COLUMNS["events.csv"], flush_interval_s=0.0)

@@ -1,4 +1,4 @@
-"""GET /api/topology (service layer): the view must be exactly what the Stage 2 loader parses from the file the experiments use."""
+"""GET /api/topology (service layer): the view must be exactly what the loader parses from the file the experiments use."""
 import unittest
 
 import yaml

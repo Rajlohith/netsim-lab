@@ -1,6 +1,6 @@
 """Read-only view of the lab topology for the dashboard (GET /api/topology).
 
-Nothing is invented here: the document is the Stage 2 loader's parse (`app.netem.topology_config.load_config`) of the same file the
+Nothing is invented here: the document is the loader's parse (`app.netem.topology_config.load_config`) of the same file the
 experiments use (`app.compare.experiment.DEFAULT_TOPOLOGY`). Link impairments are the *configured* `tc netem` values; whether a run
 applies them depends on its environment (see `notes`)."""
 from __future__ import annotations

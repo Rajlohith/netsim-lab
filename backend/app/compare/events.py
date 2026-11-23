@@ -1,4 +1,4 @@
-"""approach_events.csv: the common, approach-independent event log used for the comparison metrics."""
+"""Approach_events.csv: the common, approach-independent event log used for the comparison metrics."""
 from __future__ import annotations
 
 import csv
@@ -61,7 +61,7 @@ _SIZE = re.compile(r"(\d+)B")
 
 
 def from_mip_events(mip_rows: list, approach: str, recovery: str = "registration"):
-    """Map Stage 4 mip_events rows to common rows. recovery='registration' (basic MIP / MBB): first accepted
+    """Map mip_events rows to common rows. recovery='registration' (basic MIP / MBB): first accepted
     registration reply after a link change; recovery='ro' (route optimisation): first RO binding active."""
     out, armed, seq = [], False, 0
 
