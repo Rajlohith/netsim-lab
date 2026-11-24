@@ -76,7 +76,7 @@ export function formToRequest(form, { approach }) {
     approach: form.approach, scenario: form.scenario, environment: form.environment,
     duration_s: parseNumberField(form.duration_s), rate_pps: parseNumberField(form.rate_pps), payload: parseNumberField(form.payload), seed: parseNumberField(form.seed),
   };
-  if (approach && approach.supports_make_before_break) req.handoff_mode = form.handoff_mode;
+  if (approach && approach.supports_make_before_break) req.handoff_mode = "mbb"; // make-before-break is the only mode offered for this approach
   if (form.approach === "tcp-reconnect") req.tcp_detect = form.tcp_detect;
   const conditions = {};
   for (const k of CONDITION_KEYS) if (form.conditions[k] !== "" && form.conditions[k] !== undefined) conditions[k] = parseNumberField(form.conditions[k]);

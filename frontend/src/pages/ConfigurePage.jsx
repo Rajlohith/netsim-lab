@@ -36,7 +36,7 @@ export function ConfigureView({ approaches, scenarios, capabilities, form, setFo
       <form onSubmit={onSubmit} noValidate aria-label="Experiment configuration">
         <fieldset><legend>Approach and scenario</legend>
           <Field id="approach" label="Mobility approach" error={errors.approach}>
-            <select id="approach" value={form.approach} onChange={(e) => { const a = approaches.find((x) => x.id === e.target.value); setForm((f) => ({ ...f, approach: e.target.value, environment: runnableEnvironments(a).includes(f.environment) ? f.environment : runnableEnvironments(a)[0] || f.environment, handoff_mode: a && a.supports_make_before_break ? f.handoff_mode : "bbm" })); }}>
+            <select id="approach" value={form.approach} onChange={(e) => { const a = approaches.find((x) => x.id === e.target.value); setForm((f) => ({ ...f, approach: e.target.value, environment: runnableEnvironments(a).includes(f.environment) ? f.environment : runnableEnvironments(a)[0] || f.environment, handoff_mode: a && a.supports_make_before_break ? "mbb" : "bbm" })); }}>
               {approaches.map((a) => { const ok = runnableEnvironments(a).length > 0; return <option key={a.id} value={a.id} disabled={!ok}>{approachName(a.id)}{ok ? "" : " (not runnable on this server)"}</option>; })}
             </select>
           </Field>
@@ -51,10 +51,6 @@ export function ConfigureView({ approaches, scenarios, capabilities, form, setFo
           </Field>
           <div className="row">
             <Field id="duration_s" label="Duration (s)" error={errors.duration_s} hint={`> 0, ≤ ${lim.max_duration_s}`}><input id="duration_s" inputMode="decimal" value={form.duration_s} onChange={set("duration_s")} aria-invalid={!!errors.duration_s} /></Field>
-            {approach && approach.supports_make_before_break ? (
-              <Field id="handoff_mode" label="Handoff mode" error={errors.handoff_mode}>
-                <select id="handoff_mode" value={form.handoff_mode} onChange={set("handoff_mode")}><option value="bbm">break-before-make</option><option value="mbb">make-before-break</option></select>
-              </Field>) : null}
             {form.approach === "tcp-reconnect" ? <Field id="tcp_detect" label="TCP loss detection"><select id="tcp_detect" value={form.tcp_detect} onChange={set("tcp_detect")}><option value="event">on network-change event</option><option value="timeout">on timeout</option></select></Field> : null}
           </div>
           {scenario ? <p className="muted">Handoff schedule (fixed by the scenario): {scenario.parameters.moves.map((m) => `→ ${m.interface} at ${m.at_s} s`).join(", ")}.</p> : null}
@@ -102,7 +98,7 @@ export function ConfigureView({ approaches, scenarios, capabilities, form, setFo
           <dt>Duration</dt><dd>{form.duration_s} s</dd>
           <dt>Probe rate</dt><dd>{form.rate_pps} packets/s, {form.payload} B</dd>
           <dt>Seed</dt><dd>{form.seed}</dd>
-          <dt>Handoff mode</dt><dd>{form.handoff_mode === "mbb" ? "make-before-break" : "break-before-make"}</dd>
+          <dt>Handoff mode</dt><dd>{approach && approach.supports_make_before_break ? "make-before-break (fixed)" : "break-before-make"}</dd>
         </dl>
       </aside>
       </div>

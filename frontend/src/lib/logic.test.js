@@ -47,6 +47,9 @@ describe("validation (limits from /api/capabilities)", () => {
     const e = validateForm(form("mip-basic", S[0].id, { conditions: { latency_scale: "0", loss_percent: "100", ha_distance_ms: "x", registration_loss_percent: "", ha_processing_ms: "" } }), ctx()).errors;
     expect(Object.keys(e).sort()).toEqual(["conditions.ha_distance_ms", "conditions.latency_scale", "conditions.loss_percent"]);
   });
+  it("always sends make-before-break for the MBB approach, whatever the form holds", () => {
+    expect(formToRequest(form("mip-mbb", S[0].id, { handoff_mode: "bbm" }), ctx("mip-mbb")).handoff_mode).toBe("mbb");
+  });
   it("builds a minimal request: unset conditions are not sent; mbb only where supported", () => {
     const r = formToRequest(form("mip-basic"), ctx());
     expect(r.conditions).toBeUndefined(); expect(r.handoff_mode).toBeUndefined(); expect(r.approach).toBe("mip-basic"); expect(typeof r.duration_s).toBe("number");

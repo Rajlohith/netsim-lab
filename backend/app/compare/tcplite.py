@@ -57,7 +57,9 @@ class TcpConn:
         self.retries, self._gen, self._timer_on = 0, 0, False
         self.on_connected = self.on_data = self.on_closed = None
         self.opened_ns = None
-        self.stats = {"retransmissions": 0}
+        self.ooo = {}                              # out-of-order segments (seq -> data); only used with fast_retransmit
+        self.dupacks = 0
+        self.stats = {"retransmissions": 0, "fast_retransmits": 0}
 
     @property
     def local_ip(self):
@@ -150,14 +152,37 @@ class TcpConn:
         if self.state != "ESTABLISHED":
             return
         if flags & ACK:
+            before = self.snd_una
             self._ack(ack)
+            if self.stack.fast_retransmit and not payload and self.unacked and ack == before and self.snd_una == before:
+                self.dupacks += 1
+                if self.dupacks == self.stack.DUPACK_THRESHOLD:       # RFC 5681: 3 duplicate ACKs -> resend the missing head now
+                    head = self.unacked[0]
+                    head[3] = True
+                    self.stack.stats["retransmissions"] += 1
+                    self.stack.stats["fast_retransmits"] = self.stack.stats.get("fast_retransmits", 0) + 1
+                    self.stats["fast_retransmits"] += 1
+                    self._tx(head[0], ACK | PSH, head[1])
+            elif ack != before:
+                self.dupacks = 0
         if payload:
             if seq == self.rcv_nxt:
                 self.rcv_nxt += len(payload)
                 self._tx(self.snd_nxt, ACK)
                 if self.on_data:
                     self.on_data(payload)
+                drained = False
+                while self.stack.fast_retransmit and self.rcv_nxt in self.ooo:      # drain data that was waiting for the gap
+                    nxt = self.ooo.pop(self.rcv_nxt)
+                    self.rcv_nxt += len(nxt)
+                    drained = True
+                    if self.on_data:
+                        self.on_data(nxt)
+                if drained:
+                    self._tx(self.snd_nxt, ACK)              # one cumulative ACK for everything the gap was blocking
             else:
+                if self.stack.fast_retransmit and seq > self.rcv_nxt:
+                    self.ooo.setdefault(seq, payload)
                 self._tx(self.snd_nxt, ACK)                  # duplicate/out-of-order: re-ACK what we expect
 
     def _establish(self):
@@ -213,12 +238,18 @@ class TcpConn:
 
 
 class TcpLiteStack:
+    # OPT-IN loss recovery (RFC 5681 fast retransmit + a receiver that buffers out-of-order data). Off by default so every
+    # existing result stays byte-identical; the loss-analysis study (app/compare/loss_study.py) switches it on.
+    FAST_RETRANSMIT_DEFAULT = False
+    DUPACK_THRESHOLD = 3
+
     def __init__(self, node, sim, *, mss=1400, initial_rto=1.0, min_rto=0.2, max_rto=8.0, max_retries=6,
                  syn_retries=5, observer=None, seg_observer=None):
         self.node, self.sim, self.mss = node, sim, mss
         self.initial_rto, self.min_rto, self.max_rto = initial_rto, min_rto, max_rto
         self.max_retries, self.syn_retries, self.observer = max_retries, syn_retries, observer
         self.seg_observer = seg_observer
+        self.fast_retransmit = TcpLiteStack.FAST_RETRANSMIT_DEFAULT
         self.conns, self.accept_cb = {}, {}
         self._iss, self._port = 1000, 40000
         self.stats = {"segments_tx": 0, "segments_rx": 0, "bytes_tx": 0, "retransmissions": 0, "resets_sent": 0}
